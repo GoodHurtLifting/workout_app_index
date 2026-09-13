@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { apps, type AiStatus, type AppRecord, type ResearchStatus } from "@/lib/catalog";
+import { apps, catalogEvidenceSeeds, type AiStatus, type AppRecord, type ResearchStatus } from "@/lib/catalog";
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getCatalogDatabase, getCatalogRecord } from "@/lib/catalog-repository";
 
@@ -10,6 +10,7 @@ const splitList=(value:FormDataEntryValue|null)=>String(value??"").split(",").ma
 export async function importPreliminaryCatalog(){
   const user=await getCatalogAdminForAction(); const db=getCatalogDatabase(); const now=Date.now();
   const statements=apps.map(app=>db.prepare("INSERT INTO catalog_apps (id, slug, name, short_description, product_type, publication_status, ai_status, affiliation_disclosure, record_json, updated_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING").bind(app.id,app.id,app.name,app.description,app.type,app.researchStatus,app.ai,app.id==="lift-league"?app.caveat:null,JSON.stringify(app),user.userId,now,now));
+  statements.push(...catalogEvidenceSeeds.map(source=>db.prepare("INSERT INTO evidence_sources (id, app_id, source_type, url, claim_supported, checked_at, public, internal_note) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING").bind(source.id,source.appId,source.sourceType,source.url,source.claimSupported,now,source.public?1:0,"Seeded from the source catalog; recheck before final editorial review.")));
   await db.batch(statements); revalidatePath("/admin");
 }
 
@@ -33,9 +34,20 @@ export async function publishApprovedCatalog(){
   const user=await getCatalogAdminForAction(); const db=getCatalogDatabase();
   const rows=await db.prepare("SELECT id, record_json FROM catalog_apps WHERE publication_status = 'Reviewed' ORDER BY name").all<{id:string;record_json:string}>();
   if(!rows.results.length) throw new Error("At least one reviewed app is required");
-  const evidence=await db.prepare("SELECT app_id, COUNT(*) AS source_count FROM evidence_sources GROUP BY app_id").all<{app_id:string;source_count:number}>();
-  const counts=new Map(evidence.results.map(row=>[row.app_id,row.source_count]));
-  const missing=rows.results.filter(row=>!counts.get(row.id)); if(missing.length) throw new Error("Every reviewed app needs at least one evidence source");
+  const evidence=await db.prepare("SELECT app_id, source_type, claim_supported FROM evidence_sources").all<{app_id:string;source_type:string;claim_supported:string}>();
+  const coverage=new Map<string,Set<string>>();
+  for(const source of evidence.results){
+    const categories=coverage.get(source.app_id)??new Set<string>();
+    const claim=source.claim_supported.toLowerCase();
+    if(source.source_type==="Google Play"||source.source_type==="Apple App Store"||/android|ios|platform|availability/.test(claim)) categories.add("platforms");
+    if(/price|pricing|purchase|subscription|free|trial/.test(claim)) categories.add("pricing");
+    if(/\bai\b|artificial intelligence|hevy-gpt|hevygpt/.test(claim)) categories.add("ai");
+    if(/feature|program|logging|tracker|progress|community|offline|wearable/.test(claim)) categories.add("features");
+    coverage.set(source.app_id,categories);
+  }
+  const required=["platforms","pricing","ai","features"];
+  const missing=rows.results.flatMap(row=>required.filter(category=>!coverage.get(row.id)?.has(category)).map(category=>`${row.id}: ${category}`));
+  if(missing.length) throw new Error(`Reviewed apps need evidence for platforms, pricing, AI, and features. Missing ${missing.join(", ")}`);
   const now=Date.now(); const version=`catalog-${new Date(now).toISOString().replace(/[-:]/g,"").slice(0,13)}Z`;
   const snapshot=rows.results.map(row=>JSON.parse(row.record_json));
   await db.prepare("INSERT INTO catalog_publications (id, catalog_version, fit_methodology_version, legit_methodology_version, snapshot_json, published_by, published_at) VALUES (?, ?, ?, ?, ?, ?, ?)").bind(crypto.randomUUID(),version,"fit-1","legit-1",JSON.stringify(snapshot),user.userId,now).run();
