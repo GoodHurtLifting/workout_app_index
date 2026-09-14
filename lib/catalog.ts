@@ -214,22 +214,26 @@ export const apps: AppRecord[] = [
     bestFor: "Guidance with optional human coaching",
     description:
       "Strength training plans, education, progress tracking, and an optional paid coaching layer.",
-    price: "Free / Coaching plans",
-    monthlyPrice: null,
+    price:
+      "Free / Plus up to $12 monthly or $72 yearly; coaching priced separately",
+    monthlyPrice: 12,
     hasUsableFreeTier: true,
     platforms: ["Android", "iOS"],
     ai: "AI supporting features",
     legit: 88,
     goals: ["Build muscle", "Get stronger", "Learn resistance training"],
     features: [
-      "Expert programs",
+      "120+ expert programs",
       "Human coaching",
       "Exercise demos",
       "Progress charts",
+      "Strength Score",
+      "Workout groups",
     ],
     level: ["Beginner", "Intermediate"],
     authorship: "Trainer-written",
-    caveat: "Personal coaching costs substantially more than the free product.",
+    caveat:
+      "The free logger is substantial, but structured Plus plans and hands-on coaching are separate paid levels; coaching costs materially more.",
     deliversCompleteProgram: true,
     programLibrary: true,
     adaptiveProgramming: false,
@@ -238,8 +242,8 @@ export const apps: AppRecord[] = [
       "Home gym",
       "Dumbbells only",
     ],
-    researchStatus: "Candidate",
-    verifiedSections: 0,
+    researchStatus: "Researching",
+    verifiedSections: 7,
     totalSections: 8,
   },
   {
@@ -288,12 +292,12 @@ export const apps: AppRecord[] = [
     name: "JEFIT",
     initials: "JF",
     color: "#4aa9eb",
-    type: "Workout logger",
-    bestFor: "A broad exercise library and detailed tracking",
+    type: "Logger + adaptive plans",
+    bestFor: "Maximum planning choice and detailed tracking",
     description:
-      "A long-running workout planner and logger with routines, community features, and extensive exercise data.",
-    price: "Free / Premium",
-    monthlyPrice: null,
+      "A broad workout toolkit combining manual planning, built-in programs, community routines, and an AI-powered adaptive plan.",
+    price: "Free / Elite $12.99 monthly or $69.99 yearly",
+    monthlyPrice: 12.99,
     hasUsableFreeTier: true,
     platforms: ["Android", "iOS"],
     ai: "AI supporting features",
@@ -302,24 +306,27 @@ export const apps: AppRecord[] = [
     features: [
       "Exercise library",
       "Custom workouts",
+      "Adaptive programming",
+      "Program library",
       "Progress charts",
       "Community",
+      "Wearables",
     ],
     level: ["Beginner", "Intermediate", "Advanced"],
     authorship: "Mixed",
     caveat:
-      "The number of tools and screens may feel busy if simplicity is your priority.",
-    deliversCompleteProgram: false,
-    programLibrary: false,
-    adaptiveProgramming: false,
+      "Its many self-directed, community, library, and AI-guided routes can feel busy if you want one obvious path.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: true,
     supportedTrainingEnvironments: [
       "Commercial gym",
       "Home gym",
       "Dumbbells only",
       "Barbell and plates",
     ],
-    researchStatus: "Candidate",
-    verifiedSections: 0,
+    researchStatus: "Researching",
+    verifiedSections: 7,
     totalSections: 8,
   },
   {
@@ -373,8 +380,8 @@ export const apps: AppRecord[] = [
     bestFor: "Simple barbell strength progression",
     description:
       "Guides lifters through a focused progressive barbell routine with automatic workout progression.",
-    price: "Free / Premium",
-    monthlyPrice: null,
+    price: "Free / Pro $11.99 monthly or $59.99 yearly",
+    monthlyPrice: 11.99,
     hasUsableFreeTier: true,
     platforms: ["Android", "iOS"],
     ai: "No AI identified",
@@ -385,6 +392,8 @@ export const apps: AppRecord[] = [
       "Rest timer",
       "Exercise demos",
       "Simple interface",
+      "Workout templates",
+      "Wearables",
     ],
     level: ["Beginner", "Intermediate"],
     authorship: "Trainer-written",
@@ -398,8 +407,8 @@ export const apps: AppRecord[] = [
       "Home gym",
       "Barbell and plates",
     ],
-    researchStatus: "Candidate",
-    verifiedSections: 0,
+    researchStatus: "Researching",
+    verifiedSections: 7,
     totalSections: 8,
   },
   {
@@ -410,12 +419,12 @@ export const apps: AppRecord[] = [
     type: "Adaptive program",
     bestFor: "Hypertrophy-focused progression",
     description:
-      "Creates and adjusts gym workouts around goals, schedule, equipment, and prior performance.",
-    price: "Free trial / Premium",
-    monthlyPrice: null,
-    hasUsableFreeTier: false,
+      "Builds a stable hypertrophy plan around goals, schedule, and equipment, then adjusts set-level progression from performance.",
+    price: "Free / Pro $12.99 monthly or $79.99 yearly",
+    monthlyPrice: 12.99,
+    hasUsableFreeTier: true,
     platforms: ["Android", "iOS"],
-    ai: "AI supporting features",
+    ai: "No AI identified",
     legit: 85,
     goals: ["Build muscle", "Get stronger"],
     features: [
@@ -423,10 +432,12 @@ export const apps: AppRecord[] = [
       "Progression",
       "Exercise demos",
       "Detailed analytics",
+      "Custom workouts",
     ],
     level: ["Beginner", "Intermediate", "Advanced"],
     authorship: "Rules-based adaptive",
-    caveat: "Its strongest functionality sits behind a recurring subscription.",
+    caveat:
+      "Manual plans and logging remain free, but plan generation, progression recommendations, advanced charts, and periodization tools require Pro.",
     deliversCompleteProgram: true,
     programLibrary: false,
     adaptiveProgramming: true,
@@ -435,8 +446,8 @@ export const apps: AppRecord[] = [
       "Home gym",
       "Dumbbells only",
     ],
-    researchStatus: "Candidate",
-    verifiedSections: 0,
+    researchStatus: "Researching",
+    verifiedSections: 7,
     totalSections: 8,
   },
   {
@@ -460,11 +471,13 @@ export const apps: AppRecord[] = [
       "Custom workouts",
       "Progress charts",
       "Offline use",
+      "CSV export",
+      "Local and cloud backup",
     ],
     level: ["Beginner", "Intermediate", "Advanced"],
     authorship: "User-created",
     caveat:
-      "Android only, with less guided programming than program-based apps.",
+      "Android only. It records and organizes the training you choose but does not prescribe progression or a complete program.",
     deliversCompleteProgram: false,
     programLibrary: false,
     adaptiveProgramming: false,
@@ -474,8 +487,8 @@ export const apps: AppRecord[] = [
       "Dumbbells only",
       "Barbell and plates",
     ],
-    researchStatus: "Candidate",
-    verifiedSections: 0,
+    researchStatus: "Researching",
+    verifiedSections: 6,
     totalSections: 8,
   },
   {
@@ -486,34 +499,36 @@ export const apps: AppRecord[] = [
     type: "Adaptive program",
     bestFor: "Technical hypertrophy programming",
     description:
-      "A specialized training system that adjusts volume and effort using lifter feedback across a mesocycle.",
-    price: "Subscription",
-    monthlyPrice: null,
+      "A specialized hypertrophy system with premade plans or a custom mesocycle builder, then week-to-week adjustments from lifter feedback.",
+    price: "$34.99 monthly or $299.99 yearly",
+    monthlyPrice: 34.99,
     hasUsableFreeTier: false,
-    platforms: ["Android", "iOS"],
+    platforms: ["Web", "Android", "iOS"],
     ai: "No AI identified",
     legit: 87,
     goals: ["Build muscle"],
     features: [
       "Adaptive programming",
       "Progression",
-      "Detailed analytics",
+      "100+ training plans",
+      "Technique videos",
       "Exercise substitutions",
+      "Custom mesocycles",
     ],
     level: ["Intermediate", "Advanced"],
     authorship: "Rules-based adaptive",
     caveat:
-      "The technical approach and terminology may overwhelm a brand-new lifter.",
+      "It is expensive, focused specifically on muscle growth, and its mesocycle and autoregulation concepts may overwhelm a brand-new lifter.",
     deliversCompleteProgram: true,
-    programLibrary: false,
+    programLibrary: true,
     adaptiveProgramming: true,
     supportedTrainingEnvironments: [
       "Commercial gym",
       "Home gym",
       "Dumbbells only",
     ],
-    researchStatus: "Candidate",
-    verifiedSections: 0,
+    researchStatus: "Researching",
+    verifiedSections: 7,
     totalSections: 8,
   },
 ];
@@ -619,6 +634,7 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
   },
   caliber: {
     planningStyle: "Choose a proven path",
+    secondaryStyles: ["Build it yourself", "Just log the work"],
     choiceLoad: "Moderate",
     continuity: "Program-based",
     customization: "Guided flexibility",
@@ -651,9 +667,20 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
   },
   jefit: {
     planningStyle: "Build it yourself",
+    secondaryStyles: [
+      "Let the app adapt",
+      "Choose a proven path",
+      "Just log the work",
+    ],
     choiceLoad: "High",
     continuity: "User-directed",
     customization: "Full control",
+    decisionsRemoved:
+      "Logging, exercise reference, analytics, and—if you select its Adaptive Plan—weekly exercise, load, and rep recommendations.",
+    decisionsRemaining:
+      "You decide whether to build, download, browse, instantly generate, or adapt a routine, then navigate a large set of tools and options.",
+    tradeoff:
+      "JEFIT can accommodate almost any planning style, but that breadth asks you to choose how the app should serve you before it can simplify training.",
     idealUser:
       "You value a broad exercise database, many planning tools, and detailed control more than a tightly constrained experience.",
     notFor:
@@ -681,6 +708,12 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     choiceLoad: "Low",
     continuity: "Single coherent system",
     customization: "Follow as written",
+    decisionsRemoved:
+      "The system chooses the core lifts, workout rotation, starting weights, load increases, repeats, and deload rules.",
+    decisionsRemaining:
+      "You set your schedule, supply the required barbell equipment, and decide when your goals have outgrown the narrow system.",
+    tradeoff:
+      "It earns exceptional clarity by limiting exercise variety and keeping the training philosophy deliberately narrow.",
     idealUser:
       "You want a simple barbell-focused progression with a clear next workout and very few programming decisions.",
     notFor:
@@ -688,19 +721,32 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
   },
   "alpha-progression": {
     planningStyle: "Let the app adapt",
-    choiceLoad: "Low",
-    continuity: "Session-adaptive",
+    secondaryStyles: ["Build it yourself"],
+    choiceLoad: "Moderate",
+    continuity: "Program-based",
     customization: "Guided flexibility",
+    decisionsRemoved:
+      "Pro can generate a stable plan from your goals, schedule, equipment, and priorities, then recommend set-level progression from performance.",
+    decisionsRemaining:
+      "You refine exercises and priorities, report performance, and decide whether to accept recommendations; free users build and progress plans themselves.",
+    tradeoff:
+      "It preserves a recognizable long-term plan while automating progression, but the meaningful automation requires Pro and still expects user judgment.",
     idealUser:
       "You want hypertrophy-focused programming that adjusts around your schedule, equipment, and recorded performance.",
     notFor:
-      "You want a free long-term option, a fixed coach-authored program, or full manual control.",
+      "You want a coach-authored program, a broad program catalog, or automatic guidance without paying for Pro.",
   },
   fitnotes: {
     planningStyle: "Just log the work",
     choiceLoad: "Low",
     continuity: "User-directed",
     customization: "Full control",
+    decisionsRemoved:
+      "It handles workout recording, exercise history, routines, timers, records, export, and backup without ads or a required account.",
+    decisionsRemaining:
+      "Every programming choice—exercise selection, schedule, progression, fatigue management, and when to change course—remains yours.",
+    tradeoff:
+      "You get a simple, free, privacy-friendly logbook that stays out of the way, in exchange for receiving essentially no training guidance.",
     idealUser:
       "You are an Android user who already knows what to train and wants a straightforward, offline-friendly log without a subscription.",
     notFor:
@@ -708,9 +754,16 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
   },
   "rp-hypertrophy": {
     planningStyle: "Let the app adapt",
+    secondaryStyles: ["Choose a proven path", "Build it yourself"],
     choiceLoad: "Moderate",
     continuity: "Program-based",
     customization: "Guided flexibility",
+    decisionsRemoved:
+      "A template or custom mesocycle establishes the structure, then the app adjusts reps, loads, volume, fatigue management, and deload timing from feedback.",
+    decisionsRemaining:
+      "You select or shape the mesocycle, choose exercises, judge pump, soreness, and workload honestly, and apply the specialized terminology correctly.",
+    tradeoff:
+      "It removes much of the week-to-week hypertrophy math while retaining deep control, but asks for thoughtful feedback, domain knowledge, and a premium price.",
     idealUser:
       "You understand hypertrophy concepts and want a specialized system that adjusts volume and effort across a mesocycle using your feedback.",
     notFor:
@@ -931,6 +984,141 @@ export const catalogEvidenceSeeds: CatalogEvidenceSeed[] = [
       "Android release is coming soon; official feature list includes structured blocks, workout history, custom blocks, scoring, achievements, progress photos, training circles, and leaderboards. No public price is stated.",
     public: true,
   },
+  {
+    id: "caliber-google-play-20260914",
+    appId: "caliber",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.caliberfitness.app",
+    claimSupported:
+      "Android availability, unlimited free logging, 800+ exercises, Workout Circles, Health Connect, optional AI connection, Plus, and coaching tiers.",
+    public: true,
+  },
+  {
+    id: "caliber-apple-store-20260914",
+    appId: "caliber",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/caliber-strength-training/id1482405410",
+    claimSupported:
+      "iOS availability, free features, Plus and coaching options, and current US Plus purchase listings.",
+    public: true,
+  },
+  {
+    id: "caliber-pro-guide-20260914",
+    appId: "caliber",
+    sourceType: "Official documentation",
+    url: "https://caliberstrong.freshdesk.com/support/solutions/articles/48001257573-caliber-pro-user-guide",
+    claimSupported:
+      "Caliber's group-coaching service, coaching workflow, and current monthly, quarterly, and annual prices.",
+    public: true,
+  },
+  {
+    id: "jefit-official-20260914",
+    appId: "jefit",
+    sourceType: "Official website",
+    url: "https://www.jefit.com/",
+    claimSupported:
+      "Manual planning and logging, adaptive training, analytics, program library, exercise database, and community features.",
+    public: true,
+  },
+  {
+    id: "jefit-apple-store-20260914",
+    appId: "jefit",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/jefit-workout-plan-gym-tracker/id449810000",
+    claimSupported:
+      "iOS and Apple Watch availability, 1,400+ exercises, custom and built-in routines, AI Adaptive Plan, and current Elite prices.",
+    public: true,
+  },
+  {
+    id: "stronglifts-official-app-20260914",
+    appId: "stronglifts",
+    sourceType: "Official website",
+    url: "https://stronglifts.com/app/",
+    claimSupported:
+      "iOS and Android availability, guided programs and templates, workout logging, progression, deloads, exercise guidance, and wearable integrations.",
+    public: true,
+  },
+  {
+    id: "stronglifts-pro-20260914",
+    appId: "stronglifts",
+    sourceType: "Official documentation",
+    url: "https://support.stronglifts.com/article/98-buy-pro",
+    claimSupported:
+      "Free and Pro subscription model, current monthly and yearly prices, and the annual seven-day trial.",
+    public: true,
+  },
+  {
+    id: "stronglifts-progression-20260914",
+    appId: "stronglifts",
+    sourceType: "Official documentation",
+    url: "https://support.stronglifts.com/article/71-progression",
+    claimSupported:
+      "Automatic weight increases, configurable progression increments, and automatic return-from-break deload behavior.",
+    public: true,
+  },
+  {
+    id: "alpha-official-overview-20260914",
+    appId: "alpha-progression",
+    sourceType: "Official website",
+    url: "https://alphaprogression.com/en",
+    claimSupported:
+      "Stable plan generation, equipment and schedule customization, set-level progression recommendations, exercise videos, logging, and free-versus-Pro boundaries.",
+    public: true,
+  },
+  {
+    id: "alpha-pricing-20260914",
+    appId: "alpha-progression",
+    sourceType: "Official website",
+    url: "https://alphaprogression.com/en/subscribe",
+    claimSupported:
+      "Current $12.99 monthly and $79.99 yearly Pro prices and yearly-plan trial.",
+    public: true,
+  },
+  {
+    id: "alpha-google-play-20260914",
+    appId: "alpha-progression",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.alphaprogression.alphaprogression",
+    claimSupported:
+      "Android availability, current maintenance, plan and progression features, and developer data-safety disclosures.",
+    public: true,
+  },
+  {
+    id: "fitnotes-google-play-20260914",
+    appId: "fitnotes",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.github.jamesgay.fitnotes",
+    claimSupported:
+      "Android-only free ad-free logging, routines, history, records, CSV export, local and cloud backups, and no developer-declared data collection or sharing.",
+    public: true,
+  },
+  {
+    id: "rp-official-overview-20260914",
+    appId: "rp-hypertrophy",
+    sourceType: "Official website",
+    url: "https://rpstrength.com/pages/hypertrophy-app",
+    claimSupported:
+      "100+ plans, custom mesocycle builder, exercise selection, technique videos, feedback-driven weekly adjustment, web access, and annual pricing.",
+    public: true,
+  },
+  {
+    id: "rp-subscribe-20260914",
+    appId: "rp-hypertrophy",
+    sourceType: "Official website",
+    url: "https://apps.rpstrength.com/subscribe",
+    claimSupported:
+      "Current $34.99 monthly and $299.99 yearly subscription prices.",
+    public: true,
+  },
+  {
+    id: "rp-google-play-20260914",
+    appId: "rp-hypertrophy",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.rp.hypertrophy",
+    claimSupported:
+      "Android availability, personalized progression, feedback-driven weekly adjustment, premade plans, custom mesocycle builder, and privacy disclosures.",
+    public: true,
+  },
 ];
 
-export const catalogVersion = "0.7-researching";
+export const catalogVersion = "0.8-two-cohorts-researched";
