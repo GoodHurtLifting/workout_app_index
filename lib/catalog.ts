@@ -566,6 +566,18 @@ export type TrainingRelationship = {
   notFor: string;
 };
 
+export type OriginalityProfile = {
+  score: number;
+  level: "Conventional" | "Clear identity" | "Distinctive" | "Category-defining";
+  originalMechanics: number;
+  productPointOfView: number;
+  visualIdentity: number;
+  meaningfulDifferentiation: number;
+  defensibility: number;
+  summary: string;
+  evidenceNote: string;
+};
+
 export const trainingRelationships: Record<string, TrainingRelationship> = {
   hevy: {
     planningStyle: "Build it yourself",
@@ -783,6 +795,155 @@ export function getTrainingRelationship(appId: string): TrainingRelationship {
       notFor: "You want the app to prescribe a complete training path.",
     }
   );
+}
+
+export const originalityProfiles: Record<string, OriginalityProfile> = {
+  hevy: {
+    score: 76,
+    level: "Distinctive",
+    originalMechanics: 78,
+    productPointOfView: 72,
+    visualIdentity: 75,
+    meaningfulDifferentiation: 80,
+    defensibility: 74,
+    summary: "A strength log that treats the social feed as part of training rather than an unrelated add-on.",
+    evidenceNote: "Official product materials support the social training model; visual and defensibility judgments remain editorial.",
+  },
+  boostcamp: {
+    score: 78,
+    level: "Distinctive",
+    originalMechanics: 82,
+    productPointOfView: 79,
+    visualIdentity: 67,
+    meaningfulDifferentiation: 84,
+    defensibility: 78,
+    summary: "Turns credible creator programs and community publishing into a training marketplace with a capable logger attached.",
+    evidenceNote: "Program breadth and creator model are documented publicly; identity judgments remain editorial.",
+  },
+  fitbod: {
+    score: 81,
+    level: "Distinctive",
+    originalMechanics: 85,
+    productPointOfView: 82,
+    visualIdentity: 70,
+    meaningfulDifferentiation: 85,
+    defensibility: 83,
+    summary: "Built its identity around generating the next workout from equipment, history, and recovery instead of presenting a fixed plan.",
+    evidenceNote: "Adaptive generation is documented publicly; comparative originality judgments remain editorial.",
+  },
+  strong: {
+    score: 55,
+    level: "Clear identity",
+    originalMechanics: 45,
+    productPointOfView: 64,
+    visualIdentity: 60,
+    meaningfulDifferentiation: 52,
+    defensibility: 50,
+    summary: "A polished expression of the digital workout logbook, distinguished more by restraint than by a unique training system.",
+    evidenceNote: "Feature scope is documented publicly; the originality assessment is editorial.",
+  },
+  caliber: {
+    score: 75,
+    level: "Distinctive",
+    originalMechanics: 76,
+    productPointOfView: 80,
+    visualIdentity: 67,
+    meaningfulDifferentiation: 78,
+    defensibility: 74,
+    summary: "Connects a substantial free strength product to group and individual human coaching without forcing one service level on everyone.",
+    evidenceNote: "Free, Plus, and coaching layers are documented publicly; comparative judgments remain editorial.",
+  },
+  "lift-league": {
+    score: 94,
+    level: "Category-defining",
+    originalMechanics: 97,
+    productPointOfView: 96,
+    visualIdentity: 96,
+    meaningfulDifferentiation: 93,
+    defensibility: 88,
+    summary: "Combines a proprietary workout scoring system, one cohesive training philosophy, competitive accountability, and an unusually committed punk-metal identity.",
+    evidenceNote: "Based on first-party product evidence. No comparable combination was identified in this reviewed cohort; shared ownership is disclosed and the assessment remains preliminary until hands-on review is complete.",
+  },
+  jefit: {
+    score: 68,
+    level: "Clear identity",
+    originalMechanics: 72,
+    productPointOfView: 61,
+    visualIdentity: 58,
+    meaningfulDifferentiation: 74,
+    defensibility: 75,
+    summary: "Its unusually broad combination of manual planning, community routines, analytics, and adaptive AI is differentiated by scope more than a singular point of view.",
+    evidenceNote: "Breadth and adaptive features are documented publicly; identity judgments remain editorial.",
+  },
+  strengthlog: {
+    score: 71,
+    level: "Clear identity",
+    originalMechanics: 68,
+    productPointOfView: 76,
+    visualIdentity: 61,
+    meaningfulDifferentiation: 75,
+    defensibility: 73,
+    summary: "A serious strength toolkit whose identity comes from combining an unusually capable free log with programs, calculators, and deep statistics.",
+    evidenceNote: "Product scope is documented publicly; comparative identity judgments remain editorial.",
+  },
+  stronglifts: {
+    score: 84,
+    level: "Distinctive",
+    originalMechanics: 80,
+    productPointOfView: 94,
+    visualIdentity: 70,
+    meaningfulDifferentiation: 86,
+    defensibility: 88,
+    summary: "Its originality is disciplined constraint: a highly recognizable training doctrine that refuses to become an everything-app.",
+    evidenceNote: "The focused system and progression rules are documented publicly; identity judgments remain editorial.",
+  },
+  "alpha-progression": {
+    score: 77,
+    level: "Distinctive",
+    originalMechanics: 82,
+    productPointOfView: 79,
+    visualIdentity: 68,
+    meaningfulDifferentiation: 80,
+    defensibility: 76,
+    summary: "Preserves a stable hypertrophy plan while making set-level progression recommendations, avoiding the randomness of a new generated workout every day.",
+    evidenceNote: "Plan stability and progression behavior are documented publicly; identity judgments remain editorial.",
+  },
+  fitnotes: {
+    score: 72,
+    level: "Clear identity",
+    originalMechanics: 52,
+    productPointOfView: 86,
+    visualIdentity: 65,
+    meaningfulDifferentiation: 78,
+    defensibility: 66,
+    summary: "Radical simplicity, no ads, no subscription, and local-first data practices form a coherent alternative to account-heavy fitness platforms.",
+    evidenceNote: "Free, ad-free, backup, export, and developer-declared data practices are public; identity judgments remain editorial.",
+  },
+  "rp-hypertrophy": {
+    score: 91,
+    level: "Category-defining",
+    originalMechanics: 95,
+    productPointOfView: 94,
+    visualIdentity: 75,
+    meaningfulDifferentiation: 96,
+    defensibility: 93,
+    summary: "Turns a specific autoregulated hypertrophy methodology into software that adjusts volume, load, reps, fatigue, and deloads from lifter feedback.",
+    evidenceNote: "The feedback-driven system is documented publicly; comparative identity and defensibility judgments remain editorial.",
+  },
+};
+
+export function getOriginalityProfile(appId: string): OriginalityProfile {
+  return originalityProfiles[appId] ?? {
+    score: 50,
+    level: "Conventional",
+    originalMechanics: 50,
+    productPointOfView: 50,
+    visualIdentity: 50,
+    meaningfulDifferentiation: 50,
+    defensibility: 50,
+    summary: "Originality has not yet been evaluated.",
+    evidenceNote: "Not yet evaluated.",
+  };
 }
 
 export const catalogEvidenceSeeds: CatalogEvidenceSeed[] = [
@@ -1121,4 +1282,4 @@ export const catalogEvidenceSeeds: CatalogEvidenceSeed[] = [
   },
 ];
 
-export const catalogVersion = "0.8-two-cohorts-researched";
+export const catalogVersion = "0.9-originality-profiled";

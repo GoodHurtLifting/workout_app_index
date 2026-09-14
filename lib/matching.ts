@@ -1,4 +1,8 @@
-import { getTrainingRelationship, type AppRecord } from "@/lib/catalog";
+import {
+  getOriginalityProfile,
+  getTrainingRelationship,
+  type AppRecord,
+} from "@/lib/catalog";
 
 export type FinderAnswers = Record<string, string>;
 
@@ -99,7 +103,14 @@ export function fitScore(app: AppRecord, answers: FinderAnswers): number {
       candidate.features.includes("Human coaching"),
     "Offline use": (candidate) => candidate.features.includes("Offline use"),
   };
-  if (priorityMatches[answers.priority]?.(app)) score += 12;
+  if (answers.priority === "Distinctive experience") {
+    score += Math.max(
+      0,
+      Math.min(12, Math.round((getOriginalityProfile(app.id).score - 50) / 4)),
+    );
+  } else if (priorityMatches[answers.priority]?.(app)) {
+    score += 12;
+  }
   const level =
     answers.level === "Completely new"
       ? "Beginner"

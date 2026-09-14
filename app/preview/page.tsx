@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/sheet";
 import {
   apps as preliminaryApps,
+  getOriginalityProfile,
   getTrainingRelationship,
   type AppRecord,
 } from "@/lib/catalog";
@@ -100,6 +101,7 @@ const questions = [
       "Community",
       "Human coaching",
       "Offline use",
+      "Distinctive experience",
     ],
   },
   {
@@ -176,6 +178,12 @@ function AppCard({
           <ShieldCheck size={16} /> Legit Score
         </span>
         <strong>{app.legit}/100</strong>
+      </div>
+      <div className="legit-row">
+        <span>
+          <Sparkles size={16} /> Originality &amp; Identity
+        </span>
+        <strong>{getOriginalityProfile(app.id).score}/100</strong>
       </div>
       <p className="caveat">
         <strong>Watch for:</strong> {app.caveat}
@@ -297,6 +305,7 @@ export default function Home() {
   };
   const profile = apps.find((a) => a.id === profileId) ?? apps[0];
   const profileRelationship = getTrainingRelationship(profile.id);
+  const profileOriginality = getOriginalityProfile(profile.id);
   const heroFeatured = apps.find((app) => app.id === "boostcamp") ?? apps[0];
   const compared = compare
     .map((id) => apps.find((a) => a.id === id))
@@ -413,7 +422,7 @@ export default function Home() {
               <span>features in the catalog model</span>
             </div>
             <div>
-              <strong>2</strong>
+              <strong>3</strong>
               <span>separate, explainable scores</span>
             </div>
             <p>Catalog facts are being verified before public launch.</p>
@@ -770,6 +779,34 @@ export default function Home() {
                 </div>
               ))}
             </article>
+            <article className="quality-card">
+              <p className="eyebrow">ORIGINALITY &amp; IDENTITY</p>
+              <h2>
+                {profileOriginality.score}/100 · {profileOriginality.level}
+              </h2>
+              <p>{profileOriginality.summary}</p>
+              {[
+                ["Original mechanics", profileOriginality.originalMechanics],
+                ["Product point of view", profileOriginality.productPointOfView],
+                ["Visual identity", profileOriginality.visualIdentity],
+                [
+                  "Meaningful differentiation",
+                  profileOriginality.meaningfulDifferentiation,
+                ],
+                ["Defensibility", profileOriginality.defensibility],
+              ].map(([label, value]) => (
+                <div className="quality-row" key={label}>
+                  <span>{label}</span>
+                  <i>
+                    <b style={{ width: `${value}%` }} />
+                  </i>
+                  <strong>{value}</strong>
+                </div>
+              ))}
+              <small className="evidence-note">
+                {profileOriginality.evidenceNote}
+              </small>
+            </article>
           </div>
           <div className="verification-note">
             <strong>Research status: {profile.researchStatus}</strong>
@@ -851,6 +888,13 @@ export default function Home() {
                       (a: AppRecord) => getTrainingRelationship(a.id).idealUser,
                     ],
                     ["Legit Score", (a: AppRecord) => `${a.legit}/100`],
+                    [
+                      "Originality & identity",
+                      (a: AppRecord) => {
+                        const originality = getOriginalityProfile(a.id);
+                        return `${originality.score}/100 · ${originality.level}`;
+                      },
+                    ],
                     ["Price", (a: AppRecord) => a.price],
                     ["Platforms", (a: AppRecord) => a.platforms.join(", ")],
                     ["Programming", (a: AppRecord) => a.authorship],
@@ -889,7 +933,7 @@ export default function Home() {
       {view === "method" && (
         <section className="method-page">
           <p className="eyebrow">TRANSPARENT BY DESIGN</p>
-          <h1>Two scores. Two different questions.</h1>
+          <h1>Three scores. Three different questions.</h1>
           <div className="score-explain">
             <article>
               <span className="score-icon">%</span>
@@ -919,6 +963,23 @@ export default function Home() {
                 <li>Not influenced by advertising</li>
                 <li>Store ratings remain separate</li>
                 <li>Methodology changes are versioned</li>
+              </ul>
+            </article>
+            <article>
+              <span className="score-icon">
+                <Sparkles />
+              </span>
+              <h2>Originality &amp; Identity</h2>
+              <p>
+                Whether an app contributes a meaningful mechanic, training
+                point of view, or recognizable experience instead of simply
+                reproducing the category standard.
+              </p>
+              <ul>
+                <li>Original mechanics and product point of view</li>
+                <li>Coherent, recognizable visual identity</li>
+                <li>Differences must improve the user experience</li>
+                <li>Only affects Fit Score when distinctiveness matters to you</li>
               </ul>
             </article>
           </div>
