@@ -6,36 +6,6 @@ runConfig:
   memoryMiB: 512
 
 env:
-  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
-    value: AIzaSyD-SOycRHh8FvQXgG4KCrgf6aWyvrg8xok
-    availability:
-      - BUILD
-      - RUNTIME
-  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: workout-app-index-dev.firebaseapp.com
-    availability:
-      - BUILD
-      - RUNTIME
-  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
-    value: workout-app-index-dev
-    availability:
-      - BUILD
-      - RUNTIME
-  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    value: workout-app-index-dev.firebasestorage.app
-    availability:
-      - BUILD
-      - RUNTIME
-  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
-    value: "1035873823940"
-    availability:
-      - BUILD
-      - RUNTIME
-  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
-    value: 1:1035873823940:web:9ac347e21e0cf2e7d7ed91
-    availability:
-      - BUILD
-      - RUNTIME
   - variable: CATALOG_ADMIN_EMAIL
     value: ryan@theliftleague.com
     availability:
