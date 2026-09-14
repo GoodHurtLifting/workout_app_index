@@ -68,8 +68,12 @@ export function fitScore(app: AppRecord, answers: FinderAnswers): number {
     "Let me build exactly what I want": "Build it yourself",
     "Just stay out of the way while I log": "Just log the work",
   };
-  if (planningMatches[answers.planning] === relationship.planningStyle)
+  const preferredPlanningStyle = planningMatches[answers.planning];
+  if (preferredPlanningStyle === relationship.planningStyle) {
     score += 16;
+  } else if (relationship.secondaryStyles?.includes(preferredPlanningStyle)) {
+    score += 9;
+  }
   const goal =
     answers.goal === "Stay consistent" ? "Consistency" : answers.goal;
   if (goal && app.goals.includes(goal)) score += 14;

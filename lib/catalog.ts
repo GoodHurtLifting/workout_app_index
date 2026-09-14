@@ -272,7 +272,7 @@ export const apps: AppRecord[] = [
     caveat:
       "Not publicly released. Shared ownership with Workout App Index; evaluated under the same published criteria.",
     deliversCompleteProgram: true,
-    programLibrary: true,
+    programLibrary: false,
     adaptiveProgramming: false,
     supportedTrainingEnvironments: [
       "Commercial gym",
@@ -527,13 +527,16 @@ export type CatalogEvidenceSeed = {
   public: boolean;
 };
 
+export type PlanningStyle =
+  | "Follow a complete path"
+  | "Choose a proven path"
+  | "Let the app adapt"
+  | "Build it yourself"
+  | "Just log the work";
+
 export type TrainingRelationship = {
-  planningStyle:
-    | "Follow a complete path"
-    | "Choose a proven path"
-    | "Let the app adapt"
-    | "Build it yourself"
-    | "Just log the work";
+  planningStyle: PlanningStyle;
+  secondaryStyles?: PlanningStyle[];
   choiceLoad: "Low" | "Moderate" | "High";
   continuity:
     | "Single coherent system"
@@ -541,6 +544,9 @@ export type TrainingRelationship = {
     | "Session-adaptive"
     | "User-directed";
   customization: "Follow as written" | "Guided flexibility" | "Full control";
+  decisionsRemoved?: string;
+  decisionsRemaining?: string;
+  tradeoff?: string;
   idealUser: string;
   notFor: string;
 };
@@ -548,9 +554,16 @@ export type TrainingRelationship = {
 export const trainingRelationships: Record<string, TrainingRelationship> = {
   hevy: {
     planningStyle: "Build it yourself",
+    secondaryStyles: ["Let the app adapt", "Just log the work"],
     choiceLoad: "Moderate",
     continuity: "User-directed",
     customization: "Full control",
+    decisionsRemoved:
+      "Logging, exercise history, progress tracking, and—if you use Hevy Trainer—initial program generation and progression suggestions.",
+    decisionsRemaining:
+      "In the normal logger experience, you choose or build the routine and decide how the pieces fit together.",
+    tradeoff:
+      "You get broad control and useful optional guidance, but not one opinionated training system that governs the whole experience.",
     idealUser:
       "You already have a routine—or enjoy creating one—and want fast logging, progress data, and a social layer without giving up control.",
     notFor:
@@ -561,6 +574,12 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     choiceLoad: "High",
     continuity: "Program-based",
     customization: "Guided flexibility",
+    decisionsRemoved:
+      "Once you select a program, its schedule, exercises, and progression provide the path forward.",
+    decisionsRemaining:
+      "The largest decision comes upfront: comparing a substantial catalog and choosing which program to trust.",
+    tradeoff:
+      "Its breadth makes it easier to find a specialized program, but that same breadth can create selection fatigue.",
     idealUser:
       "You want credible programs and a capable logger, and you enjoy comparing options before committing to a training path.",
     notFor:
@@ -571,6 +590,12 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     choiceLoad: "Low",
     continuity: "Session-adaptive",
     customization: "Guided flexibility",
+    decisionsRemoved:
+      "The app chooses each session around your goals, equipment, training history, and recent performance.",
+    decisionsRemaining:
+      "You provide preferences, substitutions, and feedback, then decide how much to trust the generated session.",
+    tradeoff:
+      "You make fewer daily programming decisions, but the long-term rationale is less visible than in a fixed coach-authored program.",
     idealUser:
       "You want the app to generate the next workout around your equipment, history, and preferences, and you are comfortable relying on AI.",
     notFor:
@@ -581,6 +606,12 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     choiceLoad: "Low",
     continuity: "User-directed",
     customization: "Full control",
+    decisionsRemoved:
+      "Workout recording, rest timing, history, and progress calculations are handled cleanly.",
+    decisionsRemaining:
+      "You remain responsible for exercise selection, weekly structure, progression, and program changes.",
+    tradeoff:
+      "The app stays out of your way, which is excellent when you already have a plan and unhelpful when you do not.",
     idealUser:
       "You know what you plan to train and want a focused, flexible logbook that stays out of the way.",
     notFor:
@@ -591,6 +622,12 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     choiceLoad: "Moderate",
     continuity: "Program-based",
     customization: "Guided flexibility",
+    decisionsRemoved:
+      "Structured plans and educational guidance reduce the need to design training from scratch.",
+    decisionsRemaining:
+      "You still choose how much guidance or coaching to use and manage changes outside the selected plan.",
+    tradeoff:
+      "It offers a path from self-guided training to human coaching, but that service-oriented experience is more than a minimal logger.",
     idealUser:
       "You want structured strength guidance, education, and the option to add human coaching when self-direction is not enough.",
     notFor:
@@ -601,6 +638,12 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     choiceLoad: "Low",
     continuity: "Single coherent system",
     customization: "Follow as written",
+    decisionsRemoved:
+      "The system supplies complementary training blocks, exercise sequencing, progression context, and a clear next workout.",
+    decisionsRemaining:
+      "You choose when to train and apply effort honestly, without having to assemble a program from unrelated options.",
+    tradeoff:
+      "A cohesive system reduces choice overload, but it intentionally offers less program-hopping and exercise-level freedom.",
     idealUser:
       "You want a complete training path, meaningful variety, and visible progress without browsing endless programs or writing your own workouts.",
     notFor:
@@ -618,9 +661,16 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
   },
   strengthlog: {
     planningStyle: "Choose a proven path",
+    secondaryStyles: ["Build it yourself", "Just log the work"],
     choiceLoad: "Moderate",
     continuity: "Program-based",
     customization: "Guided flexibility",
+    decisionsRemoved:
+      "A selected program can provide structure and progression, while the logger handles detailed records, calculations, and statistics.",
+    decisionsRemaining:
+      "You choose between following a program and using the app as a self-directed training toolkit.",
+    tradeoff:
+      "It can support several training styles well, but it does not impose one simple path through its many tools and programs.",
     idealUser:
       "You want a serious strength log plus proven programs, calculators, and detailed training statistics in one place.",
     notFor:

@@ -705,6 +705,12 @@ export default function Home() {
                 <div>
                   <span>Planning</span>
                   <strong>{profileRelationship.planningStyle}</strong>
+                  {profileRelationship.secondaryStyles?.length ? (
+                    <small>
+                      Also supports:{" "}
+                      {profileRelationship.secondaryStyles.join(", ")}
+                    </small>
+                  ) : null}
                 </div>
                 <div>
                   <span>Choice load</span>
@@ -719,6 +725,22 @@ export default function Home() {
                   <strong>{profileRelationship.customization}</strong>
                 </div>
               </div>
+              {profileRelationship.decisionsRemoved ? (
+                <div className="relationship-decisions">
+                  <div>
+                    <h3>Decisions it makes easier</h3>
+                    <p>{profileRelationship.decisionsRemoved}</p>
+                  </div>
+                  <div>
+                    <h3>Decisions you still own</h3>
+                    <p>{profileRelationship.decisionsRemaining}</p>
+                  </div>
+                  <div>
+                    <h3>The tradeoff</h3>
+                    <p>{profileRelationship.tradeoff}</p>
+                  </div>
+                </div>
+              ) : null}
               <div className="relationship-fit">
                 <div>
                   <h3>This may sound like you</h3>
@@ -810,6 +832,19 @@ export default function Home() {
                       "Choice load",
                       (a: AppRecord) =>
                         getTrainingRelationship(a.id).choiceLoad,
+                    ],
+                    [
+                      "Other ways to use it",
+                      (a: AppRecord) =>
+                        getTrainingRelationship(a.id).secondaryStyles?.join(
+                          ", ",
+                        ) || "None identified",
+                    ],
+                    [
+                      "Decisions you still own",
+                      (a: AppRecord) =>
+                        getTrainingRelationship(a.id).decisionsRemaining ||
+                        "Not yet evaluated",
                     ],
                     [
                       "Ideal user",
