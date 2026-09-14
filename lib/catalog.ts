@@ -15,6 +15,11 @@ export type AppRecord = {
   price: string;
   monthlyPrice: number | null;
   hasUsableFreeTier: boolean;
+  freeTierCapabilities: {
+    completeProgram: boolean;
+    adaptiveProgramming: boolean;
+    programLibrary: boolean;
+  };
   platforms: string[];
   ai: AiStatus;
   legit: number;
@@ -45,6 +50,7 @@ export const apps: AppRecord[] = [
     price: "Free / Hevy Pro from $2.99 monthly",
     monthlyPrice: 2.99,
     hasUsableFreeTier: true,
+    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
     platforms: ["Android", "iOS"],
     ai: "AI supporting features",
     legit: 89,
@@ -87,6 +93,7 @@ export const apps: AppRecord[] = [
     price: "Free / Pro $14.99 monthly or $59.99 yearly",
     monthlyPrice: 14.99,
     hasUsableFreeTier: true,
+    freeTierCapabilities: { completeProgram: true, adaptiveProgramming: false, programLibrary: true },
     platforms: ["Android", "iOS"],
     ai: "Optional AI",
     legit: 91,
@@ -131,6 +138,7 @@ export const apps: AppRecord[] = [
     price: "$15.99 monthly or $95.99 yearly",
     monthlyPrice: 15.99,
     hasUsableFreeTier: false,
+    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
     platforms: ["Android", "iOS"],
     ai: "AI central",
     legit: 84,
@@ -174,6 +182,7 @@ export const apps: AppRecord[] = [
     price: "Free / Strong PRO $4.99 monthly or $29.99 yearly on US iOS",
     monthlyPrice: 4.99,
     hasUsableFreeTier: true,
+    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
     platforms: ["Android", "iOS"],
     ai: "No AI identified",
     legit: 87,
@@ -218,6 +227,7 @@ export const apps: AppRecord[] = [
       "Free / Plus up to $12 monthly or $72 yearly; coaching priced separately",
     monthlyPrice: 12,
     hasUsableFreeTier: true,
+    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
     platforms: ["Android", "iOS"],
     ai: "AI supporting features",
     legit: 88,
@@ -258,6 +268,7 @@ export const apps: AppRecord[] = [
     price: "Price not publicly announced",
     monthlyPrice: null,
     hasUsableFreeTier: false,
+    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
     platforms: ["Android"],
     ai: "No AI identified",
     legit: 82,
@@ -299,6 +310,7 @@ export const apps: AppRecord[] = [
     price: "Free / Elite $12.99 monthly or $69.99 yearly",
     monthlyPrice: 12.99,
     hasUsableFreeTier: true,
+    freeTierCapabilities: { completeProgram: true, adaptiveProgramming: false, programLibrary: true },
     platforms: ["Android", "iOS"],
     ai: "AI supporting features",
     legit: 83,
@@ -341,6 +353,7 @@ export const apps: AppRecord[] = [
     price: "Free / Premium; US iOS monthly listing $16.90",
     monthlyPrice: 16.9,
     hasUsableFreeTier: true,
+    freeTierCapabilities: { completeProgram: true, adaptiveProgramming: false, programLibrary: true },
     platforms: ["Android", "iOS"],
     ai: "No AI identified",
     legit: 90,
@@ -383,6 +396,7 @@ export const apps: AppRecord[] = [
     price: "Free / Pro $11.99 monthly or $59.99 yearly",
     monthlyPrice: 11.99,
     hasUsableFreeTier: true,
+    freeTierCapabilities: { completeProgram: true, adaptiveProgramming: true, programLibrary: false },
     platforms: ["Android", "iOS"],
     ai: "No AI identified",
     legit: 86,
@@ -423,6 +437,7 @@ export const apps: AppRecord[] = [
     price: "Free / Pro $12.99 monthly or $79.99 yearly",
     monthlyPrice: 12.99,
     hasUsableFreeTier: true,
+    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
     platforms: ["Android", "iOS"],
     ai: "No AI identified",
     legit: 85,
@@ -462,6 +477,7 @@ export const apps: AppRecord[] = [
     price: "Free",
     monthlyPrice: 0,
     hasUsableFreeTier: true,
+    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
     platforms: ["Android"],
     ai: "No AI identified",
     legit: 88,
@@ -503,6 +519,7 @@ export const apps: AppRecord[] = [
     price: "$34.99 monthly or $299.99 yearly",
     monthlyPrice: 34.99,
     hasUsableFreeTier: false,
+    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
     platforms: ["Web", "Android", "iOS"],
     ai: "No AI identified",
     legit: 87,

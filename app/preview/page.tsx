@@ -29,7 +29,7 @@ import {
   getTrainingRelationship,
   type AppRecord,
 } from "@/lib/catalog";
-import { fitScore } from "@/lib/matching";
+import { exclusionReasons, fitScore } from "@/lib/matching";
 
 const questions = [
   {
@@ -238,6 +238,21 @@ export default function Home() {
         .map((app) => ({ app, score: fitScore(app, answers) }))
         .filter((x) => x.score > 0)
         .sort((a, b) => b.score - a.score),
+    [apps, answers],
+  );
+  const nearMatches = useMemo(
+    () =>
+      apps
+        .map((app) => ({
+          app,
+          score: fitScore(app, answers, true),
+          reasons: exclusionReasons(app, answers),
+        }))
+        .sort(
+          (a, b) =>
+            a.reasons.length - b.reasons.length || b.score - a.score,
+        )
+        .slice(0, 3),
     [apps, answers],
   );
   const filtered = useMemo(
@@ -546,18 +561,60 @@ export default function Home() {
               Retake finder
             </Button>
           </div>
-          <div className="result-grid">
-            {ranked.slice(0, 6).map(({ app, score }) => (
-              <AppCard
-                key={app.id}
-                app={app}
-                score={score}
-                selected={compare.includes(app.id)}
-                onCompare={() => toggleCompare(app.id)}
-                onProfile={() => openProfile(app.id)}
-              />
-            ))}
-          </div>
+          {ranked.length ? (
+            <div className="result-grid">
+              {ranked.slice(0, 6).map(({ app, score }) => (
+                <AppCard
+                  key={app.id}
+                  app={app}
+                  score={score}
+                  selected={compare.includes(app.id)}
+                  onCompare={() => toggleCompare(app.id)}
+                  onProfile={() => openProfile(app.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="near-matches">
+              <div className="near-match-heading">
+                <p className="eyebrow">NO EXACT MATCH YET</p>
+                <h2>Here’s what came closest.</h2>
+                <p>
+                  Your requirements conflict with every verified profile. These
+                  are the nearest alternatives and the specific compromises
+                  each one requires.
+                </p>
+              </div>
+              <div className="result-grid">
+                {nearMatches.map(({ app, reasons }) => (
+                  <article className="app-card near-match-card" key={app.id}>
+                    <div className="app-identity">
+                      <span
+                        className="app-logo"
+                        style={{ background: app.color }}
+                      >
+                        {app.initials}
+                      </span>
+                      <div>
+                        <p className="eyebrow">CLOSEST ALTERNATIVE</p>
+                        <h3>{app.name}</h3>
+                      </div>
+                    </div>
+                    <p className="best-for">Best for: {app.bestFor}</p>
+                    <p className="near-match-label">What conflicts:</p>
+                    <ul>
+                      {reasons.map((reason) => (
+                        <li key={reason}>{reason}</li>
+                      ))}
+                    </ul>
+                    <Button variant="outline" onClick={() => openProfile(app.id)}>
+                      View profile <ChevronRight />
+                    </Button>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
       )}
       {view === "browse" && (

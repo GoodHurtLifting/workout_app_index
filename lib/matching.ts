@@ -12,39 +12,74 @@ const budgetCeiling: Record<string, number> = {
   "Up to $20 monthly": 20,
 };
 
+function requestedExperienceNeedsPaidAccess(
+  app: AppRecord,
+  answers: FinderAnswers,
+): boolean {
+  if (!app.hasUsableFreeTier) return true;
+  const free = app.freeTierCapabilities;
+  if (answers.job === "Give me a complete program")
+    return !free?.completeProgram;
+  if (answers.job === "Adapt training for me")
+    return !free?.adaptiveProgramming;
+  if (answers.job === "Let me choose a proven program")
+    return !free?.programLibrary;
+  return false;
+}
+
 export function exclusionReason(
   app: AppRecord,
   answers: FinderAnswers,
 ): string | null {
+  return exclusionReasons(app, answers)[0] ?? null;
+}
+
+export function exclusionReasons(
+  app: AppRecord,
+  answers: FinderAnswers,
+): string[] {
+  const reasons: string[] = [];
   if (answers.ai === "Avoid all AI" && app.ai !== "No AI identified")
-    return "AI use conflicts with your preference";
+    reasons.push("Uses AI somewhere in the product");
   if (
     answers.job === "Give me a complete program" &&
     !app.deliversCompleteProgram
   )
-    return "Does not provide a complete training program";
+    reasons.push("Does not provide a complete training program");
   if (answers.job === "Adapt training for me" && !app.adaptiveProgramming)
-    return "Does not adapt programming automatically";
+    reasons.push("Does not adapt programming automatically");
   if (answers.job === "Let me choose a proven program" && !app.programLibrary)
-    return "Does not offer a program library";
-  if (answers.budget === "Free only" && !app.hasUsableFreeTier)
-    return "No verified usable free tier";
+    reasons.push("Does not offer a program library");
+  const needsPaidAccess = requestedExperienceNeedsPaidAccess(app, answers);
+  if (answers.budget === "Free only" && needsPaidAccess)
+    reasons.push("The requested experience is not available in the free tier");
   const ceiling = budgetCeiling[answers.budget];
-  if (ceiling && app.monthlyPrice !== null && app.monthlyPrice > ceiling)
-    return `Costs more than $${ceiling} per month`;
-  if (ceiling && app.monthlyPrice === null && !app.hasUsableFreeTier)
-    return "Price could not be verified within your budget";
+  if (
+    ceiling &&
+    needsPaidAccess &&
+    app.monthlyPrice !== null &&
+    app.monthlyPrice > ceiling
+  )
+    reasons.push(`Paid access costs more than $${ceiling} per month`);
+  if (ceiling && app.monthlyPrice === null && needsPaidAccess)
+    reasons.push("Price could not be verified within your budget");
   if (
     answers.equipment &&
     !["It varies", "Not sure"].includes(answers.equipment) &&
     !app.supportedTrainingEnvironments.includes(answers.equipment)
   )
-    return `Does not clearly support ${answers.equipment.toLowerCase()} training`;
-  return null;
+    reasons.push(
+      `Does not clearly support ${answers.equipment.toLowerCase()} training`,
+    );
+  return reasons;
 }
 
-export function fitScore(app: AppRecord, answers: FinderAnswers): number {
-  if (exclusionReason(app, answers)) return 0;
+export function fitScore(
+  app: AppRecord,
+  answers: FinderAnswers,
+  includeExcluded = false,
+): number {
+  if (!includeExcluded && exclusionReason(app, answers)) return 0;
   // The weighted preferences total 100. Hard requirements are handled above.
   let score = 22;
   const job = answers.job;

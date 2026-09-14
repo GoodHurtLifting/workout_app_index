@@ -18,3 +18,4 @@
 .score-explain{grid-template-columns:repeat(3,1fr)}
 .evidence-note{display:block;margin-top:22px;color:var(--muted);line-height:1.5}
 @media(max-width:900px){.score-explain{grid-template-columns:1fr}}
+.near-matches{margin-top:18px}.near-match-heading{max-width:760px;margin-bottom:28px}.near-match-heading h2{font-size:2rem;margin:4px 0 10px}.near-match-heading>p:last-child{color:var(--muted);line-height:1.5}.near-match-card ul{margin:4px 0 24px;padding-left:20px;color:var(--muted);line-height:1.55}.near-match-card>button{align-self:flex-start;margin-top:auto}.near-match-label{font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin:4px 0}
