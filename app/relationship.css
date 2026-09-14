@@ -1,0 +1,72 @@
+.relationship-card,
+.quality-card {
+  grid-column: 1 / -1;
+}
+
+.relationship-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--line);
+  margin-top: 16px;
+}
+
+.relationship-summary div {
+  padding: 16px;
+  border-right: 1px solid var(--line);
+}
+
+.relationship-summary div:last-child {
+  border-right: 0;
+}
+
+.relationship-summary span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.relationship-summary strong {
+  display: block;
+  margin-top: 6px;
+}
+
+.relationship-fit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.relationship-fit > div {
+  background: var(--paper);
+  padding: 18px;
+}
+
+.relationship-fit h3 {
+  margin: 0 0 8px;
+}
+
+.relationship-fit p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 620px) {
+  .relationship-summary,
+  .relationship-fit {
+    grid-template-columns: 1fr;
+  }
+
+  .relationship-summary div {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .relationship-summary div:last-child {
+    border-bottom: 0;
+  }
+}

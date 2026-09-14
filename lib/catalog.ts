@@ -1,10 +1,8 @@
 export type AiStatus =
-  | "No AI identified"
-  | "Optional AI"
-  | "AI supporting features"
-  | "AI central";
+  "No AI identified" | "Optional AI" | "AI supporting features" | "AI central";
 
-export type ResearchStatus = "Candidate" | "Researching" | "Evaluation ready" | "Reviewed";
+export type ResearchStatus =
+  "Candidate" | "Researching" | "Evaluation ready" | "Reviewed";
 
 export type AppRecord = {
   id: string;
@@ -35,45 +33,854 @@ export type AppRecord = {
 };
 
 export const apps: AppRecord[] = [
-  {id:"hevy",name:"Hevy",initials:"HV",color:"#ff5a3d",type:"Workout logger + trainer",bestFor:"Fast, social workout logging",description:"A strength workout tracker for building routines, logging sessions, reviewing progress, sharing activity, and optionally generating a goal-based program with Hevy Trainer.",price:"Free / Hevy Pro from $2.99 monthly",monthlyPrice:2.99,hasUsableFreeTier:true,platforms:["Android","iOS"],ai:"AI supporting features",legit:89,goals:["Build muscle","Get stronger","Track workouts"],features:["Fast logging","Progress charts","Community","Wearables","Program library","Algorithmic trainer","AI workout analysis"],level:["Beginner","Intermediate","Advanced"],authorship:"User-created",caveat:"The free tier limits routines, custom exercises, and data-history views. Hevy Trainer is a Pro-only algorithmic program generator; Hevy states that it does not use AI to create programs.",deliversCompleteProgram:true,programLibrary:true,adaptiveProgramming:true,supportedTrainingEnvironments:["Commercial gym","Home gym","Dumbbells only","Barbell and plates"],researchStatus:"Researching",verifiedSections:7,totalSections:8},
-  {id:"boostcamp",name:"Boostcamp",initials:"BC",color:"#ffbd31",type:"Program library + logger",bestFor:"Trainer-written strength programs",description:"A workout tracker with a large free library of coach-designed and community programs, custom program tools, detailed logging, and an optional AI coach.",price:"Free / Pro $14.99 monthly or $59.99 yearly",monthlyPrice:14.99,hasUsableFreeTier:true,platforms:["Android","iOS"],ai:"Optional AI",legit:91,goals:["Build muscle","Get stronger","Powerlifting"],features:["Expert programs","Progression","Exercise demos","Fast logging","Offline use","Detailed analytics","Community","Optional AI coach"],level:["Beginner","Intermediate","Advanced"],authorship:"Trainer-written",caveat:"The free tier includes the tracker and most of the program library. The AI coach, advanced analytics, and some exclusive coach programs require Pro.",deliversCompleteProgram:true,programLibrary:true,adaptiveProgramming:false,supportedTrainingEnvironments:["Commercial gym","Home gym","Dumbbells only","Barbell and plates","Bodyweight"],researchStatus:"Researching",verifiedSections:7,totalSections:8},
-  {id:"fitbod",name:"Fitbod",initials:"FB",color:"#6d5efc",type:"Adaptive program",bestFor:"Automatically generated workouts",description:"Uses AI to generate and adjust workouts around goals, experience, available equipment, preferences, and prior performance.",price:"$15.99 monthly or $95.99 yearly",monthlyPrice:15.99,hasUsableFreeTier:false,platforms:["Android","iOS"],ai:"AI central",legit:84,goals:["Build muscle","Get stronger","General fitness","Consistency"],features:["Adaptive programming","Exercise demos","Progress charts","Substitutions","Recovery tracking","Wearables","Health integration"],level:["Beginner","Intermediate","Advanced"],authorship:"AI-generated",caveat:"After the trial, continued access requires a subscription. The core programming experience is AI-generated, so it conflicts with an avoid-AI requirement.",deliversCompleteProgram:true,programLibrary:false,adaptiveProgramming:true,supportedTrainingEnvironments:["Commercial gym","Home gym","Dumbbells only","Bodyweight","It varies"],researchStatus:"Researching",verifiedSections:7,totalSections:8},
-  {id:"strong",name:"Strong",initials:"ST",color:"#1ca47c",type:"Workout logger",bestFor:"Simple, flexible workout tracking",description:"A focused workout logger for creating routines, recording varied set types, timing rests, and reviewing strength and volume progress.",price:"Free / Strong PRO $4.99 monthly or $29.99 yearly on US iOS",monthlyPrice:4.99,hasUsableFreeTier:true,platforms:["Android","iOS"],ai:"No AI identified",legit:87,goals:["Build muscle","Get stronger","Track workouts"],features:["Fast logging","Custom workouts","Progress charts","Rest timer","Exercise library","Data export","Wearables","Health integration"],level:["Beginner","Intermediate","Advanced"],authorship:"User-created",caveat:"The free tier saves unlimited workouts but limits users to three custom routines. Strong supplies tracking tools rather than a guided or adaptive training program.",deliversCompleteProgram:false,programLibrary:false,adaptiveProgramming:false,supportedTrainingEnvironments:["Commercial gym","Home gym","Dumbbells only","Barbell and plates"],researchStatus:"Researching",verifiedSections:7,totalSections:8},
-  {id:"caliber",name:"Caliber",initials:"CA",color:"#2675f5",type:"Coaching platform",bestFor:"Guidance with optional human coaching",description:"Strength training plans, education, progress tracking, and an optional paid coaching layer.",price:"Free / Coaching plans",monthlyPrice:null,hasUsableFreeTier:true,platforms:["Android","iOS"],ai:"AI supporting features",legit:88,goals:["Build muscle","Get stronger","Learn resistance training"],features:["Expert programs","Human coaching","Exercise demos","Progress charts"],level:["Beginner","Intermediate"],authorship:"Trainer-written",caveat:"Personal coaching costs substantially more than the free product.",deliversCompleteProgram:true,programLibrary:true,adaptiveProgramming:false,supportedTrainingEnvironments:["Commercial gym","Home gym","Dumbbells only"],researchStatus:"Candidate",verifiedSections:0,totalSections:8},
-  {id:"lift-league",name:"The Lift League",initials:"LL",color:"#e64040",type:"Structured training",bestFor:"Scored block training and shared progress",description:"An Android strength-training app in development, built around structured training blocks, workout logging, performance scoring, and accountability features.",price:"Price not publicly announced",monthlyPrice:null,hasUsableFreeTier:false,platforms:["Android"],ai:"No AI identified",legit:82,goals:["Build muscle","Get stronger","Consistency"],features:["Structured training blocks","Workout history","Custom block builder","Leaderboards","Built-in motivation","Training circles","Performance scoring"],level:["Beginner","Intermediate","Advanced"],authorship:"Trainer-written",caveat:"Not publicly released. Shared ownership with Workout App Index; evaluated under the same published criteria.",deliversCompleteProgram:true,programLibrary:true,adaptiveProgramming:false,supportedTrainingEnvironments:["Commercial gym","Home gym","Barbell and plates"],researchStatus:"Researching",verifiedSections:3,totalSections:8},
-  {id:"jefit",name:"JEFIT",initials:"JF",color:"#4aa9eb",type:"Workout logger",bestFor:"A broad exercise library and detailed tracking",description:"A long-running workout planner and logger with routines, community features, and extensive exercise data.",price:"Free / Premium",monthlyPrice:null,hasUsableFreeTier:true,platforms:["Android","iOS"],ai:"AI supporting features",legit:83,goals:["Build muscle","Get stronger","Track workouts"],features:["Exercise library","Custom workouts","Progress charts","Community"],level:["Beginner","Intermediate","Advanced"],authorship:"Mixed",caveat:"The number of tools and screens may feel busy if simplicity is your priority.",deliversCompleteProgram:false,programLibrary:false,adaptiveProgramming:false,supportedTrainingEnvironments:["Commercial gym","Home gym","Dumbbells only","Barbell and plates"],researchStatus:"Candidate",verifiedSections:0,totalSections:8},
-  {id:"strengthlog",name:"StrengthLog",initials:"SL",color:"#ef4f4f",type:"Logger + programs",bestFor:"Detailed strength tracking and proven programs",description:"Combines unlimited workout logging with a large exercise library, strength programs, statistics, goals, timers, calculators, and wearable support.",price:"Free / Premium; US iOS monthly listing $16.90",monthlyPrice:16.9,hasUsableFreeTier:true,platforms:["Android","iOS"],ai:"No AI identified",legit:90,goals:["Build muscle","Get stronger","Powerlifting"],features:["Expert programs","Fast logging","Detailed analytics","Rest timer","Exercise library","Wearables","Health integration"],level:["Beginner","Intermediate","Advanced"],authorship:"Trainer-written",caveat:"The free tier includes unlimited logging and selected programs, while the full program catalog and advanced statistics require Premium. Store pricing varies by country and platform.",deliversCompleteProgram:true,programLibrary:true,adaptiveProgramming:false,supportedTrainingEnvironments:["Commercial gym","Home gym","Dumbbells only","Barbell and plates"],researchStatus:"Researching",verifiedSections:6,totalSections:8},
-  {id:"stronglifts",name:"StrongLifts",initials:"5×5",color:"#ff3c32",type:"Structured program",bestFor:"Simple barbell strength progression",description:"Guides lifters through a focused progressive barbell routine with automatic workout progression.",price:"Free / Premium",monthlyPrice:null,hasUsableFreeTier:true,platforms:["Android","iOS"],ai:"No AI identified",legit:86,goals:["Get stronger","Learn resistance training","Consistency"],features:["Automatic progression","Rest timer","Exercise demos","Simple interface"],level:["Beginner","Intermediate"],authorship:"Trainer-written",caveat:"The core training approach is intentionally narrow and barbell dependent.",deliversCompleteProgram:true,programLibrary:false,adaptiveProgramming:true,supportedTrainingEnvironments:["Commercial gym","Home gym","Barbell and plates"],researchStatus:"Candidate",verifiedSections:0,totalSections:8},
-  {id:"alpha-progression",name:"Alpha Progression",initials:"AP",color:"#f2c600",type:"Adaptive program",bestFor:"Hypertrophy-focused progression",description:"Creates and adjusts gym workouts around goals, schedule, equipment, and prior performance.",price:"Free trial / Premium",monthlyPrice:null,hasUsableFreeTier:false,platforms:["Android","iOS"],ai:"AI supporting features",legit:85,goals:["Build muscle","Get stronger"],features:["Adaptive programming","Progression","Exercise demos","Detailed analytics"],level:["Beginner","Intermediate","Advanced"],authorship:"Rules-based adaptive",caveat:"Its strongest functionality sits behind a recurring subscription.",deliversCompleteProgram:true,programLibrary:false,adaptiveProgramming:true,supportedTrainingEnvironments:["Commercial gym","Home gym","Dumbbells only"],researchStatus:"Candidate",verifiedSections:0,totalSections:8},
-  {id:"fitnotes",name:"FitNotes",initials:"FN",color:"#56a66a",type:"Workout logger",bestFor:"Free, straightforward Android logging",description:"A lightweight Android gym log for routines, exercise history, records, and basic progress tracking.",price:"Free",monthlyPrice:0,hasUsableFreeTier:true,platforms:["Android"],ai:"No AI identified",legit:88,goals:["Build muscle","Get stronger","Track workouts"],features:["Fast logging","Custom workouts","Progress charts","Offline use"],level:["Beginner","Intermediate","Advanced"],authorship:"User-created",caveat:"Android only, with less guided programming than program-based apps.",deliversCompleteProgram:false,programLibrary:false,adaptiveProgramming:false,supportedTrainingEnvironments:["Commercial gym","Home gym","Dumbbells only","Barbell and plates"],researchStatus:"Candidate",verifiedSections:0,totalSections:8},
-  {id:"rp-hypertrophy",name:"RP Hypertrophy",initials:"RP",color:"#cf245e",type:"Adaptive program",bestFor:"Technical hypertrophy programming",description:"A specialized training system that adjusts volume and effort using lifter feedback across a mesocycle.",price:"Subscription",monthlyPrice:null,hasUsableFreeTier:false,platforms:["Android","iOS"],ai:"No AI identified",legit:87,goals:["Build muscle"],features:["Adaptive programming","Progression","Detailed analytics","Exercise substitutions"],level:["Intermediate","Advanced"],authorship:"Rules-based adaptive",caveat:"The technical approach and terminology may overwhelm a brand-new lifter.",deliversCompleteProgram:true,programLibrary:false,adaptiveProgramming:true,supportedTrainingEnvironments:["Commercial gym","Home gym","Dumbbells only"],researchStatus:"Candidate",verifiedSections:0,totalSections:8}
+  {
+    id: "hevy",
+    name: "Hevy",
+    initials: "HV",
+    color: "#ff5a3d",
+    type: "Workout logger + trainer",
+    bestFor: "Fast, social workout logging",
+    description:
+      "A strength workout tracker for building routines, logging sessions, reviewing progress, sharing activity, and optionally generating a goal-based program with Hevy Trainer.",
+    price: "Free / Hevy Pro from $2.99 monthly",
+    monthlyPrice: 2.99,
+    hasUsableFreeTier: true,
+    platforms: ["Android", "iOS"],
+    ai: "AI supporting features",
+    legit: 89,
+    goals: ["Build muscle", "Get stronger", "Track workouts"],
+    features: [
+      "Fast logging",
+      "Progress charts",
+      "Community",
+      "Wearables",
+      "Program library",
+      "Algorithmic trainer",
+      "AI workout analysis",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "User-created",
+    caveat:
+      "The free tier limits routines, custom exercises, and data-history views. Hevy Trainer is a Pro-only algorithmic program generator; Hevy states that it does not use AI to create programs.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Barbell and plates",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "boostcamp",
+    name: "Boostcamp",
+    initials: "BC",
+    color: "#ffbd31",
+    type: "Program library + logger",
+    bestFor: "Trainer-written strength programs",
+    description:
+      "A workout tracker with a large free library of coach-designed and community programs, custom program tools, detailed logging, and an optional AI coach.",
+    price: "Free / Pro $14.99 monthly or $59.99 yearly",
+    monthlyPrice: 14.99,
+    hasUsableFreeTier: true,
+    platforms: ["Android", "iOS"],
+    ai: "Optional AI",
+    legit: 91,
+    goals: ["Build muscle", "Get stronger", "Powerlifting"],
+    features: [
+      "Expert programs",
+      "Progression",
+      "Exercise demos",
+      "Fast logging",
+      "Offline use",
+      "Detailed analytics",
+      "Community",
+      "Optional AI coach",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Trainer-written",
+    caveat:
+      "The free tier includes the tracker and most of the program library. The AI coach, advanced analytics, and some exclusive coach programs require Pro.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Barbell and plates",
+      "Bodyweight",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "fitbod",
+    name: "Fitbod",
+    initials: "FB",
+    color: "#6d5efc",
+    type: "Adaptive program",
+    bestFor: "Automatically generated workouts",
+    description:
+      "Uses AI to generate and adjust workouts around goals, experience, available equipment, preferences, and prior performance.",
+    price: "$15.99 monthly or $95.99 yearly",
+    monthlyPrice: 15.99,
+    hasUsableFreeTier: false,
+    platforms: ["Android", "iOS"],
+    ai: "AI central",
+    legit: 84,
+    goals: ["Build muscle", "Get stronger", "General fitness", "Consistency"],
+    features: [
+      "Adaptive programming",
+      "Exercise demos",
+      "Progress charts",
+      "Substitutions",
+      "Recovery tracking",
+      "Wearables",
+      "Health integration",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "AI-generated",
+    caveat:
+      "After the trial, continued access requires a subscription. The core programming experience is AI-generated, so it conflicts with an avoid-AI requirement.",
+    deliversCompleteProgram: true,
+    programLibrary: false,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Bodyweight",
+      "It varies",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "strong",
+    name: "Strong",
+    initials: "ST",
+    color: "#1ca47c",
+    type: "Workout logger",
+    bestFor: "Simple, flexible workout tracking",
+    description:
+      "A focused workout logger for creating routines, recording varied set types, timing rests, and reviewing strength and volume progress.",
+    price: "Free / Strong PRO $4.99 monthly or $29.99 yearly on US iOS",
+    monthlyPrice: 4.99,
+    hasUsableFreeTier: true,
+    platforms: ["Android", "iOS"],
+    ai: "No AI identified",
+    legit: 87,
+    goals: ["Build muscle", "Get stronger", "Track workouts"],
+    features: [
+      "Fast logging",
+      "Custom workouts",
+      "Progress charts",
+      "Rest timer",
+      "Exercise library",
+      "Data export",
+      "Wearables",
+      "Health integration",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "User-created",
+    caveat:
+      "The free tier saves unlimited workouts but limits users to three custom routines. Strong supplies tracking tools rather than a guided or adaptive training program.",
+    deliversCompleteProgram: false,
+    programLibrary: false,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Barbell and plates",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "caliber",
+    name: "Caliber",
+    initials: "CA",
+    color: "#2675f5",
+    type: "Coaching platform",
+    bestFor: "Guidance with optional human coaching",
+    description:
+      "Strength training plans, education, progress tracking, and an optional paid coaching layer.",
+    price: "Free / Coaching plans",
+    monthlyPrice: null,
+    hasUsableFreeTier: true,
+    platforms: ["Android", "iOS"],
+    ai: "AI supporting features",
+    legit: 88,
+    goals: ["Build muscle", "Get stronger", "Learn resistance training"],
+    features: [
+      "Expert programs",
+      "Human coaching",
+      "Exercise demos",
+      "Progress charts",
+    ],
+    level: ["Beginner", "Intermediate"],
+    authorship: "Trainer-written",
+    caveat: "Personal coaching costs substantially more than the free product.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+    ],
+    researchStatus: "Candidate",
+    verifiedSections: 0,
+    totalSections: 8,
+  },
+  {
+    id: "lift-league",
+    name: "The Lift League",
+    initials: "LL",
+    color: "#e64040",
+    type: "Structured training",
+    bestFor: "Scored block training and shared progress",
+    description:
+      "An Android strength-training app in development, built around structured training blocks, workout logging, performance scoring, and accountability features.",
+    price: "Price not publicly announced",
+    monthlyPrice: null,
+    hasUsableFreeTier: false,
+    platforms: ["Android"],
+    ai: "No AI identified",
+    legit: 82,
+    goals: ["Build muscle", "Get stronger", "Consistency"],
+    features: [
+      "Structured training blocks",
+      "Workout history",
+      "Custom block builder",
+      "Leaderboards",
+      "Built-in motivation",
+      "Training circles",
+      "Performance scoring",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Trainer-written",
+    caveat:
+      "Not publicly released. Shared ownership with Workout App Index; evaluated under the same published criteria.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Barbell and plates",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 3,
+    totalSections: 8,
+  },
+  {
+    id: "jefit",
+    name: "JEFIT",
+    initials: "JF",
+    color: "#4aa9eb",
+    type: "Workout logger",
+    bestFor: "A broad exercise library and detailed tracking",
+    description:
+      "A long-running workout planner and logger with routines, community features, and extensive exercise data.",
+    price: "Free / Premium",
+    monthlyPrice: null,
+    hasUsableFreeTier: true,
+    platforms: ["Android", "iOS"],
+    ai: "AI supporting features",
+    legit: 83,
+    goals: ["Build muscle", "Get stronger", "Track workouts"],
+    features: [
+      "Exercise library",
+      "Custom workouts",
+      "Progress charts",
+      "Community",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Mixed",
+    caveat:
+      "The number of tools and screens may feel busy if simplicity is your priority.",
+    deliversCompleteProgram: false,
+    programLibrary: false,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Barbell and plates",
+    ],
+    researchStatus: "Candidate",
+    verifiedSections: 0,
+    totalSections: 8,
+  },
+  {
+    id: "strengthlog",
+    name: "StrengthLog",
+    initials: "SL",
+    color: "#ef4f4f",
+    type: "Logger + programs",
+    bestFor: "Detailed strength tracking and proven programs",
+    description:
+      "Combines unlimited workout logging with a large exercise library, strength programs, statistics, goals, timers, calculators, and wearable support.",
+    price: "Free / Premium; US iOS monthly listing $16.90",
+    monthlyPrice: 16.9,
+    hasUsableFreeTier: true,
+    platforms: ["Android", "iOS"],
+    ai: "No AI identified",
+    legit: 90,
+    goals: ["Build muscle", "Get stronger", "Powerlifting"],
+    features: [
+      "Expert programs",
+      "Fast logging",
+      "Detailed analytics",
+      "Rest timer",
+      "Exercise library",
+      "Wearables",
+      "Health integration",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Trainer-written",
+    caveat:
+      "The free tier includes unlimited logging and selected programs, while the full program catalog and advanced statistics require Premium. Store pricing varies by country and platform.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Barbell and plates",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 6,
+    totalSections: 8,
+  },
+  {
+    id: "stronglifts",
+    name: "StrongLifts",
+    initials: "5×5",
+    color: "#ff3c32",
+    type: "Structured program",
+    bestFor: "Simple barbell strength progression",
+    description:
+      "Guides lifters through a focused progressive barbell routine with automatic workout progression.",
+    price: "Free / Premium",
+    monthlyPrice: null,
+    hasUsableFreeTier: true,
+    platforms: ["Android", "iOS"],
+    ai: "No AI identified",
+    legit: 86,
+    goals: ["Get stronger", "Learn resistance training", "Consistency"],
+    features: [
+      "Automatic progression",
+      "Rest timer",
+      "Exercise demos",
+      "Simple interface",
+    ],
+    level: ["Beginner", "Intermediate"],
+    authorship: "Trainer-written",
+    caveat:
+      "The core training approach is intentionally narrow and barbell dependent.",
+    deliversCompleteProgram: true,
+    programLibrary: false,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Barbell and plates",
+    ],
+    researchStatus: "Candidate",
+    verifiedSections: 0,
+    totalSections: 8,
+  },
+  {
+    id: "alpha-progression",
+    name: "Alpha Progression",
+    initials: "AP",
+    color: "#f2c600",
+    type: "Adaptive program",
+    bestFor: "Hypertrophy-focused progression",
+    description:
+      "Creates and adjusts gym workouts around goals, schedule, equipment, and prior performance.",
+    price: "Free trial / Premium",
+    monthlyPrice: null,
+    hasUsableFreeTier: false,
+    platforms: ["Android", "iOS"],
+    ai: "AI supporting features",
+    legit: 85,
+    goals: ["Build muscle", "Get stronger"],
+    features: [
+      "Adaptive programming",
+      "Progression",
+      "Exercise demos",
+      "Detailed analytics",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Rules-based adaptive",
+    caveat: "Its strongest functionality sits behind a recurring subscription.",
+    deliversCompleteProgram: true,
+    programLibrary: false,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+    ],
+    researchStatus: "Candidate",
+    verifiedSections: 0,
+    totalSections: 8,
+  },
+  {
+    id: "fitnotes",
+    name: "FitNotes",
+    initials: "FN",
+    color: "#56a66a",
+    type: "Workout logger",
+    bestFor: "Free, straightforward Android logging",
+    description:
+      "A lightweight Android gym log for routines, exercise history, records, and basic progress tracking.",
+    price: "Free",
+    monthlyPrice: 0,
+    hasUsableFreeTier: true,
+    platforms: ["Android"],
+    ai: "No AI identified",
+    legit: 88,
+    goals: ["Build muscle", "Get stronger", "Track workouts"],
+    features: [
+      "Fast logging",
+      "Custom workouts",
+      "Progress charts",
+      "Offline use",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "User-created",
+    caveat:
+      "Android only, with less guided programming than program-based apps.",
+    deliversCompleteProgram: false,
+    programLibrary: false,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Barbell and plates",
+    ],
+    researchStatus: "Candidate",
+    verifiedSections: 0,
+    totalSections: 8,
+  },
+  {
+    id: "rp-hypertrophy",
+    name: "RP Hypertrophy",
+    initials: "RP",
+    color: "#cf245e",
+    type: "Adaptive program",
+    bestFor: "Technical hypertrophy programming",
+    description:
+      "A specialized training system that adjusts volume and effort using lifter feedback across a mesocycle.",
+    price: "Subscription",
+    monthlyPrice: null,
+    hasUsableFreeTier: false,
+    platforms: ["Android", "iOS"],
+    ai: "No AI identified",
+    legit: 87,
+    goals: ["Build muscle"],
+    features: [
+      "Adaptive programming",
+      "Progression",
+      "Detailed analytics",
+      "Exercise substitutions",
+    ],
+    level: ["Intermediate", "Advanced"],
+    authorship: "Rules-based adaptive",
+    caveat:
+      "The technical approach and terminology may overwhelm a brand-new lifter.",
+    deliversCompleteProgram: true,
+    programLibrary: false,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+    ],
+    researchStatus: "Candidate",
+    verifiedSections: 0,
+    totalSections: 8,
+  },
 ];
 
-export type CatalogEvidenceSeed = {id:string;appId:string;sourceType:string;url:string;claimSupported:string;public:boolean};
+export type CatalogEvidenceSeed = {
+  id: string;
+  appId: string;
+  sourceType: string;
+  url: string;
+  claimSupported: string;
+  public: boolean;
+};
+
+export type TrainingRelationship = {
+  planningStyle:
+    | "Follow a complete path"
+    | "Choose a proven path"
+    | "Let the app adapt"
+    | "Build it yourself"
+    | "Just log the work";
+  choiceLoad: "Low" | "Moderate" | "High";
+  continuity:
+    | "Single coherent system"
+    | "Program-based"
+    | "Session-adaptive"
+    | "User-directed";
+  customization: "Follow as written" | "Guided flexibility" | "Full control";
+  idealUser: string;
+  notFor: string;
+};
+
+export const trainingRelationships: Record<string, TrainingRelationship> = {
+  hevy: {
+    planningStyle: "Build it yourself",
+    choiceLoad: "Moderate",
+    continuity: "User-directed",
+    customization: "Full control",
+    idealUser:
+      "You already have a routine—or enjoy creating one—and want fast logging, progress data, and a social layer without giving up control.",
+    notFor:
+      "You want one opinionated training system to make nearly every programming decision for you.",
+  },
+  boostcamp: {
+    planningStyle: "Choose a proven path",
+    choiceLoad: "High",
+    continuity: "Program-based",
+    customization: "Guided flexibility",
+    idealUser:
+      "You want credible programs and a capable logger, and you enjoy comparing options before committing to a training path.",
+    notFor:
+      "A large catalog feels like homework and you would rather be given one coherent system to follow.",
+  },
+  fitbod: {
+    planningStyle: "Let the app adapt",
+    choiceLoad: "Low",
+    continuity: "Session-adaptive",
+    customization: "Guided flexibility",
+    idealUser:
+      "You want the app to generate the next workout around your equipment, history, and preferences, and you are comfortable relying on AI.",
+    notFor:
+      "You want a transparent fixed program, coach-authored progression, or an entirely AI-free experience.",
+  },
+  strong: {
+    planningStyle: "Just log the work",
+    choiceLoad: "Low",
+    continuity: "User-directed",
+    customization: "Full control",
+    idealUser:
+      "You know what you plan to train and want a focused, flexible logbook that stays out of the way.",
+    notFor:
+      "You need the app to choose a complete program, explain training decisions, or adapt programming for you.",
+  },
+  caliber: {
+    planningStyle: "Choose a proven path",
+    choiceLoad: "Moderate",
+    continuity: "Program-based",
+    customization: "Guided flexibility",
+    idealUser:
+      "You want structured strength guidance, education, and the option to add human coaching when self-direction is not enough.",
+    notFor:
+      "You only want a minimal logger or do not want coaching-oriented prompts and services.",
+  },
+  "lift-league": {
+    planningStyle: "Follow a complete path",
+    choiceLoad: "Low",
+    continuity: "Single coherent system",
+    customization: "Follow as written",
+    idealUser:
+      "You want a complete training path, meaningful variety, and visible progress without browsing endless programs or writing your own workouts.",
+    notFor:
+      "You frequently change programs, want complete exercise-level control, or enjoy assembling your own training from a large library.",
+  },
+  jefit: {
+    planningStyle: "Build it yourself",
+    choiceLoad: "High",
+    continuity: "User-directed",
+    customization: "Full control",
+    idealUser:
+      "You value a broad exercise database, many planning tools, and detailed control more than a tightly constrained experience.",
+    notFor:
+      "You are easily overwhelmed by options or want one clear training path with minimal setup.",
+  },
+  strengthlog: {
+    planningStyle: "Choose a proven path",
+    choiceLoad: "Moderate",
+    continuity: "Program-based",
+    customization: "Guided flexibility",
+    idealUser:
+      "You want a serious strength log plus proven programs, calculators, and detailed training statistics in one place.",
+    notFor:
+      "You want the app to generate every session automatically or prefer an extremely minimal interface.",
+  },
+  stronglifts: {
+    planningStyle: "Follow a complete path",
+    choiceLoad: "Low",
+    continuity: "Single coherent system",
+    customization: "Follow as written",
+    idealUser:
+      "You want a simple barbell-focused progression with a clear next workout and very few programming decisions.",
+    notFor:
+      "You need broad exercise variety, hypertrophy specialization, or substantial program customization.",
+  },
+  "alpha-progression": {
+    planningStyle: "Let the app adapt",
+    choiceLoad: "Low",
+    continuity: "Session-adaptive",
+    customization: "Guided flexibility",
+    idealUser:
+      "You want hypertrophy-focused programming that adjusts around your schedule, equipment, and recorded performance.",
+    notFor:
+      "You want a free long-term option, a fixed coach-authored program, or full manual control.",
+  },
+  fitnotes: {
+    planningStyle: "Just log the work",
+    choiceLoad: "Low",
+    continuity: "User-directed",
+    customization: "Full control",
+    idealUser:
+      "You are an Android user who already knows what to train and wants a straightforward, offline-friendly log without a subscription.",
+    notFor:
+      "You want iOS support, guided programming, coaching, or automatic workout generation.",
+  },
+  "rp-hypertrophy": {
+    planningStyle: "Let the app adapt",
+    choiceLoad: "Moderate",
+    continuity: "Program-based",
+    customization: "Guided flexibility",
+    idealUser:
+      "You understand hypertrophy concepts and want a specialized system that adjusts volume and effort across a mesocycle using your feedback.",
+    notFor:
+      "You are brand new to lifting or want a simple general-purpose workout logger.",
+  },
+};
+
+export function getTrainingRelationship(appId: string): TrainingRelationship {
+  return (
+    trainingRelationships[appId] ?? {
+      planningStyle: "Build it yourself",
+      choiceLoad: "Moderate",
+      continuity: "User-directed",
+      customization: "Full control",
+      idealUser:
+        "You want flexible tools and prefer to make your own training decisions.",
+      notFor: "You want the app to prescribe a complete training path.",
+    }
+  );
+}
 
 export const catalogEvidenceSeeds: CatalogEvidenceSeed[] = [
-  {id:"hevy-official-features-20260912",appId:"hevy",sourceType:"Official website",url:"https://www.hevyapp.com/features/",claimSupported:"Workout logging, progress tracking, social features, wearables, program library, and HevyGPT are listed by Hevy.",public:true},
-  {id:"hevy-google-play-20260912",appId:"hevy",sourceType:"Google Play",url:"https://play.google.com/store/apps/details?id=com.hevy",claimSupported:"Android availability, free access with in-app purchases, workout logging, routines, progress analysis, community, and Wear OS support.",public:true},
-  {id:"hevy-apple-store-20260912",appId:"hevy",sourceType:"Apple App Store",url:"https://apps.apple.com/us/app/hevy-workout-tracker-gym-log/id1458862350",claimSupported:"iOS availability and US Hevy Pro monthly, yearly, and lifetime purchase options.",public:true},
-  {id:"boostcamp-official-programs-20260912",appId:"boostcamp",sourceType:"Official website",url:"https://www.boostcamp.app/programs",claimSupported:"Large program library with coach-designed and community strength programs.",public:true},
-  {id:"boostcamp-official-pro-20260912",appId:"boostcamp",sourceType:"Official website",url:"https://www.boostcamp.app/pro",claimSupported:"Free program library and tracker, optional AI-personalized programs, Pro features, trial, and current monthly and annual prices.",public:true},
-  {id:"boostcamp-google-play-20260912",appId:"boostcamp",sourceType:"Google Play",url:"https://play.google.com/store/apps/details?id=com.bpmhealth.boostcamp",claimSupported:"Android availability, free tier, program library, workout logging, offline use, AI coach, and in-app purchases.",public:true},
-  {id:"hevy-pro-boundaries-20260913",appId:"hevy",sourceType:"Official documentation",url:"https://help.hevyapp.com/hc/en-us/articles/35119778922263-Hevy-Pro-Subscription-How-to-get-Pro-and-What-Does-It-Include",claimSupported:"Free and Pro limits for routines, custom exercises, data history, measurements, and advanced tracking.",public:true},
-  {id:"hevy-trainer-20260913",appId:"hevy",sourceType:"Official documentation",url:"https://help.hevyapp.com/hc/en-us/articles/38385724273047-Hevy-Trainer-Explained-How-It-Builds-Your-Workout-Program",claimSupported:"Hevy Trainer is Pro-only, creates a goal-based program, provides performance-based progressive overload, and is described by Hevy as algorithmic rather than AI-generated.",public:true},
-  {id:"boostcamp-pro-20260913",appId:"boostcamp",sourceType:"Official website",url:"https://www.boostcamp.app/pro",claimSupported:"Pro costs $14.99 monthly or $59.99 yearly; the annual plan has a seven-day trial; the tracker and most of the program library remain free; Pro adds AI and advanced analytics.",public:true},
-  {id:"boostcamp-apple-store-20260913",appId:"boostcamp",sourceType:"Apple App Store",url:"https://apps.apple.com/us/app/boostcamp-workout-programs/id1529354455",claimSupported:"iOS and iPad availability, free download with purchases, logging, offline use, program library, AI coach, analytics, and Apple Health integration.",public:true},
-  {id:"strong-google-play-20260913",appId:"strong",sourceType:"Google Play",url:"https://play.google.com/store/apps/details?id=io.strongapp.strong",claimSupported:"Android availability, workout logging, routine creation, data export, Health Connect, current maintenance, and developer data-safety disclosures.",public:true},
-  {id:"strong-apple-store-20260913",appId:"strong",sourceType:"Apple App Store",url:"https://apps.apple.com/us/app/strong-workout-tracker-gym-log/id464254577",claimSupported:"iOS and Apple Watch availability, free unlimited workout history with a three-routine limit, features, and US Strong PRO prices.",public:true},
-  {id:"strong-privacy-20260913",appId:"strong",sourceType:"Privacy policy",url:"https://strong.app/privacy",claimSupported:"Strong's linked developer privacy policy for account, workout, health, device, and service data practices.",public:true},
-  {id:"fitbod-subscriptions-20260913",appId:"fitbod",sourceType:"Official documentation",url:"https://help.fitbod.me/hc/en-us/sections/1500000506081-Subscriptions",claimSupported:"Current individual pricing is $15.99 monthly or $95.99 yearly, with trials and subscription management described by Fitbod.",public:true},
-  {id:"fitbod-google-play-20260913",appId:"fitbod",sourceType:"Google Play",url:"https://play.google.com/store/apps/details?id=com.fitbod.fitbod",claimSupported:"Android availability, AI-personalized workouts, equipment-aware planning, performance adaptation, exercise guidance, Wear OS, and subscription-only access after trial.",public:true},
-  {id:"fitbod-apple-store-20260913",appId:"fitbod",sourceType:"Apple App Store",url:"https://apps.apple.com/us/app/fitbod-gym-fitness-planner/id1041517543",claimSupported:"iOS and Apple Watch availability, AI-generated and adaptive workouts, exercise library, integrations, subscription, and developer privacy disclosures.",public:true},
-  {id:"fitbod-privacy-20260913",appId:"fitbod",sourceType:"Privacy policy",url:"https://fitbod.me/privacy-policy",claimSupported:"Fitbod's linked developer privacy policy for its app and services.",public:true},
-  {id:"strengthlog-official-overview-20260913",appId:"strengthlog",sourceType:"Official website",url:"https://www.strengthlog.com/",claimSupported:"Free unlimited workout logging, exercise library, programs, statistics, tools, and optional Premium features.",public:true},
-  {id:"strengthlog-google-play-20260913",appId:"strengthlog",sourceType:"Google Play",url:"https://play.google.com/store/apps/details?id=com.styrkelabbet.Styrkelabbet",claimSupported:"Android availability, free and Premium feature boundaries, program library, workout logging, Wear OS, Health Connect, and data-safety disclosures.",public:true},
-  {id:"strengthlog-apple-store-20260913",appId:"strengthlog",sourceType:"Apple App Store",url:"https://apps.apple.com/us/app/strengthlog-workout-tracker/id1434229662",claimSupported:"iOS, iPad, and Apple Watch availability; free download; US in-app purchase prices; feature and privacy disclosures.",public:true},
-  {id:"strengthlog-privacy-20260913",appId:"strengthlog",sourceType:"Privacy policy",url:"https://www.strengthlog.com/app-terms-privacy/",claimSupported:"Current August 2026 terms describe Premium billing and the personal-data practices governing the StrengthLog app.",public:true},
-  {id:"lift-league-official-overview-20260913",appId:"lift-league",sourceType:"Official website",url:"https://theliftleague.com/",claimSupported:"Android release is coming soon; official feature list includes structured blocks, workout history, custom blocks, scoring, achievements, progress photos, training circles, and leaderboards. No public price is stated.",public:true},
+  {
+    id: "hevy-official-features-20260912",
+    appId: "hevy",
+    sourceType: "Official website",
+    url: "https://www.hevyapp.com/features/",
+    claimSupported:
+      "Workout logging, progress tracking, social features, wearables, program library, and HevyGPT are listed by Hevy.",
+    public: true,
+  },
+  {
+    id: "hevy-google-play-20260912",
+    appId: "hevy",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.hevy",
+    claimSupported:
+      "Android availability, free access with in-app purchases, workout logging, routines, progress analysis, community, and Wear OS support.",
+    public: true,
+  },
+  {
+    id: "hevy-apple-store-20260912",
+    appId: "hevy",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/hevy-workout-tracker-gym-log/id1458862350",
+    claimSupported:
+      "iOS availability and US Hevy Pro monthly, yearly, and lifetime purchase options.",
+    public: true,
+  },
+  {
+    id: "boostcamp-official-programs-20260912",
+    appId: "boostcamp",
+    sourceType: "Official website",
+    url: "https://www.boostcamp.app/programs",
+    claimSupported:
+      "Large program library with coach-designed and community strength programs.",
+    public: true,
+  },
+  {
+    id: "boostcamp-official-pro-20260912",
+    appId: "boostcamp",
+    sourceType: "Official website",
+    url: "https://www.boostcamp.app/pro",
+    claimSupported:
+      "Free program library and tracker, optional AI-personalized programs, Pro features, trial, and current monthly and annual prices.",
+    public: true,
+  },
+  {
+    id: "boostcamp-google-play-20260912",
+    appId: "boostcamp",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.bpmhealth.boostcamp",
+    claimSupported:
+      "Android availability, free tier, program library, workout logging, offline use, AI coach, and in-app purchases.",
+    public: true,
+  },
+  {
+    id: "hevy-pro-boundaries-20260913",
+    appId: "hevy",
+    sourceType: "Official documentation",
+    url: "https://help.hevyapp.com/hc/en-us/articles/35119778922263-Hevy-Pro-Subscription-How-to-get-Pro-and-What-Does-It-Include",
+    claimSupported:
+      "Free and Pro limits for routines, custom exercises, data history, measurements, and advanced tracking.",
+    public: true,
+  },
+  {
+    id: "hevy-trainer-20260913",
+    appId: "hevy",
+    sourceType: "Official documentation",
+    url: "https://help.hevyapp.com/hc/en-us/articles/38385724273047-Hevy-Trainer-Explained-How-It-Builds-Your-Workout-Program",
+    claimSupported:
+      "Hevy Trainer is Pro-only, creates a goal-based program, provides performance-based progressive overload, and is described by Hevy as algorithmic rather than AI-generated.",
+    public: true,
+  },
+  {
+    id: "boostcamp-pro-20260913",
+    appId: "boostcamp",
+    sourceType: "Official website",
+    url: "https://www.boostcamp.app/pro",
+    claimSupported:
+      "Pro costs $14.99 monthly or $59.99 yearly; the annual plan has a seven-day trial; the tracker and most of the program library remain free; Pro adds AI and advanced analytics.",
+    public: true,
+  },
+  {
+    id: "boostcamp-apple-store-20260913",
+    appId: "boostcamp",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/boostcamp-workout-programs/id1529354455",
+    claimSupported:
+      "iOS and iPad availability, free download with purchases, logging, offline use, program library, AI coach, analytics, and Apple Health integration.",
+    public: true,
+  },
+  {
+    id: "strong-google-play-20260913",
+    appId: "strong",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=io.strongapp.strong",
+    claimSupported:
+      "Android availability, workout logging, routine creation, data export, Health Connect, current maintenance, and developer data-safety disclosures.",
+    public: true,
+  },
+  {
+    id: "strong-apple-store-20260913",
+    appId: "strong",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/strong-workout-tracker-gym-log/id464254577",
+    claimSupported:
+      "iOS and Apple Watch availability, free unlimited workout history with a three-routine limit, features, and US Strong PRO prices.",
+    public: true,
+  },
+  {
+    id: "strong-privacy-20260913",
+    appId: "strong",
+    sourceType: "Privacy policy",
+    url: "https://strong.app/privacy",
+    claimSupported:
+      "Strong's linked developer privacy policy for account, workout, health, device, and service data practices.",
+    public: true,
+  },
+  {
+    id: "fitbod-subscriptions-20260913",
+    appId: "fitbod",
+    sourceType: "Official documentation",
+    url: "https://help.fitbod.me/hc/en-us/sections/1500000506081-Subscriptions",
+    claimSupported:
+      "Current individual pricing is $15.99 monthly or $95.99 yearly, with trials and subscription management described by Fitbod.",
+    public: true,
+  },
+  {
+    id: "fitbod-google-play-20260913",
+    appId: "fitbod",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.fitbod.fitbod",
+    claimSupported:
+      "Android availability, AI-personalized workouts, equipment-aware planning, performance adaptation, exercise guidance, Wear OS, and subscription-only access after trial.",
+    public: true,
+  },
+  {
+    id: "fitbod-apple-store-20260913",
+    appId: "fitbod",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/fitbod-gym-fitness-planner/id1041517543",
+    claimSupported:
+      "iOS and Apple Watch availability, AI-generated and adaptive workouts, exercise library, integrations, subscription, and developer privacy disclosures.",
+    public: true,
+  },
+  {
+    id: "fitbod-privacy-20260913",
+    appId: "fitbod",
+    sourceType: "Privacy policy",
+    url: "https://fitbod.me/privacy-policy",
+    claimSupported:
+      "Fitbod's linked developer privacy policy for its app and services.",
+    public: true,
+  },
+  {
+    id: "strengthlog-official-overview-20260913",
+    appId: "strengthlog",
+    sourceType: "Official website",
+    url: "https://www.strengthlog.com/",
+    claimSupported:
+      "Free unlimited workout logging, exercise library, programs, statistics, tools, and optional Premium features.",
+    public: true,
+  },
+  {
+    id: "strengthlog-google-play-20260913",
+    appId: "strengthlog",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.styrkelabbet.Styrkelabbet",
+    claimSupported:
+      "Android availability, free and Premium feature boundaries, program library, workout logging, Wear OS, Health Connect, and data-safety disclosures.",
+    public: true,
+  },
+  {
+    id: "strengthlog-apple-store-20260913",
+    appId: "strengthlog",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/strengthlog-workout-tracker/id1434229662",
+    claimSupported:
+      "iOS, iPad, and Apple Watch availability; free download; US in-app purchase prices; feature and privacy disclosures.",
+    public: true,
+  },
+  {
+    id: "strengthlog-privacy-20260913",
+    appId: "strengthlog",
+    sourceType: "Privacy policy",
+    url: "https://www.strengthlog.com/app-terms-privacy/",
+    claimSupported:
+      "Current August 2026 terms describe Premium billing and the personal-data practices governing the StrengthLog app.",
+    public: true,
+  },
+  {
+    id: "lift-league-official-overview-20260913",
+    appId: "lift-league",
+    sourceType: "Official website",
+    url: "https://theliftleague.com/",
+    claimSupported:
+      "Android release is coming soon; official feature list includes structured blocks, workout history, custom blocks, scoring, achievements, progress photos, training circles, and leaderboards. No public price is stated.",
+    public: true,
+  },
 ];
 
 export const catalogVersion = "0.7-researching";

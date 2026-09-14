@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./relationship.css";
 
 export const metadata: Metadata = {
   title: "Workout App Index | Find the Right Workout App",
-  description: "Find and compare strength-training apps by features, programming style, price, AI use, and overall quality.",
+  description:
+    "Find and compare strength-training apps by features, programming style, price, AI use, and overall quality.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
