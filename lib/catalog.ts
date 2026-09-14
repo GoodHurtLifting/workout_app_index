@@ -50,7 +50,11 @@ export const apps: AppRecord[] = [
     price: "Free / Hevy Pro from $2.99 monthly",
     monthlyPrice: 2.99,
     hasUsableFreeTier: true,
-    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
     platforms: ["Android", "iOS"],
     ai: "AI supporting features",
     legit: 89,
@@ -93,7 +97,11 @@ export const apps: AppRecord[] = [
     price: "Free / Pro $14.99 monthly or $59.99 yearly",
     monthlyPrice: 14.99,
     hasUsableFreeTier: true,
-    freeTierCapabilities: { completeProgram: true, adaptiveProgramming: false, programLibrary: true },
+    freeTierCapabilities: {
+      completeProgram: true,
+      adaptiveProgramming: false,
+      programLibrary: true,
+    },
     platforms: ["Android", "iOS"],
     ai: "Optional AI",
     legit: 91,
@@ -138,7 +146,11 @@ export const apps: AppRecord[] = [
     price: "$15.99 monthly or $95.99 yearly",
     monthlyPrice: 15.99,
     hasUsableFreeTier: false,
-    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
     platforms: ["Android", "iOS"],
     ai: "AI central",
     legit: 84,
@@ -182,7 +194,11 @@ export const apps: AppRecord[] = [
     price: "Free / Strong PRO $4.99 monthly or $29.99 yearly on US iOS",
     monthlyPrice: 4.99,
     hasUsableFreeTier: true,
-    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
     platforms: ["Android", "iOS"],
     ai: "No AI identified",
     legit: 87,
@@ -227,7 +243,11 @@ export const apps: AppRecord[] = [
       "Free / Plus up to $12 monthly or $72 yearly; coaching priced separately",
     monthlyPrice: 12,
     hasUsableFreeTier: true,
-    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
     platforms: ["Android", "iOS"],
     ai: "AI supporting features",
     legit: 88,
@@ -262,30 +282,37 @@ export const apps: AppRecord[] = [
     initials: "LL",
     color: "#e64040",
     type: "Structured training",
-    bestFor: "Scored block training and shared progress",
+    bestFor: "A complete scored system without program hunting",
     description:
-      "An Android strength-training app in development, built around structured training blocks, workout logging, performance scoring, and accountability features.",
+      "An Android strength-training system with 12 connected four-week blocks, guided logging, proprietary performance scores, and built-in accountability.",
     price: "30-day free trial / $7.99 monthly",
     monthlyPrice: 7.99,
     hasUsableFreeTier: false,
-    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
     platforms: ["Android"],
     ai: "No AI identified",
     legit: 82,
     goals: ["Build muscle", "Get stronger", "Consistency"],
     features: [
       "Structured training blocks",
+      "Guided workout logging",
       "Workout history",
       "Custom block builder",
       "Leaderboards",
       "Built-in motivation",
       "Training circles",
       "Performance scoring",
+      "Plate and 1RM calculators",
+      "Progress photo comparisons",
     ],
     level: ["Beginner", "Intermediate", "Advanced"],
     authorship: "Trainer-written",
     caveat:
-      "Not publicly released. Shared ownership with Workout App Index; evaluated under the same published criteria.",
+      "Recently released on Google Play with limited public usage history. Shared ownership with Workout App Index; evaluated under the same published criteria.",
     deliversCompleteProgram: true,
     programLibrary: false,
     adaptiveProgramming: false,
@@ -294,8 +321,8 @@ export const apps: AppRecord[] = [
       "Home gym",
       "Barbell and plates",
     ],
-    researchStatus: "Researching",
-    verifiedSections: 3,
+    researchStatus: "Evaluation ready",
+    verifiedSections: 7,
     totalSections: 8,
   },
   {
@@ -310,7 +337,11 @@ export const apps: AppRecord[] = [
     price: "Free / Elite $12.99 monthly or $69.99 yearly",
     monthlyPrice: 12.99,
     hasUsableFreeTier: true,
-    freeTierCapabilities: { completeProgram: true, adaptiveProgramming: false, programLibrary: true },
+    freeTierCapabilities: {
+      completeProgram: true,
+      adaptiveProgramming: false,
+      programLibrary: true,
+    },
     platforms: ["Android", "iOS"],
     ai: "AI supporting features",
     legit: 83,
@@ -353,7 +384,11 @@ export const apps: AppRecord[] = [
     price: "Free / Premium; US iOS monthly listing $16.90",
     monthlyPrice: 16.9,
     hasUsableFreeTier: true,
-    freeTierCapabilities: { completeProgram: true, adaptiveProgramming: false, programLibrary: true },
+    freeTierCapabilities: {
+      completeProgram: true,
+      adaptiveProgramming: false,
+      programLibrary: true,
+    },
     platforms: ["Android", "iOS"],
     ai: "No AI identified",
     legit: 90,
@@ -396,7 +431,11 @@ export const apps: AppRecord[] = [
     price: "Free / Pro $11.99 monthly or $59.99 yearly",
     monthlyPrice: 11.99,
     hasUsableFreeTier: true,
-    freeTierCapabilities: { completeProgram: true, adaptiveProgramming: true, programLibrary: false },
+    freeTierCapabilities: {
+      completeProgram: true,
+      adaptiveProgramming: true,
+      programLibrary: false,
+    },
     platforms: ["Android", "iOS"],
     ai: "No AI identified",
     legit: 86,
@@ -437,7 +476,11 @@ export const apps: AppRecord[] = [
     price: "Free / Pro $12.99 monthly or $79.99 yearly",
     monthlyPrice: 12.99,
     hasUsableFreeTier: true,
-    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
     platforms: ["Android", "iOS"],
     ai: "No AI identified",
     legit: 85,
@@ -477,7 +520,11 @@ export const apps: AppRecord[] = [
     price: "Free",
     monthlyPrice: 0,
     hasUsableFreeTier: true,
-    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
     platforms: ["Android"],
     ai: "No AI identified",
     legit: 88,
@@ -519,7 +566,11 @@ export const apps: AppRecord[] = [
     price: "$34.99 monthly or $299.99 yearly",
     monthlyPrice: 34.99,
     hasUsableFreeTier: false,
-    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
     platforms: ["Web", "Android", "iOS"],
     ai: "No AI identified",
     legit: 87,
@@ -585,7 +636,8 @@ export type TrainingRelationship = {
 
 export type OriginalityProfile = {
   score: number;
-  level: "Conventional" | "Clear identity" | "Distinctive" | "Category-defining";
+  level:
+    "Conventional" | "Clear identity" | "Distinctive" | "Category-defining";
   originalMechanics: number;
   productPointOfView: number;
   visualIdentity: number;
@@ -680,6 +732,7 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
   },
   "lift-league": {
     planningStyle: "Follow a complete path",
+    secondaryStyles: ["Choose a proven path"],
     choiceLoad: "Low",
     continuity: "Single coherent system",
     customization: "Follow as written",
@@ -823,8 +876,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 75,
     meaningfulDifferentiation: 80,
     defensibility: 74,
-    summary: "A strength log that treats the social feed as part of training rather than an unrelated add-on.",
-    evidenceNote: "Official product materials support the social training model; visual and defensibility judgments remain editorial.",
+    summary:
+      "A strength log that treats the social feed as part of training rather than an unrelated add-on.",
+    evidenceNote:
+      "Official product materials support the social training model; visual and defensibility judgments remain editorial.",
   },
   boostcamp: {
     score: 78,
@@ -834,8 +889,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 67,
     meaningfulDifferentiation: 84,
     defensibility: 78,
-    summary: "Turns credible creator programs and community publishing into a training marketplace with a capable logger attached.",
-    evidenceNote: "Program breadth and creator model are documented publicly; identity judgments remain editorial.",
+    summary:
+      "Turns credible creator programs and community publishing into a training marketplace with a capable logger attached.",
+    evidenceNote:
+      "Program breadth and creator model are documented publicly; identity judgments remain editorial.",
   },
   fitbod: {
     score: 81,
@@ -845,8 +902,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 70,
     meaningfulDifferentiation: 85,
     defensibility: 83,
-    summary: "Built its identity around generating the next workout from equipment, history, and recovery instead of presenting a fixed plan.",
-    evidenceNote: "Adaptive generation is documented publicly; comparative originality judgments remain editorial.",
+    summary:
+      "Built its identity around generating the next workout from equipment, history, and recovery instead of presenting a fixed plan.",
+    evidenceNote:
+      "Adaptive generation is documented publicly; comparative originality judgments remain editorial.",
   },
   strong: {
     score: 55,
@@ -856,8 +915,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 60,
     meaningfulDifferentiation: 52,
     defensibility: 50,
-    summary: "A polished expression of the digital workout logbook, distinguished more by restraint than by a unique training system.",
-    evidenceNote: "Feature scope is documented publicly; the originality assessment is editorial.",
+    summary:
+      "A polished expression of the digital workout logbook, distinguished more by restraint than by a unique training system.",
+    evidenceNote:
+      "Feature scope is documented publicly; the originality assessment is editorial.",
   },
   caliber: {
     score: 75,
@@ -867,8 +928,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 67,
     meaningfulDifferentiation: 78,
     defensibility: 74,
-    summary: "Connects a substantial free strength product to group and individual human coaching without forcing one service level on everyone.",
-    evidenceNote: "Free, Plus, and coaching layers are documented publicly; comparative judgments remain editorial.",
+    summary:
+      "Connects a substantial free strength product to group and individual human coaching without forcing one service level on everyone.",
+    evidenceNote:
+      "Free, Plus, and coaching layers are documented publicly; comparative judgments remain editorial.",
   },
   "lift-league": {
     score: 94,
@@ -878,8 +941,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 96,
     meaningfulDifferentiation: 93,
     defensibility: 88,
-    summary: "Combines a proprietary workout scoring system, one cohesive training philosophy, competitive accountability, and an unusually committed punk-metal identity.",
-    evidenceNote: "Based on first-party product evidence. No comparable combination was identified in this reviewed cohort; shared ownership is disclosed and the assessment remains preliminary until hands-on review is complete.",
+    summary:
+      "Combines a proprietary workout scoring system, one cohesive training philosophy, competitive accountability, and an unusually committed punk-metal identity.",
+    evidenceNote:
+      "Supported by the public product site, scoring and training-system documentation, Google Play listing, screenshots, and implementation evidence. No comparable combination was identified in this reviewed cohort; shared ownership is disclosed and hands-on review remains outstanding.",
   },
   jefit: {
     score: 68,
@@ -889,8 +954,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 58,
     meaningfulDifferentiation: 74,
     defensibility: 75,
-    summary: "Its unusually broad combination of manual planning, community routines, analytics, and adaptive AI is differentiated by scope more than a singular point of view.",
-    evidenceNote: "Breadth and adaptive features are documented publicly; identity judgments remain editorial.",
+    summary:
+      "Its unusually broad combination of manual planning, community routines, analytics, and adaptive AI is differentiated by scope more than a singular point of view.",
+    evidenceNote:
+      "Breadth and adaptive features are documented publicly; identity judgments remain editorial.",
   },
   strengthlog: {
     score: 71,
@@ -900,8 +967,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 61,
     meaningfulDifferentiation: 75,
     defensibility: 73,
-    summary: "A serious strength toolkit whose identity comes from combining an unusually capable free log with programs, calculators, and deep statistics.",
-    evidenceNote: "Product scope is documented publicly; comparative identity judgments remain editorial.",
+    summary:
+      "A serious strength toolkit whose identity comes from combining an unusually capable free log with programs, calculators, and deep statistics.",
+    evidenceNote:
+      "Product scope is documented publicly; comparative identity judgments remain editorial.",
   },
   stronglifts: {
     score: 84,
@@ -911,8 +980,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 70,
     meaningfulDifferentiation: 86,
     defensibility: 88,
-    summary: "Its originality is disciplined constraint: a highly recognizable training doctrine that refuses to become an everything-app.",
-    evidenceNote: "The focused system and progression rules are documented publicly; identity judgments remain editorial.",
+    summary:
+      "Its originality is disciplined constraint: a highly recognizable training doctrine that refuses to become an everything-app.",
+    evidenceNote:
+      "The focused system and progression rules are documented publicly; identity judgments remain editorial.",
   },
   "alpha-progression": {
     score: 77,
@@ -922,8 +993,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 68,
     meaningfulDifferentiation: 80,
     defensibility: 76,
-    summary: "Preserves a stable hypertrophy plan while making set-level progression recommendations, avoiding the randomness of a new generated workout every day.",
-    evidenceNote: "Plan stability and progression behavior are documented publicly; identity judgments remain editorial.",
+    summary:
+      "Preserves a stable hypertrophy plan while making set-level progression recommendations, avoiding the randomness of a new generated workout every day.",
+    evidenceNote:
+      "Plan stability and progression behavior are documented publicly; identity judgments remain editorial.",
   },
   fitnotes: {
     score: 72,
@@ -933,8 +1006,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 65,
     meaningfulDifferentiation: 78,
     defensibility: 66,
-    summary: "Radical simplicity, no ads, no subscription, and local-first data practices form a coherent alternative to account-heavy fitness platforms.",
-    evidenceNote: "Free, ad-free, backup, export, and developer-declared data practices are public; identity judgments remain editorial.",
+    summary:
+      "Radical simplicity, no ads, no subscription, and local-first data practices form a coherent alternative to account-heavy fitness platforms.",
+    evidenceNote:
+      "Free, ad-free, backup, export, and developer-declared data practices are public; identity judgments remain editorial.",
   },
   "rp-hypertrophy": {
     score: 91,
@@ -944,23 +1019,27 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     visualIdentity: 75,
     meaningfulDifferentiation: 96,
     defensibility: 93,
-    summary: "Turns a specific autoregulated hypertrophy methodology into software that adjusts volume, load, reps, fatigue, and deloads from lifter feedback.",
-    evidenceNote: "The feedback-driven system is documented publicly; comparative identity and defensibility judgments remain editorial.",
+    summary:
+      "Turns a specific autoregulated hypertrophy methodology into software that adjusts volume, load, reps, fatigue, and deloads from lifter feedback.",
+    evidenceNote:
+      "The feedback-driven system is documented publicly; comparative identity and defensibility judgments remain editorial.",
   },
 };
 
 export function getOriginalityProfile(appId: string): OriginalityProfile {
-  return originalityProfiles[appId] ?? {
-    score: 50,
-    level: "Conventional",
-    originalMechanics: 50,
-    productPointOfView: 50,
-    visualIdentity: 50,
-    meaningfulDifferentiation: 50,
-    defensibility: 50,
-    summary: "Originality has not yet been evaluated.",
-    evidenceNote: "Not yet evaluated.",
-  };
+  return (
+    originalityProfiles[appId] ?? {
+      score: 50,
+      level: "Conventional",
+      originalMechanics: 50,
+      productPointOfView: 50,
+      visualIdentity: 50,
+      meaningfulDifferentiation: 50,
+      defensibility: 50,
+      summary: "Originality has not yet been evaluated.",
+      evidenceNote: "Not yet evaluated.",
+    }
+  );
 }
 
 export const catalogEvidenceSeeds: CatalogEvidenceSeed[] = [
@@ -1159,7 +1238,52 @@ export const catalogEvidenceSeeds: CatalogEvidenceSeed[] = [
     sourceType: "Official website",
     url: "https://theliftleague.com/",
     claimSupported:
-      "Android release is coming soon; official feature list includes structured blocks, workout history, custom blocks, scoring, achievements, progress photos, training circles, and leaderboards. No public price is stated.",
+      "Google Play early access is open; the site documents 12 connected four-week blocks, three training phases, scoring, guided logging, calculators, custom blocks, achievements, progress photos, training circles, and leaderboards.",
+    public: true,
+  },
+  {
+    id: "lift-league-google-play-20260914",
+    appId: "lift-league",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.theliftleague.app",
+    claimSupported:
+      "Public Android availability, a $7.99 in-app purchase listing, current maintenance, structured training and scoring features, support contact, privacy link, encryption in transit, and account-deletion availability.",
+    public: true,
+  },
+  {
+    id: "lift-league-privacy-20260914",
+    appId: "lift-league",
+    sourceType: "Privacy policy",
+    url: "https://theliftleague.com/privacy/",
+    claimSupported:
+      "Account, profile, workout, scoring, photo, diagnostic, notification, Firebase service, sharing, retention, privacy-control, security, support, and deletion practices.",
+    public: true,
+  },
+  {
+    id: "lift-league-scoring-20260914",
+    appId: "lift-league",
+    sourceType: "Official documentation",
+    url: "https://theliftleague.com/field-notes/exercise-scores-explained.html",
+    claimSupported:
+      "Exercise and Workout Scores reduce logged training into comparable performance markers while preserving user judgment and exercise-specific context.",
+    public: true,
+  },
+  {
+    id: "lift-league-block-guide-20260914",
+    appId: "lift-league",
+    sourceType: "Official documentation",
+    url: "https://theliftleague.com/field-notes/guide-to-the-lift-leagues-12-training-blocks.html",
+    claimSupported:
+      "Twelve four-week blocks provide 48 weeks of connected powerbuilding, strength, and specialized training with three- to five-day schedules and repeatable paths.",
+    public: true,
+  },
+  {
+    id: "lift-league-training-philosophy-20260914",
+    appId: "lift-league",
+    sourceType: "Official documentation",
+    url: "https://theliftleague.com/field-notes/why-training-blocks-work.html",
+    claimSupported:
+      "The product intentionally balances a structured complete system with the ability to select and repeat individual blocks without assembling unrelated workouts.",
     public: true,
   },
   {
@@ -1299,4 +1423,4 @@ export const catalogEvidenceSeeds: CatalogEvidenceSeed[] = [
   },
 ];
 
-export const catalogVersion = "0.9-originality-profiled";
+export const catalogVersion = "0.10-tll-first-party-audit";
