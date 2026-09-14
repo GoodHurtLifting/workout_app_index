@@ -265,8 +265,8 @@ export const apps: AppRecord[] = [
     bestFor: "Scored block training and shared progress",
     description:
       "An Android strength-training app in development, built around structured training blocks, workout logging, performance scoring, and accountability features.",
-    price: "Price not publicly announced",
-    monthlyPrice: null,
+    price: "30-day free trial / $7.99 monthly",
+    monthlyPrice: 7.99,
     hasUsableFreeTier: false,
     freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
     platforms: ["Android"],
