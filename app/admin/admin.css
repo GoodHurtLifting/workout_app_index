@@ -53,3 +53,6 @@
 .publication-history article span,.publication-history article small{color:var(--muted);font-size:.78rem}
 @media(max-width:900px){.editor-layout{grid-template-columns:1fr}.editor-heading{align-items:flex-start;flex-direction:column}.evidence-list>article{grid-template-columns:1fr}.evidence-list article small{grid-column:auto}}
 @media(max-width:620px){.admin-utility{justify-content:flex-start;flex-wrap:wrap}.admin-row{grid-template-columns:38px 1fr 88px}.admin-row .freshness,.admin-row>svg{display:none}}
+.admin-login{max-width:34rem;margin:12vh auto;padding:3rem;background:white;border:1px solid var(--border);box-shadow:0 18px 50px rgba(15,23,42,.12)}
+.admin-login h1{margin:.5rem 0 1rem}.admin-login p{line-height:1.6}.admin-login .admin-primary{margin-top:1.5rem}.admin-login [role="alert"]{color:#a61b1b;font-weight:700}
+.admin-utility form{margin:0}.admin-utility form button{display:inline-flex;align-items:center;gap:.35rem;background:none;border:0;color:inherit;font:inherit;cursor:pointer}

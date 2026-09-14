@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "workout-app-index-dev",
+    "dev": "workout-app-index-dev",
+    "prod": "workout-app-index-prod"
+  }
+}
