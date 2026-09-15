@@ -326,7 +326,7 @@ export default function Home() {
     .map((id) => apps.find((a) => a.id === id))
     .filter(Boolean) as AppRecord[];
   return (
-    <main>
+    <main className="product-shell">
       <header className="site-header">
         <button className="brand" onClick={() => navigate("home")}>
           <span className="brand-mark">
@@ -349,11 +349,11 @@ export default function Home() {
         <>
           <section className="hero">
             <div className="hero-copy">
-              <p className="kicker">STRENGTH APP MATCHMAKING, MINUS THE HYPE</p>
+              <p className="kicker">INDEPENDENT FITNESS APP INTELLIGENCE</p>
               <h1>
-                Too many workout apps.
+                The definitive guide to fitness apps.
                 <br />
-                <em>Find the one that fits.</em>
+                <em>Your best fit, found.</em>
               </h1>
               <p>
                 Compare strength-training apps by features, programming style,
@@ -430,7 +430,7 @@ export default function Home() {
           <section className="proof">
             <div>
               <strong>{apps.length}</strong>
-              <span>preliminary app profiles</span>
+              <span>researched app profiles</span>
             </div>
             <div>
               <strong>60+</strong>
@@ -440,7 +440,7 @@ export default function Home() {
               <strong>3</strong>
               <span>separate, explainable scores</span>
             </div>
-            <p>Catalog facts are being verified before public launch.</p>
+            <p>Independent guidance. Transparent methods. No sponsored rankings.</p>
           </section>
           <section className="paths">
             <div className="section-heading">
