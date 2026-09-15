@@ -624,8 +624,8 @@ export default function Home() {
               <p className="eyebrow">THE CATALOG</p>
               <h1>Browse workout apps</h1>
               <p>
-                Preliminary profiles. Product facts and scores will be verified
-                before launch.
+                Research-backed profiles with transparent facts, scoring, and
+                tradeoffs.
               </p>
             </div>
             <div className="browse-search">
