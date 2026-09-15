@@ -12,6 +12,15 @@ const budgetCeiling: Record<string, number> = {
   "Up to $20 monthly": 20,
 };
 
+function supportsProvenProgramChoice(app: AppRecord): boolean {
+  const relationship = getTrainingRelationship(app.id);
+  return (
+    app.programLibrary ||
+    relationship.planningStyle === "Choose a proven path" ||
+    relationship.secondaryStyles?.includes("Choose a proven path") === true
+  );
+}
+
 function requestedExperienceNeedsPaidAccess(
   app: AppRecord,
   answers: FinderAnswers,
@@ -48,7 +57,10 @@ export function exclusionReasons(
     reasons.push("Does not provide a complete training program");
   if (answers.job === "Adapt training for me" && !app.adaptiveProgramming)
     reasons.push("Does not adapt programming automatically");
-  if (answers.job === "Let me choose a proven program" && !app.programLibrary)
+  if (
+    answers.job === "Let me choose a proven program" &&
+    !supportsProvenProgramChoice(app)
+  )
     reasons.push("Does not offer a program library");
   const needsPaidAccess = requestedExperienceNeedsPaidAccess(app, answers);
   if (answers.budget === "Free only" && needsPaidAccess)
@@ -86,8 +98,10 @@ export function fitScore(
   if (job === "Give me a complete program" && app.deliversCompleteProgram)
     score += 20;
   if (job === "Adapt training for me" && app.adaptiveProgramming) score += 20;
-  if (job === "Let me choose a proven program" && app.programLibrary)
-    score += 20;
+  if (job === "Let me choose a proven program") {
+    if (app.programLibrary) score += 20;
+    else if (supportsProvenProgramChoice(app)) score += 12;
+  }
   if (
     job === "Help me build my own workouts" &&
     (app.authorship === "User-created" ||
