@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
   Check,
+  ChevronLeft,
   ChevronRight,
   Filter,
   Search,
@@ -129,6 +130,29 @@ const questions = [
   },
 ];
 
+const featuredProfiles = [
+  {
+    id: "lift-league",
+    highlights: ["Cohesive training system", "Proprietary scoring", "No AI identified"],
+    spectrum: 58,
+  },
+  {
+    id: "boostcamp",
+    highlights: ["Proven programs", "Strength progression", "Broad free library"],
+    spectrum: 68,
+  },
+  {
+    id: "strengthlog",
+    highlights: ["Detailed logging", "Proven programs", "Deep statistics"],
+    spectrum: 76,
+  },
+  {
+    id: "fitbod",
+    highlights: ["Generated workouts", "Equipment aware", "Adaptive training"],
+    spectrum: 62,
+  },
+] as const;
+
 function AppCard({
   app,
   score,
@@ -203,6 +227,7 @@ function AppCard({
 
 export default function Home() {
   const [apps, setApps] = useState<AppRecord[]>(preliminaryApps);
+  const [featuredIndex, setFeaturedIndex] = useState(0);
   useEffect(() => {
     let active = true;
     fetch("/api/catalog")
@@ -215,6 +240,15 @@ export default function Home() {
     return () => {
       active = false;
     };
+  }, []);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return;
+    const timer = window.setInterval(
+      () => setFeaturedIndex((index) => (index + 1) % featuredProfiles.length),
+      8000,
+    );
+    return () => window.clearInterval(timer);
   }, []);
   const [view, setView] = useState<
     "home" | "finder" | "browse" | "method" | "profile" | "compare"
@@ -321,7 +355,9 @@ export default function Home() {
   const profile = apps.find((a) => a.id === profileId) ?? apps[0];
   const profileRelationship = getTrainingRelationship(profile.id);
   const profileOriginality = getOriginalityProfile(profile.id);
-  const heroFeatured = apps.find((app) => app.id === "boostcamp") ?? apps[0];
+  const featuredProfile = featuredProfiles[featuredIndex];
+  const heroFeatured =
+    apps.find((app) => app.id === featuredProfile.id) ?? apps[0];
   const compared = compare
     .map((id) => apps.find((a) => a.id === id))
     .filter(Boolean) as AppRecord[];
@@ -378,8 +414,32 @@ export default function Home() {
             </div>
             <div className="match-panel">
               <div className="panel-head">
-                <span>YOUR TOP MATCH</span>
-                <span className="confidence">HIGH CONFIDENCE</span>
+                <span>FEATURED PROFILE</span>
+                <div className="carousel-controls">
+                  <span>{featuredIndex + 1} / {featuredProfiles.length}</span>
+                  <button
+                    aria-label="Previous featured app"
+                    onClick={() =>
+                      setFeaturedIndex(
+                        (index) =>
+                          (index - 1 + featuredProfiles.length) %
+                          featuredProfiles.length,
+                      )
+                    }
+                  >
+                    <ChevronLeft />
+                  </button>
+                  <button
+                    aria-label="Next featured app"
+                    onClick={() =>
+                      setFeaturedIndex(
+                        (index) => (index + 1) % featuredProfiles.length,
+                      )
+                    }
+                  >
+                    <ChevronRight />
+                  </button>
+                </div>
               </div>
               <div className="match-app">
                 <span
@@ -394,20 +454,16 @@ export default function Home() {
                   <span>{heroFeatured.bestFor}</span>
                 </div>
                 <div className="hero-score">
-                  <strong>94</strong>
-                  <span>% FIT</span>
+                  <strong>{getOriginalityProfile(heroFeatured.id).score}</strong>
+                  <span>ORIGINALITY</span>
                 </div>
               </div>
               <div className="match-reasons">
-                <div>
-                  <Check /> Proven programs
-                </div>
-                <div>
-                  <Check /> Strength progression
-                </div>
-                <div>
-                  <Check /> Beginner friendly
-                </div>
+                {featuredProfile.highlights.map((highlight) => (
+                  <div key={highlight}>
+                    <Check /> {highlight}
+                  </div>
+                ))}
               </div>
               <div className="spectrum">
                 <div>
@@ -415,7 +471,7 @@ export default function Home() {
                   <span>Technical</span>
                 </div>
                 <i>
-                  <b style={{ width: "68%" }} />
+                  <b style={{ width: `${featuredProfile.spectrum}%` }} />
                 </i>
               </div>
               <div className="panel-foot">
@@ -424,6 +480,9 @@ export default function Home() {
                   <strong>{heroFeatured.legit}</strong>
                 </span>
                 <span>AI: {heroFeatured.ai}</span>
+                <button onClick={() => openProfile(heroFeatured.id)}>
+                  View profile <ChevronRight />
+                </button>
               </div>
             </div>
           </section>
