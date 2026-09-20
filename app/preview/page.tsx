@@ -31,6 +31,7 @@ import {
   type AppRecord,
 } from "@/lib/catalog";
 import { exclusionReasons, fitScore } from "@/lib/matching";
+import { openAnalyticsPreferences, trackEvent } from "@/lib/analytics";
 
 const questions = [
   {
@@ -251,7 +252,13 @@ export default function Home() {
     return () => window.clearInterval(timer);
   }, []);
   const [view, setView] = useState<
-    "home" | "finder" | "browse" | "method" | "profile" | "compare"
+    | "home"
+    | "finder"
+    | "browse"
+    | "method"
+    | "profile"
+    | "compare"
+    | "privacy"
   >("home");
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -330,26 +337,35 @@ export default function Home() {
     setAuthorshipFilter("All");
     setFeatureFilter("All");
   };
-  const toggleCompare = (id: string) =>
-    setCompare((current) =>
-      current.includes(id)
-        ? current.filter((x) => x !== id)
-        : current.length < 4
-          ? [...current, id]
-          : current,
-    );
+  const toggleCompare = (id: string) => {
+    if (!compare.includes(id) && compare.length < 4)
+      trackEvent("add_to_comparison", { app_id: id });
+    setCompare((current) => {
+      if (current.includes(id)) return current.filter((x) => x !== id);
+      if (current.length >= 4) return current;
+      return [...current, id];
+    });
+  };
   const navigate = (next: typeof view) => {
     setView(next);
+    trackEvent("page_view", {
+      page_path: next === "home" ? "/" : `/${next}`,
+      page_title: `Workout App Index - ${next}`,
+    });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const openProfile = (id: string) => {
     setProfileId(id);
+    trackEvent("view_app_profile", { app_id: id });
     navigate("profile");
   };
   const answer = (value: string) => {
     const q = questions[step];
     setAnswers((a) => ({ ...a, [q.key]: value }));
-    if (step === questions.length - 1) setShowResults(true);
+    if (step === questions.length - 1) {
+      trackEvent("complete_app_finder");
+      setShowResults(true);
+    }
     else setStep((s) => s + 1);
   };
   const profile = apps.find((a) => a.id === profileId) ?? apps[0];
@@ -1110,6 +1126,42 @@ export default function Home() {
           </div>
         </section>
       )}
+      {view === "privacy" && (
+        <section className="privacy-page">
+          <p className="eyebrow">PRIVACY</p>
+          <h1>Clear choices. Minimal collection.</h1>
+          <div className="privacy-card">
+            <h2>Public site</h2>
+            <p>
+              You can browse the catalog and use the app finder without an
+              account. The finder runs in your browser; we do not send your
+              individual questionnaire answers to Google Analytics.
+            </p>
+            <h2>Optional analytics</h2>
+            <p>
+              If you accept analytics, Google Analytics measures page views and
+              broad interactions such as completing the finder, viewing an app
+              profile, or adding an app to comparison. Google may process device,
+              browser, approximate-location, and usage information under its own
+              terms. Analytics remains off when you decline.
+            </p>
+            <h2>Your choice</h2>
+            <p>
+              Your analytics preference is stored in your browser. You can
+              change it at any time; declining does not limit the site.
+            </p>
+            <Button variant="outline" onClick={openAnalyticsPreferences}>
+              Change analytics preference
+            </Button>
+            <h2>Contact</h2>
+            <p>
+              Questions or correction requests can be sent to Turf King LLC at
+              ryan@theliftleague.com.
+            </p>
+            <p className="privacy-updated">Last updated: September 19, 2026</p>
+          </div>
+        </section>
+      )}
       {compare.length > 0 && view !== "compare" && (
         <div className="compare-tray">
           <span>
@@ -1205,7 +1257,7 @@ export default function Home() {
           <button onClick={() => navigate("method")}>How we score</button>
           <button>Editorial standards</button>
           <button>Corrections</button>
-          <button>Privacy</button>
+          <button onClick={() => navigate("privacy")}>Privacy</button>
         </div>
         <small>
           © 2026 Turf King LLC. App names and trademarks belong to their

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AnalyticsConsent } from "@/components/analytics-consent";
 import "./globals.css";
 import "./relationship.css";
 
@@ -19,7 +20,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        <AnalyticsConsent />
+      </body>
     </html>
   );
 }
