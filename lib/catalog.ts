@@ -285,8 +285,8 @@ export const apps: AppRecord[] = [
     bestFor: "A complete scored system without program hunting",
     description:
       "An Android strength-training system with 12 connected four-week blocks, guided logging, proprietary performance scores, and built-in accountability.",
-    price: "30-day free trial / $7.99 monthly",
-    monthlyPrice: 7.99,
+    price: "30-day free trial / $2.99 monthly",
+    monthlyPrice: 2.99,
     hasUsableFreeTier: false,
     freeTierCapabilities: {
       completeProgram: false,
@@ -877,6 +877,286 @@ export const apps: AppRecord[] = [
     verifiedSections: 7,
     totalSections: 8,
   },
+  {
+    id: "freeletics",
+    name: "Freeletics",
+    initials: "FL",
+    color: "#00c389",
+    type: "Adaptive digital coach",
+    bestFor: "Flexible AI coaching at home or in the gym",
+    description:
+      "Creates personalized Training Journeys across bodyweight, calisthenics, weights, machines, and cardio, then changes sessions from the user's feedback, schedule, and available equipment.",
+    price: "Free limited workouts / paid Coach pricing varies by term and market",
+    monthlyPrice: null,
+    hasUsableFreeTier: true,
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: true,
+    },
+    platforms: ["Android", "iOS"],
+    ai: "AI central",
+    legit: 87,
+    goals: ["Build muscle", "Get stronger", "General fitness", "Consistency"],
+    features: [
+      "Adaptive programming",
+      "Expert programs",
+      "Exercise demos",
+      "Bodyweight training",
+      "Custom workouts",
+      "Community",
+      "Wearables",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Mixed",
+    caveat:
+      "Its flexibility comes with a large menu of Training Journeys, workouts, and training modes. Full personalized coaching is paid, current pricing is not consistently published before checkout, and it conflicts with an avoid-AI requirement.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Bodyweight",
+      "It varies",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "apple-fitness-plus",
+    name: "Apple Fitness+",
+    initials: "AF+",
+    color: "#e84d8a",
+    type: "Instructor-led class service",
+    bestFor: "Polished classes inside the Apple ecosystem",
+    description:
+      "Provides a large 4K library across twelve workout types and meditation, with trainer-led sessions, personalized recommendations, automatic Custom Plans, and live metrics from compatible Apple and Bluetooth devices.",
+    price: "1-month trial / $9.99 monthly or $79.99 yearly in the US",
+    monthlyPrice: 9.99,
+    hasUsableFreeTier: false,
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
+    platforms: ["iOS"],
+    ai: "AI supporting features",
+    legit: 91,
+    goals: ["Build muscle", "General fitness", "Consistency"],
+    features: [
+      "Workout videos",
+      "Expert programs",
+      "Built-in motivation",
+      "Wearables",
+      "Health integration",
+      "Mobility",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Trainer-written",
+    caveat:
+      "It requires an iPhone and emphasizes classes and activity variety more than detailed strength logging or transparent long-term barbell progression. Custom Plans organize preferred activities rather than replace a specialized strength coach.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: ["Home gym", "Dumbbells only", "Bodyweight", "It varies"],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "sweat",
+    name: "Sweat",
+    initials: "SW",
+    color: "#f36b9d",
+    type: "Women-centered program library",
+    bestFor: "Progressive programs designed for women",
+    description:
+      "Offers more than seventy trainer-authored programs for home and gym, including strength, low-impact, yoga, and pregnancy-related options, supported by workout planning, demonstrations, substitutions, education, and community challenges.",
+    price: "Free trial / monthly or yearly subscription; price varies by market",
+    monthlyPrice: null,
+    hasUsableFreeTier: false,
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
+    platforms: ["Android", "iOS"],
+    ai: "No AI identified",
+    legit: 88,
+    goals: ["Build muscle", "Get stronger", "General fitness", "Consistency", "Learn resistance training"],
+    features: [
+      "Expert programs",
+      "Exercise demos",
+      "Substitutions",
+      "Community",
+      "Built-in motivation",
+      "Health integration",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Trainer-written",
+    caveat:
+      "Its depth and life-stage coverage are meaningful strengths, but users must choose among a large catalog and subscription pricing varies by market and purchase channel. It is less focused on open-ended lifting analytics than a dedicated logbook.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Bodyweight",
+      "It varies",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "centr",
+    name: "Centr",
+    initials: "CE",
+    color: "#e0b15a",
+    type: "Integrated fitness and wellness",
+    bestFor: "One subscription for training, meals, and recovery",
+    description:
+      "Combines personalized daily training, coach-led programs, self-guided workouts, meal plans, recipes, and recovery content across strength, HIIT, HYROX, boxing, yoga, Pilates, and other modalities.",
+    price: "7-day free trial / $159.99 yearly for Centr Coach",
+    monthlyPrice: 13.33,
+    hasUsableFreeTier: false,
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
+    platforms: ["Android", "iOS"],
+    ai: "AI supporting features",
+    legit: 87,
+    goals: ["Build muscle", "Get stronger", "General fitness", "Consistency"],
+    features: [
+      "Expert programs",
+      "Workout videos",
+      "Built-in motivation",
+      "Nutrition guidance",
+      "Mobility",
+      "Wearables",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Trainer-written",
+    caveat:
+      "The broad all-in-one experience can reduce planning across exercise and meals, but it also contains many programs and modalities. Its personalization is less transparent than a fixed progression system and the reviewed offer is annual billing.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Bodyweight",
+      "It varies",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "gravl",
+    name: "Gravl",
+    initials: "GR",
+    color: "#6557ff",
+    type: "AI strength coach",
+    bestFor: "Automatic strength sessions and load progression",
+    description:
+      "Plans complete strength sessions around goals, schedule, equipment, recovery, and training history, then prescribes reps and weights and adjusts future sessions from logged performance and feedback.",
+    price: "Free to start / Premium price shown during signup; $89.99 yearly workout-and-macros bundle",
+    monthlyPrice: null,
+    hasUsableFreeTier: true,
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
+    platforms: ["Android", "iOS"],
+    ai: "AI central",
+    legit: 86,
+    goals: ["Build muscle", "Get stronger", "General fitness"],
+    features: [
+      "Adaptive programming",
+      "Automatic progression",
+      "Fast logging",
+      "Exercise demos",
+      "Readiness feedback",
+      "Human coaching",
+      "Wearables",
+      "Community",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "AI-generated",
+    caveat:
+      "It asks the user to trust AI-generated exercise and load decisions, so it is incompatible with an avoid-AI preference. Current standalone Premium pricing is not clearly published without entering the signup flow.",
+    deliversCompleteProgram: true,
+    programLibrary: false,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Barbell and plates",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "shred",
+    name: "SHRED",
+    initials: "SH",
+    color: "#ff3b30",
+    type: "Adaptive training and community",
+    bestFor: "AI-personalized strength with social motivation",
+    description:
+      "Starts with expert-built training cycles, then uses AI to personalize workouts, progression, weights, tempo, rest, substitutions, and equipment while adding challenges, groups, leaderboards, and studio-style sessions.",
+    price: "Free limited tier / $19.99 monthly or $119.99 yearly; 7-day annual trial",
+    monthlyPrice: 19.99,
+    hasUsableFreeTier: true,
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: true,
+    },
+    platforms: ["Android", "iOS"],
+    ai: "AI central",
+    legit: 85,
+    goals: ["Build muscle", "Get stronger", "General fitness", "Consistency"],
+    features: [
+      "Adaptive programming",
+      "Expert programs",
+      "Automatic progression",
+      "Exercise demos",
+      "Substitutions",
+      "Community",
+      "Leaderboards",
+      "Wearables",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Mixed",
+    caveat:
+      "Its blend of guided strength, studio classes, and social features is broad rather than minimalist. Personalized programming and AI progression require Premium and conflict with an avoid-AI requirement.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Bodyweight",
+      "It varies",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
 ];
 
 export type CatalogEvidenceSeed = {
@@ -1228,6 +1508,105 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     notFor:
       "You want a focused strength progression system, minimal choice, or detailed set-by-set lifting analysis.",
   },
+  freeletics: {
+    planningStyle: "Let the app adapt",
+    secondaryStyles: ["Choose a proven path"],
+    choiceLoad: "Moderate",
+    continuity: "Session-adaptive",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "The Coach builds each session around goals, level, equipment, schedule, and feedback, including warm-ups, cooldowns, and recovery work.",
+    decisionsRemaining:
+      "You choose a Training Journey, report session difficulty, manage the broad mix of training modes, and decide how much to trust the AI adjustments.",
+    tradeoff:
+      "It adapts across unusually varied environments and modalities, but its abundance of journeys and modes is less singular than one fixed training philosophy.",
+    idealUser:
+      "You need workouts that can change with location, equipment, time, and energy and are comfortable letting AI shape the plan.",
+    notFor:
+      "You want an AI-free program, transparent fixed progression, or a narrowly focused barbell system.",
+  },
+  "apple-fitness-plus": {
+    planningStyle: "Choose a proven path",
+    choiceLoad: "High",
+    continuity: "Program-based",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "Trainer-led sessions supply instruction and pacing, while recommendations and Custom Plans organize selected activities into a schedule.",
+    decisionsRemaining:
+      "You choose preferred activities, trainers, duration, and equipment and determine whether the resulting mix provides enough progressive strength structure.",
+    tradeoff:
+      "It offers exceptional production and ecosystem integration at a modest price, but class variety takes precedence over rigorous strength progression.",
+    idealUser:
+      "You already use Apple devices and want polished, approachable classes and a balanced routine across several activities.",
+    notFor:
+      "You use Android, want detailed lifting analytics, or need a specialized barbell program with explicit progression rules.",
+  },
+  sweat: {
+    planningStyle: "Choose a proven path",
+    choiceLoad: "High",
+    continuity: "Program-based",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "Once selected, a trainer-authored program supplies the schedule, exercises, demonstrations, substitutions, and progression path.",
+    decisionsRemaining:
+      "You compare a large program catalog, select the best trainer and goal path, and decide when to change programs or add optional sessions.",
+    tradeoff:
+      "Its women-centered depth and life-stage coverage are unusual strengths, but choosing among many programs can recreate the selection burden WAI is meant to clarify.",
+    idealUser:
+      "You want a women-centered training community and a proven program suited to your equipment, experience, or stage of life.",
+    notFor:
+      "You want one universal system, adaptive AI, or an open-ended strength log with deep analytics.",
+  },
+  centr: {
+    planningStyle: "Let the app adapt",
+    secondaryStyles: ["Choose a proven path"],
+    choiceLoad: "Moderate",
+    continuity: "Program-based",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "Centr can select daily workouts and meals from stated goals and preferences, or provide a structured coach-authored program to follow.",
+    decisionsRemaining:
+      "You choose between the personalized daily plan and a broad program catalog and decide how much value to place on nutrition and recovery content.",
+    tradeoff:
+      "It can coordinate more of a wellness routine than a lifting-only app, but that breadth makes its core training philosophy less distinct.",
+    idealUser:
+      "You want training, food, and recovery guidance together and value variety across strength, conditioning, mobility, and wellness.",
+    notFor:
+      "You want a minimalist logbook, a narrowly defined strength system, or detailed visibility into how progression decisions are made.",
+  },
+  gravl: {
+    planningStyle: "Let the app adapt",
+    choiceLoad: "Low",
+    continuity: "Session-adaptive",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "The app plans the week, exercises, sets, repetitions, and weights around goals, recovery, history, and each gym's equipment.",
+    decisionsRemaining:
+      "You rate performance, maintain equipment and recovery inputs, accept or change substitutions, and decide whether to trust its generated progression.",
+    tradeoff:
+      "It removes substantial day-to-day strength planning and adds human support, but its logic remains an AI-mediated system rather than a transparent fixed method.",
+    idealUser:
+      "You want to enter the gym and be told exactly what to perform and lift, with automatic progression and fast logging.",
+    notFor:
+      "You avoid AI, want to study a coach-authored method, or prefer full control over exercise selection and progression.",
+  },
+  shred: {
+    planningStyle: "Let the app adapt",
+    secondaryStyles: ["Choose a proven path"],
+    choiceLoad: "Moderate",
+    continuity: "Session-adaptive",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "Expert-built cycles provide the base while AI adjusts exercise selection, weights, tempo, rest, progression, and equipment fit.",
+    decisionsRemaining:
+      "You select a training style, provide goals and equipment, respond to recommendations, and decide how much community and class content to use.",
+    tradeoff:
+      "It combines adaptive strength with unusually social and class-oriented motivation, at the cost of a busier and less singular experience.",
+    idealUser:
+      "You want personalized strength programming but stay more consistent when challenges, friends, groups, and leaderboards are part of the product.",
+    notFor:
+      "You avoid AI, dislike social fitness features, or want a quiet fixed program with minimal product surface area.",
+  },
 };
 
 export function getTrainingRelationship(appId: string): TrainingRelationship {
@@ -1479,6 +1858,84 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
     evidenceNote:
       "Live and on-demand classes, instructor model, modalities, challenges, and community are documented publicly; comparative judgments remain editorial.",
   },
+  freeletics: {
+    score: 89,
+    level: "Distinctive",
+    originalMechanics: 92,
+    productPointOfView: 90,
+    visualIdentity: 82,
+    meaningfulDifferentiation: 91,
+    defensibility: 90,
+    summary:
+      "Established a recognizable bodyweight-first digital-coach identity, then expanded its adaptive Training Journey system across gym equipment and cardio without abandoning train-anywhere flexibility.",
+    evidenceNote:
+      "AI personalization, Training Journeys, feedback adjustment, modality breadth, and community scale are documented publicly; comparative judgments remain editorial.",
+  },
+  "apple-fitness-plus": {
+    score: 91,
+    level: "Category-defining",
+    originalMechanics: 82,
+    productPointOfView: 92,
+    visualIdentity: 97,
+    meaningfulDifferentiation: 91,
+    defensibility: 96,
+    summary:
+      "Turns Apple's devices, health data, media production, music ecosystem, and family subscription model into a fitness experience competitors cannot reproduce as a standalone app.",
+    evidenceNote:
+      "Device integration, real-time metrics, content model, recommendations, Custom Plans, and family sharing are documented publicly; comparative judgments remain editorial.",
+  },
+  sweat: {
+    score: 87,
+    level: "Distinctive",
+    originalMechanics: 77,
+    productPointOfView: 93,
+    visualIdentity: 89,
+    meaningfulDifferentiation: 90,
+    defensibility: 87,
+    summary:
+      "Built a large training platform around women, recognizable trainers, life-stage programming, community, and progressive programs rather than treating women as a filter on a generic catalog.",
+    evidenceNote:
+      "Women-centered positioning, trainer roster, program breadth, pregnancy-related options, planning, and community are documented publicly; comparative judgments remain editorial.",
+  },
+  centr: {
+    score: 83,
+    level: "Distinctive",
+    originalMechanics: 78,
+    productPointOfView: 85,
+    visualIdentity: 88,
+    meaningfulDifferentiation: 84,
+    defensibility: 82,
+    summary:
+      "Presents training, meals, recovery, recognizable coaches, and equipment as one polished wellness system rather than a collection of unrelated utilities.",
+    evidenceNote:
+      "Integrated workouts, personalized plans, nutrition, recovery, coach roster, and equipment positioning are documented publicly; comparative judgments remain editorial.",
+  },
+  gravl: {
+    score: 88,
+    level: "Distinctive",
+    originalMechanics: 91,
+    productPointOfView: 90,
+    visualIdentity: 80,
+    meaningfulDifferentiation: 90,
+    defensibility: 89,
+    summary:
+      "Combines exact AI-prescribed strength sessions and loads with gym-specific equipment profiles, recovery context, wearable logging, human support, and a proprietary Strength Score.",
+    evidenceNote:
+      "Workout generation, load prescription, equipment adaptation, recovery tracking, integrations, coach support, and Strength Score are documented publicly; comparative judgments remain editorial.",
+  },
+  shred: {
+    score: 86,
+    level: "Distinctive",
+    originalMechanics: 87,
+    productPointOfView: 86,
+    visualIdentity: 84,
+    meaningfulDifferentiation: 87,
+    defensibility: 85,
+    summary:
+      "Blends coach-built strength cycles, AI progression, studio classes, equipment adaptation, and a dense social-challenge layer more deliberately than most adaptive workout generators.",
+    evidenceNote:
+      "Expert cycles, AI adjustments, training styles, equipment adaptation, groups, challenges, and leaderboards are documented publicly; comparative judgments remain editorial.",
+  },
 };
 
 export function getOriginalityProfile(appId: string): OriginalityProfile {
@@ -1702,7 +2159,16 @@ export const catalogEvidenceSeeds: CatalogEvidenceSeed[] = [
     sourceType: "Google Play",
     url: "https://play.google.com/store/apps/details?id=com.theliftleague.app",
     claimSupported:
-      "Public Android availability, a $7.99 in-app purchase listing, current maintenance, structured training and scoring features, support contact, privacy link, encryption in transit, and account-deletion availability.",
+      "Public Android availability, current maintenance, structured training and scoring features, support contact, privacy link, encryption in transit, and account-deletion availability.",
+    public: true,
+  },
+  {
+    id: "lift-league-owner-pricing-20260921",
+    appId: "lift-league",
+    sourceType: "First-party product update",
+    url: "https://theliftleague.com/",
+    claimSupported:
+      "The product owner confirmed a 30-day free trial followed by a $2.99 monthly subscription.",
     public: true,
   },
   {
@@ -1984,6 +2450,114 @@ export const catalogEvidenceSeeds: CatalogEvidenceSeed[] = [
       "Android phone, tablet, TV, and Wear OS availability; thousands of classes, activity tracking, community features, and developer data-safety disclosures.",
     public: true,
   },
+  {
+    id: "freeletics-help-free-access-20260921",
+    appId: "freeletics",
+    sourceType: "Official documentation",
+    url: "https://help.freeletics.com/hc/en-us/articles/360004928220-Is-the-app-free",
+    claimSupported:
+      "Free access includes selected signature workouts, exercises, runs, and audio sessions, while a Coach subscription supplies the personalized plan.",
+    public: true,
+  },
+  {
+    id: "freeletics-apple-store-20260921",
+    appId: "freeletics",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/freeletics-workouts-fitness/id654810212",
+    claimSupported:
+      "AI Coach personalization, feedback adjustment, Training Journeys, bodyweight and equipment-based training, free-tier boundaries, Apple-device support, and privacy disclosures.",
+    public: true,
+  },
+  {
+    id: "apple-fitness-plus-official-20260921",
+    appId: "apple-fitness-plus",
+    sourceType: "Official website",
+    url: "https://www.apple.com/apple-fitness-plus/",
+    claimSupported:
+      "Current US price and trial, twelve workout types, weekly content, recommendations, Custom Plans, device metrics, family sharing, and platform requirements.",
+    public: true,
+  },
+  {
+    id: "apple-fitness-plus-support-20260921",
+    appId: "apple-fitness-plus",
+    sourceType: "Official documentation",
+    url: "https://support.apple.com/en-us/102233",
+    claimSupported:
+      "Subscription setup and the requirement for compatible Apple devices and an Apple Account.",
+    public: true,
+  },
+  {
+    id: "sweat-official-programs-20260921",
+    appId: "sweat",
+    sourceType: "Official website",
+    url: "https://sweat.com/",
+    claimSupported:
+      "Women-centered positioning and a catalog of more than seventy progressive training programs.",
+    public: true,
+  },
+  {
+    id: "sweat-apple-store-20260921",
+    appId: "sweat",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/sweat-fitness-app-for-women/id1049234587",
+    claimSupported:
+      "Trainer-authored home and gym programs, demonstrations, substitutions, planner, community, health integration, subscription model, Apple-device availability, and privacy disclosures.",
+    public: true,
+  },
+  {
+    id: "centr-coach-official-20260921",
+    appId: "centr",
+    sourceType: "Official website",
+    url: "https://centr.com/pages/centr-coach",
+    claimSupported:
+      "Current annual offer and trial, Android and iOS availability, personalized training, programs, meal plans, progress tracking, equipment fit, and modality breadth.",
+    public: true,
+  },
+  {
+    id: "centr-apple-store-20260921",
+    appId: "centr",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/centr-strength-fitness-app/id1382530817",
+    claimSupported:
+      "Personalized daily workouts and meals, trainer-authored programs, home and gym use, HYROX training, workout duration range, Apple-device support, and privacy disclosures.",
+    public: true,
+  },
+  {
+    id: "gravl-official-overview-20260921",
+    appId: "gravl",
+    sourceType: "Official website",
+    url: "https://gravl.ai/",
+    claimSupported:
+      "AI-generated strength plans, automatic progressive overload, fast logging, equipment profiles, recovery tracking, wearable integrations, coach support, community, and Strength Score.",
+    public: true,
+  },
+  {
+    id: "gravl-apple-store-20260921",
+    appId: "gravl",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/gravl-ai-personal-trainer/id6450921637",
+    claimSupported:
+      "Exercise and load prescription, performance feedback, Apple Watch logging, exercise videos, Premium boundaries, health integrations, and privacy disclosures.",
+    public: true,
+  },
+  {
+    id: "shred-official-overview-20260921",
+    appId: "shred",
+    sourceType: "Official website",
+    url: "https://www.shred.app/",
+    claimSupported:
+      "Expert-built cycles, adaptive AI progression, equipment adjustment, strength and studio training, exercise guidance, challenges, groups, leaderboards, and community features.",
+    public: true,
+  },
+  {
+    id: "shred-official-pricing-20260921",
+    appId: "shred",
+    sourceType: "Official website",
+    url: "https://www.shred.app/pricing",
+    claimSupported:
+      "Free-tier boundaries, current monthly and annual prices, annual trial, Premium personalization, AI progression, tracking, demos, equipment customization, and watch integration.",
+    public: true,
+  },
 ];
 
-export const catalogVersion = "0.11-expanded-training-models";
+export const catalogVersion = "0.12-adaptive-and-lifestyle-cohort";
