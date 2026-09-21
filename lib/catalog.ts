@@ -599,6 +599,284 @@ export const apps: AppRecord[] = [
     verifiedSections: 7,
     totalSections: 8,
   },
+  {
+    id: "ladder",
+    name: "Ladder",
+    initials: "LD",
+    color: "#f15a24",
+    type: "Coach-led team training",
+    bestFor: "A fresh coach-built workout every day",
+    description:
+      "Pairs members with a coach-led training team that publishes progressive weekly programming with in-ear coaching, demonstrations, timers, substitutions, and community support.",
+    price: "7-day free trial / Pro $29.99 monthly or $179.99 yearly on US iOS",
+    monthlyPrice: 29.99,
+    hasUsableFreeTier: false,
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
+    platforms: ["iOS"],
+    ai: "No AI identified",
+    legit: 89,
+    goals: ["Build muscle", "Get stronger", "General fitness", "Consistency"],
+    features: [
+      "Expert programs",
+      "Progression",
+      "Exercise demos",
+      "Guided workout logging",
+      "Community",
+      "Substitutions",
+      "Wearables",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Trainer-written",
+    caveat:
+      "The strongest value comes from committing to one coach and team. Current US App Store pricing is premium, and the reviewed public listing supports iPhone and Apple Watch rather than Android.",
+    deliversCompleteProgram: true,
+    programLibrary: false,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Bodyweight",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "juggernaut-ai",
+    name: "JuggernautAI",
+    initials: "JAI",
+    color: "#b21f2d",
+    type: "Adaptive strength program",
+    bestFor: "AI-guided powerlifting and powerbuilding",
+    description:
+      "Builds an individualized powerlifting or powerbuilding program, then adjusts volume, frequency, exercise selection, periodization, and session demands from readiness and performance feedback.",
+    price: "2-week free trial / $34.99 monthly or $349.99 yearly",
+    monthlyPrice: 34.99,
+    hasUsableFreeTier: false,
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
+    platforms: ["Android", "iOS"],
+    ai: "AI central",
+    legit: 86,
+    goals: ["Build muscle", "Get stronger", "Powerlifting"],
+    features: [
+      "Adaptive programming",
+      "Automatic progression",
+      "Readiness feedback",
+      "Exercise demos",
+      "Detailed analytics",
+      "Community",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "AI-generated",
+    caveat:
+      "It is expensive and narrowly centered on powerlifting and powerbuilding. The program depends on frequent subjective feedback and conflicts with an avoid-AI requirement.",
+    deliversCompleteProgram: true,
+    programLibrary: false,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: ["Commercial gym", "Home gym", "Barbell and plates"],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "trainheroic",
+    name: "TrainHeroic",
+    initials: "TH",
+    color: "#ff6b00",
+    type: "Coach and program marketplace",
+    bestFor: "Buying expert programs or training with a team",
+    description:
+      "Combines strength logging and planning with a marketplace of one-time programs, ongoing team subscriptions, and direct coach-delivered training.",
+    price: "Free app / Athlete Pro $4.99 monthly; programs and teams priced separately",
+    monthlyPrice: null,
+    hasUsableFreeTier: true,
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
+    platforms: ["Android", "iOS", "Web"],
+    ai: "No AI identified",
+    legit: 85,
+    goals: ["Build muscle", "Get stronger", "Powerlifting", "General fitness"],
+    features: [
+      "Expert programs",
+      "Custom workouts",
+      "Fast logging",
+      "Detailed analytics",
+      "Community",
+      "Leaderboards",
+      "Human coaching",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Mixed",
+    caveat:
+      "The app itself can be used as a tracker, but meaningful program access is sold separately by individual coaches. Quality, duration, trial terms, and price vary substantially across the marketplace.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Barbell and plates",
+      "Bodyweight",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "nike-training-club",
+    name: "Nike Training Club",
+    initials: "NTC",
+    color: "#111111",
+    type: "Free workout library",
+    bestFor: "Free trainer-led general fitness",
+    description:
+      "Offers a large free library of trainer-led strength, conditioning, yoga, Pilates, mobility, and recovery workouts plus guided multi-week programs for home or gym.",
+    price: "Free with a Nike Member account",
+    monthlyPrice: 0,
+    hasUsableFreeTier: true,
+    freeTierCapabilities: {
+      completeProgram: true,
+      adaptiveProgramming: false,
+      programLibrary: true,
+    },
+    platforms: ["Android", "iOS"],
+    ai: "No AI identified",
+    legit: 88,
+    goals: ["Build muscle", "Get stronger", "General fitness", "Consistency", "Learn resistance training"],
+    features: [
+      "Expert programs",
+      "Exercise demos",
+      "Workout videos",
+      "Bodyweight training",
+      "Mobility",
+      "Health integration",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Trainer-written",
+    caveat:
+      "Its breadth is excellent for accessible general fitness but requires browsing among many modalities and individual sessions. It is less focused on detailed strength logging and long-term barbell progression.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Bodyweight",
+      "It varies",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "future",
+    name: "Future",
+    initials: "FU",
+    color: "#5b47ff",
+    type: "One-to-one remote coaching",
+    bestFor: "Personalized training with human accountability",
+    description:
+      "Pairs members with a dedicated human coach who builds a custom program, monitors progress, communicates directly, and adjusts training around goals, schedule, experience, and lifestyle.",
+    price: "$199 monthly",
+    monthlyPrice: 199,
+    hasUsableFreeTier: false,
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
+    platforms: ["iOS"],
+    ai: "No AI identified",
+    legit: 86,
+    goals: ["Build muscle", "Get stronger", "General fitness", "Consistency", "Learn resistance training"],
+    features: [
+      "Human coaching",
+      "Adaptive programming",
+      "Built-in motivation",
+      "Exercise demos",
+      "Wearables",
+      "Health integration",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Trainer-written",
+    caveat:
+      "The dedicated-coach model provides unusually high accountability but costs far more than a typical fitness-app subscription. The reviewed public listing supports iPhone and Apple Watch.",
+    deliversCompleteProgram: true,
+    programLibrary: false,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Barbell and plates",
+      "Bodyweight",
+      "It varies",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
+  {
+    id: "peloton-app",
+    name: "Peloton App",
+    initials: "P",
+    color: "#df1c2f",
+    type: "Instructor-led class library",
+    bestFor: "High-energy classes across many modalities",
+    description:
+      "Provides thousands of live and on-demand instructor-led classes spanning strength, running, cycling, yoga, Pilates, HIIT, meditation, and mobility, with scheduling, stacks, challenges, and community.",
+    price: "Limited free access / App One $15.99 monthly; App+ $28.99 monthly on US iOS",
+    monthlyPrice: 15.99,
+    hasUsableFreeTier: true,
+    freeTierCapabilities: {
+      completeProgram: false,
+      adaptiveProgramming: false,
+      programLibrary: false,
+    },
+    platforms: ["Android", "iOS", "Web"],
+    ai: "No AI identified",
+    legit: 89,
+    goals: ["Build muscle", "General fitness", "Consistency"],
+    features: [
+      "Workout videos",
+      "Community",
+      "Leaderboards",
+      "Built-in motivation",
+      "Wearables",
+      "Health integration",
+    ],
+    level: ["Beginner", "Intermediate", "Advanced"],
+    authorship: "Trainer-written",
+    caveat:
+      "Its breadth and production quality are strengths, but users still choose among thousands of classes. Access tiers differ, and the experience is less suited to detailed strength progression than a dedicated lifting system.",
+    deliversCompleteProgram: false,
+    programLibrary: true,
+    adaptiveProgramming: false,
+    supportedTrainingEnvironments: [
+      "Commercial gym",
+      "Home gym",
+      "Dumbbells only",
+      "Bodyweight",
+      "It varies",
+    ],
+    researchStatus: "Researching",
+    verifiedSections: 7,
+    totalSections: 8,
+  },
 ];
 
 export type CatalogEvidenceSeed = {
@@ -851,6 +1129,105 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     notFor:
       "You are brand new to lifting or want a simple general-purpose workout logger.",
   },
+  ladder: {
+    planningStyle: "Follow a complete path",
+    secondaryStyles: ["Choose a proven path"],
+    choiceLoad: "Low",
+    continuity: "Program-based",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "After you choose a coach and team, the weekly plan, daily workout, pacing, demonstrations, and progression are supplied for you.",
+    decisionsRemaining:
+      "You choose the team that best fits your goals, manage team changes, select substitutions, and decide how closely to follow the weekly schedule.",
+    tradeoff:
+      "It combines the energy of an ongoing coach-led team with low daily decision-making, but its experience depends heavily on choosing the right coach and accepting that coach's style.",
+    idealUser:
+      "You want a fresh strength workout waiting each day, value coaching personality and community, and prefer following a team over writing a program.",
+    notFor:
+      "You want Android support, detailed self-programming tools, or a fixed long-term system that does not change with a coach's weekly plan.",
+  },
+  "juggernaut-ai": {
+    planningStyle: "Let the app adapt",
+    choiceLoad: "Low",
+    continuity: "Session-adaptive",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "The system builds periodization, volume, frequency, weak-point exercise selection, and workout adjustments around your profile and readiness feedback.",
+    decisionsRemaining:
+      "You choose powerlifting or powerbuilding, training frequency, priorities, and exercises where permitted, then provide accurate readiness and performance feedback.",
+    tradeoff:
+      "It automates specialized strength programming with far more sport specificity than a general generator, but requires trust in an expensive AI-centered system.",
+    idealUser:
+      "You care primarily about powerlifting or powerbuilding and want an adaptive program without hiring a one-to-one coach.",
+    notFor:
+      "You avoid AI, want a low-cost subscription, or prefer general fitness and broad workout variety.",
+  },
+  trainheroic: {
+    planningStyle: "Choose a proven path",
+    secondaryStyles: ["Build it yourself", "Just log the work"],
+    choiceLoad: "High",
+    continuity: "Program-based",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "A purchased program, team, or coach can supply the training calendar, demonstrations, community, and progression context.",
+    decisionsRemaining:
+      "You must decide whether to self-program, buy a static plan, join an ongoing team, or work with a coach—and evaluate the quality and price of individual sellers.",
+    tradeoff:
+      "The marketplace can connect almost any athlete to expert programming, but the platform cannot eliminate the work of choosing which coach or product to trust.",
+    idealUser:
+      "You want access to specialist coaches and programs across strength sports and are comfortable shopping among independently priced options.",
+    notFor:
+      "You want one obvious training path, one predictable subscription price, or a tightly curated catalog.",
+  },
+  "nike-training-club": {
+    planningStyle: "Choose a proven path",
+    choiceLoad: "High",
+    continuity: "Program-based",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "Trainer-led videos, demonstrations, individual workouts, and multi-week programs remove the need to invent each session.",
+    decisionsRemaining:
+      "You choose among many modalities and sessions, schedule the work, and decide how separate workouts fit into a longer-term goal.",
+    tradeoff:
+      "It provides unusually broad, polished training content for free, but breadth and flexibility replace the clarity of one opinionated strength system.",
+    idealUser:
+      "You want free, approachable workouts across strength, conditioning, mobility, and wellness for home or gym.",
+    notFor:
+      "You want deep barbell logging, a narrow strength specialization, or one continuous system with minimal browsing.",
+  },
+  future: {
+    planningStyle: "Let the app adapt",
+    secondaryStyles: ["Follow a complete path"],
+    choiceLoad: "Low",
+    continuity: "Session-adaptive",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "A dedicated human coach handles program design, ongoing adjustments, accountability, and much of the interpretation of your progress and schedule.",
+    decisionsRemaining:
+      "You communicate honestly with the coach, complete the work, manage the relationship, and decide whether the accountability justifies the premium price.",
+    tradeoff:
+      "It offers the most personal guidance in this cohort, but at a price closer to a service relationship than a normal app subscription.",
+    idealUser:
+      "You want a real person to build and adjust your training and consider accountability worth substantially more than software alone.",
+    notFor:
+      "You want a low-cost app, Android support, self-directed control, or an impersonal tool that stays out of the way.",
+  },
+  "peloton-app": {
+    planningStyle: "Choose a proven path",
+    choiceLoad: "High",
+    continuity: "User-directed",
+    customization: "Guided flexibility",
+    decisionsRemoved:
+      "Each class supplies instruction, pacing, music, demonstrations, and motivation, while scheduling and stacks organize selected sessions.",
+    decisionsRemaining:
+      "You choose modality, instructor, class, duration, schedule, and how thousands of sessions combine into a coherent progression plan.",
+    tradeoff:
+      "It delivers exceptional instructor energy and content variety, but the user still acts as curator and long-term program designer.",
+    idealUser:
+      "You are motivated by instructors, music, live energy, challenges, and switching among multiple fitness modalities.",
+    notFor:
+      "You want a focused strength progression system, minimal choice, or detailed set-by-set lifting analysis.",
+  },
 };
 
 export function getTrainingRelationship(appId: string): TrainingRelationship {
@@ -1023,6 +1400,84 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
       "Turns a specific autoregulated hypertrophy methodology into software that adjusts volume, load, reps, fatigue, and deloads from lifter feedback.",
     evidenceNote:
       "The feedback-driven system is documented publicly; comparative identity and defensibility judgments remain editorial.",
+  },
+  ladder: {
+    score: 88,
+    level: "Distinctive",
+    originalMechanics: 89,
+    productPointOfView: 92,
+    visualIdentity: 82,
+    meaningfulDifferentiation: 91,
+    defensibility: 87,
+    summary:
+      "Turns a coach-led team, progressive weekly plan, community, and in-ear instruction into a daily strength experience that feels closer to joining a training room than browsing videos.",
+    evidenceNote:
+      "Coach teams, weekly programming, in-ear guidance, substitutions, and community are documented publicly; comparative judgments remain editorial.",
+  },
+  "juggernaut-ai": {
+    score: 90,
+    level: "Category-defining",
+    originalMechanics: 94,
+    productPointOfView: 95,
+    visualIdentity: 76,
+    meaningfulDifferentiation: 94,
+    defensibility: 92,
+    summary:
+      "Encodes a recognizable powerlifting and powerbuilding methodology into an adaptive system driven by readiness, weak points, volume landmarks, and periodization.",
+    evidenceNote:
+      "The individualized strength methodology and feedback-driven adjustments are documented publicly; comparative identity judgments remain editorial.",
+  },
+  trainheroic: {
+    score: 82,
+    level: "Distinctive",
+    originalMechanics: 84,
+    productPointOfView: 82,
+    visualIdentity: 70,
+    meaningfulDifferentiation: 88,
+    defensibility: 88,
+    summary:
+      "Combines athlete logging, coach delivery, ongoing teams, static programs, commerce, and community into infrastructure for an open strength-coaching market.",
+    evidenceNote:
+      "Marketplace, coaching, team, program, and logging models are documented publicly; comparative judgments remain editorial.",
+  },
+  "nike-training-club": {
+    score: 76,
+    level: "Distinctive",
+    originalMechanics: 62,
+    productPointOfView: 78,
+    visualIdentity: 90,
+    meaningfulDifferentiation: 74,
+    defensibility: 82,
+    summary:
+      "Its differentiation comes less from a novel training mechanism than from making a large, polished, globally recognized trainer-led library free to Nike members.",
+    evidenceNote:
+      "Free access, program breadth, trainer-led content, and platform reach are documented publicly; originality judgments remain editorial.",
+  },
+  future: {
+    score: 91,
+    level: "Category-defining",
+    originalMechanics: 91,
+    productPointOfView: 94,
+    visualIdentity: 84,
+    meaningfulDifferentiation: 95,
+    defensibility: 92,
+    summary:
+      "Uses software as the operating layer for a dedicated human coaching relationship rather than presenting automation as a substitute for the coach.",
+    evidenceNote:
+      "Dedicated-coach programming, monitoring, communication, accountability, and price are documented publicly; comparative judgments remain editorial.",
+  },
+  "peloton-app": {
+    score: 90,
+    level: "Category-defining",
+    originalMechanics: 86,
+    productPointOfView: 92,
+    visualIdentity: 95,
+    meaningfulDifferentiation: 91,
+    defensibility: 94,
+    summary:
+      "Makes instructor personality, music, live participation, polished production, challenges, and shared class culture the central fitness product.",
+    evidenceNote:
+      "Live and on-demand classes, instructor model, modalities, challenges, and community are documented publicly; comparative judgments remain editorial.",
   },
 };
 
@@ -1421,6 +1876,114 @@ export const catalogEvidenceSeeds: CatalogEvidenceSeed[] = [
       "Android availability, personalized progression, feedback-driven weekly adjustment, premade plans, custom mesocycle builder, and privacy disclosures.",
     public: true,
   },
+  {
+    id: "ladder-official-overview-20260921",
+    appId: "ladder",
+    sourceType: "Official website",
+    url: "https://www.joinladder.com/",
+    claimSupported:
+      "Coach-led teams, progressive strength programming, team matching, home and gym support, and the no-card seven-day trial.",
+    public: true,
+  },
+  {
+    id: "ladder-apple-store-20260921",
+    appId: "ladder",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/ladder-strength-training-plans/id1502936453",
+    claimSupported:
+      "iPhone and Apple Watch availability, daily coach-built plans, in-ear guidance, substitutions, progress journal, privacy disclosures, and current US purchases.",
+    public: true,
+  },
+  {
+    id: "juggernaut-pricing-20260921",
+    appId: "juggernaut-ai",
+    sourceType: "Official website",
+    url: "https://www.juggernautai.app/pricing",
+    claimSupported:
+      "Two-week trial, current monthly and annual prices, individualized powerlifting and powerbuilding plans, feedback adjustment, videos, and community.",
+    public: true,
+  },
+  {
+    id: "juggernaut-google-play-20260921",
+    appId: "juggernaut-ai",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.jtsstrength.juggernautai",
+    claimSupported:
+      "Android availability and individualized volume, frequency, periodization, weak-point exercise selection, readiness feedback, and current maintenance.",
+    public: true,
+  },
+  {
+    id: "trainheroic-marketplace-20260921",
+    appId: "trainheroic",
+    sourceType: "Official marketplace",
+    url: "https://marketplace.trainheroic.com/",
+    claimSupported:
+      "Independently priced static programs and ongoing subscriptions across strength, powerlifting, weightlifting, conditioning, and other specialties.",
+    public: true,
+  },
+  {
+    id: "trainheroic-google-play-20260921",
+    appId: "trainheroic",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.TrainHeroic.TrainHeroic",
+    claimSupported:
+      "Android availability, logging, planning, custom sessions, readiness insights, professional coaching, progress graphs, leaderboards, timers, and data-safety disclosures.",
+    public: true,
+  },
+  {
+    id: "nike-training-club-official-20260921",
+    appId: "nike-training-club",
+    sourceType: "Official website",
+    url: "https://www.nike.com/help/a/ntc-info/app",
+    claimSupported:
+      "Free trainer-led classes, circuit workouts, multi-week programs, and guidance spanning training and wellness.",
+    public: true,
+  },
+  {
+    id: "nike-training-club-google-play-20260921",
+    appId: "nike-training-club",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.nike.ntc",
+    claimSupported:
+      "Android availability, free Nike Member access, strength, conditioning, yoga, Pilates, recovery, activity tracking, Google Fit, and data-safety disclosures.",
+    public: true,
+  },
+  {
+    id: "future-apple-store-20260921",
+    appId: "future",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/future-pro-personal-training/id1288178982",
+    claimSupported:
+      "iPhone and Apple Watch availability, dedicated human coach matching, custom programming, progress monitoring, accountability, current $199 monthly price, and privacy disclosures.",
+    public: true,
+  },
+  {
+    id: "future-official-overview-20260921",
+    appId: "future",
+    sourceType: "Official website",
+    url: "https://www.future.co/",
+    claimSupported:
+      "Dedicated remote personal coaching, individualized programming, communication, accountability, and wearable-supported activity context.",
+    public: true,
+  },
+  {
+    id: "peloton-apple-store-20260921",
+    appId: "peloton-app",
+    sourceType: "Apple App Store",
+    url: "https://apps.apple.com/us/app/peloton-fitness-workouts/id792750948",
+    claimSupported:
+      "Live and on-demand instructor-led classes, broad modalities, scheduling, stacks, challenges, Apple-device support, current US membership prices, and privacy disclosures.",
+    public: true,
+  },
+  {
+    id: "peloton-google-play-20260921",
+    appId: "peloton-app",
+    sourceType: "Google Play",
+    url: "https://play.google.com/store/apps/details?id=com.onepeloton.callisto",
+    claimSupported:
+      "Android phone, tablet, TV, and Wear OS availability; thousands of classes, activity tracking, community features, and developer data-safety disclosures.",
+    public: true,
+  },
 ];
 
-export const catalogVersion = "0.10-tll-first-party-audit";
+export const catalogVersion = "0.11-expanded-training-models";
