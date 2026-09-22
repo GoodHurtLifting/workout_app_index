@@ -65,6 +65,12 @@ export function exclusionReasons(
   const needsPaidAccess = requestedExperienceNeedsPaidAccess(app, answers);
   if (answers.budget === "Free only" && needsPaidAccess)
     reasons.push("The requested experience is not available in the free tier");
+  if (
+    answers.budget === "One-time purchase" &&
+    needsPaidAccess &&
+    app.supportsOneTimePurchase !== true
+  )
+    reasons.push("The requested experience requires a recurring subscription");
   const ceiling = budgetCeiling[answers.budget];
   if (
     ceiling &&
