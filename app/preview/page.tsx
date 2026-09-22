@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   ArrowRight,
   Check,
@@ -159,13 +160,11 @@ function AppCard({
   score,
   selected,
   onCompare,
-  onProfile,
 }: {
   app: AppRecord;
   score?: number;
   selected: boolean;
   onCompare: () => void;
-  onProfile: () => void;
 }) {
   return (
     <article className="app-card">
@@ -218,8 +217,13 @@ function AppCard({
           {selected ? <Check /> : null}
           {selected ? "Added" : "Compare"}
         </Button>
-        <Button variant="ghost" onClick={onProfile}>
-          View profile <ChevronRight />
+        <Button variant="ghost" asChild>
+          <Link
+            href={`/apps/${app.id}`}
+            onClick={() => trackEvent("view_app_profile", { app_id: app.id })}
+          >
+            View profile <ChevronRight />
+          </Link>
         </Button>
       </div>
     </article>
@@ -271,7 +275,7 @@ export default function Home() {
   const [featureFilter, setFeatureFilter] = useState("All");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [compare, setCompare] = useState<string[]>([]);
-  const [profileId, setProfileId] = useState("boostcamp");
+  const profileId = "boostcamp";
   // Both calculations intentionally rerun when the asynchronously published catalog changes.
   const ranked = useMemo(
     () =>
@@ -353,11 +357,6 @@ export default function Home() {
       page_title: `Workout App Index - ${next}`,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-  const openProfile = (id: string) => {
-    setProfileId(id);
-    trackEvent("view_app_profile", { app_id: id });
-    navigate("profile");
   };
   const answer = (value: string) => {
     const q = questions[step];
@@ -496,9 +495,14 @@ export default function Home() {
                   <strong>{heroFeatured.legit}</strong>
                 </span>
                 <span>AI: {heroFeatured.ai}</span>
-                <button onClick={() => openProfile(heroFeatured.id)}>
+                <Link
+                  href={`/apps/${heroFeatured.id}`}
+                  onClick={() =>
+                    trackEvent("view_app_profile", { app_id: heroFeatured.id })
+                  }
+                >
                   View profile <ChevronRight />
-                </button>
+                </Link>
               </div>
             </div>
           </section>
@@ -645,7 +649,6 @@ export default function Home() {
                   score={score}
                   selected={compare.includes(app.id)}
                   onCompare={() => toggleCompare(app.id)}
-                  onProfile={() => openProfile(app.id)}
                 />
               ))}
             </div>
@@ -682,8 +685,15 @@ export default function Home() {
                         <li key={reason}>{reason}</li>
                       ))}
                     </ul>
-                    <Button variant="outline" onClick={() => openProfile(app.id)}>
-                      View profile <ChevronRight />
+                    <Button variant="outline" asChild>
+                      <Link
+                        href={`/apps/${app.id}`}
+                        onClick={() =>
+                          trackEvent("view_app_profile", { app_id: app.id })
+                        }
+                      >
+                        View profile <ChevronRight />
+                      </Link>
                     </Button>
                   </article>
                 ))}
@@ -747,7 +757,6 @@ export default function Home() {
                   app={app}
                   selected={compare.includes(app.id)}
                   onCompare={() => toggleCompare(app.id)}
-                  onProfile={() => openProfile(app.id)}
                 />
               ))}
             </div>
