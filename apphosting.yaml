@@ -6,6 +6,11 @@ runConfig:
   memoryMiB: 512
 
 env:
+  - variable: NEXT_PUBLIC_ADSENSE_CLIENT_ID
+    value: ca-pub-6124878930933444
+    availability:
+      - BUILD
+      - RUNTIME
   - variable: CATALOG_ADMIN_EMAIL
     value: ryan@theliftleague.com
     availability:

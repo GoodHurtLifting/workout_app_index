@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -33,6 +33,7 @@ import {
 } from "@/lib/catalog";
 import { exclusionReasons, fitScore } from "@/lib/matching";
 import { openAnalyticsPreferences, trackEvent } from "@/lib/analytics";
+import { AdSlot } from "@/components/ad-slot";
 
 const questions = [
   {
@@ -553,6 +554,7 @@ export default function Home() {
               </button>
             </div>
           </section>
+          <AdSlot placement="home" />
           <section className="category-strip">
             <p>POPULAR STARTING POINTS</p>
             <div>
@@ -751,13 +753,15 @@ export default function Home() {
           </div>
           {filtered.length ? (
             <div className="result-grid">
-              {filtered.map((app) => (
-                <AppCard
-                  key={app.id}
-                  app={app}
-                  selected={compare.includes(app.id)}
-                  onCompare={() => toggleCompare(app.id)}
-                />
+              {filtered.map((app, index) => (
+                <Fragment key={app.id}>
+                  <AppCard
+                    app={app}
+                    selected={compare.includes(app.id)}
+                    onCompare={() => toggleCompare(app.id)}
+                  />
+                  {index === 5 ? <AdSlot placement="browse" /> : null}
+                </Fragment>
               ))}
             </div>
           ) : (
@@ -1154,10 +1158,26 @@ export default function Home() {
               browser, approximate-location, and usage information under its own
               terms. Analytics remains off when you decline.
             </p>
+            <h2>Advertising</h2>
+            <p>
+              Google AdSense may show clearly labeled ads on selected pages to
+              help keep the site free. Google and its partners may use cookies
+              or similar technologies for ad delivery and measurement. Ads do
+              not influence app scores, rankings, or inclusion. Where required,
+              an advertising consent message lets you manage those choices.
+            </p>
+            <h2>Editorial submissions</h2>
+            <p>
+              If you submit an app or request a correction, we store the
+              information you provide in a private review queue. We use your
+              contact details to evaluate the request and follow up if needed.
+              Submissions are not published automatically.
+            </p>
             <h2>Your choice</h2>
             <p>
-              Your analytics preference is stored in your browser. You can
-              change it at any time; declining does not limit the site.
+              Your analytics preference is stored in your browser and applies
+              to Analytics, not to advertising. You can change it at any time;
+              declining Analytics does not limit the site.
             </p>
             <Button variant="outline" onClick={openAnalyticsPreferences}>
               Change analytics preference
@@ -1167,7 +1187,7 @@ export default function Home() {
               Questions or correction requests can be sent to Turf King LLC at
               ryan@theliftleague.com.
             </p>
-            <p className="privacy-updated">Last updated: September 19, 2026</p>
+            <p className="privacy-updated">Last updated: September 23, 2026</p>
           </div>
         </section>
       )}
@@ -1264,8 +1284,9 @@ export default function Home() {
         <p>Compare the apps. Find your fit.</p>
         <div>
           <button onClick={() => navigate("method")}>How we score</button>
-          <button>Editorial standards</button>
-          <button>Corrections</button>
+          <Link href="/editorial-standards">Editorial standards</Link>
+          <Link href="/corrections">Corrections</Link>
+          <Link href="/submit-app">Submit an app</Link>
           <button onClick={() => navigate("privacy")}>Privacy</button>
         </div>
         <small>

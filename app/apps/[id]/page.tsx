@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { apps, getOriginalityProfile, getTrainingRelationship } from "@/lib/catalog";
+import { AdSlot } from "@/components/ad-slot";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -37,8 +38,10 @@ export default async function AppProfilePage({ params }: Props) {
         <article className="relationship-card"><p className="eyebrow">HOW THIS APP EXPECTS YOU TO TRAIN</p><div className="relationship-summary"><div><span>Planning</span><strong>{relationship.planningStyle}</strong></div><div><span>Choice load</span><strong>{relationship.choiceLoad}</strong></div><div><span>Continuity</span><strong>{relationship.continuity}</strong></div><div><span>Customization</span><strong>{relationship.customization}</strong></div></div><div className="relationship-decisions"><div><h3>Decisions it makes easier</h3><p>{relationship.decisionsRemoved}</p></div><div><h3>Decisions you still own</h3><p>{relationship.decisionsRemaining}</p></div><div><h3>The tradeoff</h3><p>{relationship.tradeoff}</p></div></div><div className="relationship-fit"><div><h3>This may sound like you</h3><p>{relationship.idealUser}</p></div><div><h3>Probably not your fit</h3><p>{relationship.notFor}</p></div></div></article>
         <article className="quality-card"><p className="eyebrow">ORIGINALITY &amp; IDENTITY</p><h2>{originality.score}/100 · {originality.level}</h2><p>{originality.summary}</p><small className="evidence-note">{originality.evidenceNote}</small></article>
       </div>
+      <AdSlot placement="profile" />
       <section className="related-apps"><p className="eyebrow">RELATED OPTIONS</p><h2>Compare nearby fits</h2><div>{related.map((candidate) => <Link href={`/apps/${candidate.id}`} key={candidate.id}><strong>{candidate.name}</strong><span>{candidate.bestFor}</span></Link>)}</div></section>
       <div className="verification-note"><strong>Research status: {app.researchStatus}</strong><p>{app.verifiedSections} of {app.totalSections} research sections currently have evidence.</p></div>
+      <nav className="public-information-links" aria-label="Editorial information"><Link href="/editorial-standards">Editorial standards</Link><Link href="/corrections">Suggest a correction</Link><Link href="/submit-app">Submit an app</Link></nav>
     </section>
   </main>;
 }

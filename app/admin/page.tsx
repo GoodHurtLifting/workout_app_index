@@ -3,7 +3,8 @@ import { Check, ChevronRight, LogOut } from "lucide-react";
 import { catalogVersion } from "@/lib/catalog";
 import { requireCatalogAdmin } from "@/lib/admin-auth";
 import { listCatalogRecords, listPublications } from "@/lib/catalog-repository";
-import { importPreliminaryCatalog, publishApprovedCatalog } from "./actions";
+import { listEditorialRequests } from "@/lib/editorial-requests";
+import { importPreliminaryCatalog, markEditorialRequestReviewed, publishApprovedCatalog } from "./actions";
 import "./admin.css";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +13,7 @@ export default async function AdminPage() {
   const user = await requireCatalogAdmin("/admin");
   const apps = await listCatalogRecords();
   const publications = await listPublications();
+  const editorialRequests = await listEditorialRequests();
   const ready = apps.filter(app => ["Evaluation ready", "Reviewed"].includes(app.researchStatus)).length;
   const verified = apps.reduce((sum, app) => sum + app.verifiedSections, 0);
   const total = apps.reduce((sum, app) => sum + app.totalSections, 0);
@@ -21,6 +23,33 @@ export default async function AdminPage() {
     <div className="admin-head"><div><p className="eyebrow">INTERNAL CATALOG · {catalogVersion}</p><h1>Research dashboard</h1><p>The operating surface for building a trustworthy public index.</p></div><form action={importPreliminaryCatalog}><button className="admin-primary" type="submit">Import preliminary catalog</button></form></div>
     <div className="admin-stats"><article><span>{apps.length}</span><p>Candidate profiles</p></article><article><span>{ready}</span><p>Ready to publish</p></article><article><span>{apps.length-ready}</span><p>Need verification</p></article><article><span>{verified}/{total}</span><p>Sections verified</p></article></div>
     <div className="admin-work"><div className="admin-list"><div className="admin-list-head"><h2>App evaluations</h2><span>Research state</span></div>{apps.map(app=><Link className="admin-row" href={`/admin/apps/${app.id}`} key={app.id}><span className="app-logo" style={{background:app.color}}>{app.initials}</span><span><strong>{app.name}</strong><small>{app.type}</small></span><i className={app.researchStatus.toLowerCase().replace(" ","-")}>{app.researchStatus}</i><span className="freshness">{app.verifiedSections} of {app.totalSections} sections</span><ChevronRight/></Link>)}</div><aside><p className="eyebrow">PUBLISHING GATE</p><h2>Nothing goes public by accident.</h2><ul><li><Check/> Platforms and access checked</li><li><Check/> Pricing dated and sourced</li><li><Check/> AI status classified</li><li><Check/> Feature evidence attached</li><li><Check/> Legit Score reviewed</li><li><Check/> Disclosures complete</li></ul><p>Only records marked Reviewed and backed by evidence enter a public snapshot.</p><form action={publishApprovedCatalog}><button className="publish-button" type="submit" disabled={!apps.some(app=>app.researchStatus==="Reviewed")}>Publish approved catalog</button></form></aside></div>
+    <section className="editorial-inbox">
+      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>App submissions and corrections</h2></div>
+      {editorialRequests.length ? editorialRequests.map((request) => (
+        <article key={request.id}>
+          <div className="editorial-inbox-heading">
+            <strong>{request.kind === "app" ? `App submission: ${request.appName}` : "Correction request"}</strong>
+            <span>{request.status} · {new Date(request.createdAt).toLocaleDateString("en-US")}</span>
+          </div>
+          <p>From {request.name} · <a href={`mailto:${request.email}`}>{request.email}</a></p>
+          <p>{request.details}</p>
+          {request.kind === "app" ? (
+            <div className="editorial-inbox-details">
+              <span>Price: {request.pricing}</span><span>Availability: {request.availability}</span>
+              <a href={request.websiteUrl} target="_blank" rel="noopener noreferrer">Website</a>
+              {request.storeUrl ? <a href={request.storeUrl} target="_blank" rel="noopener noreferrer">Store listing</a> : null}
+              <a href={request.privacyUrl} target="_blank" rel="noopener noreferrer">Privacy policy</a>
+            </div>
+          ) : (
+            <div className="editorial-inbox-details">
+              <a href={request.pageUrl} target="_blank" rel="noopener noreferrer">Page to correct</a>
+              <a href={request.sourceUrl} target="_blank" rel="noopener noreferrer">Source</a>
+            </div>
+          )}
+          {request.status === "new" ? <form action={markEditorialRequestReviewed}><input type="hidden" name="id" value={request.id}/><button type="submit">Mark reviewed</button></form> : null}
+        </article>
+      )) : <p>No submissions yet.</p>}
+    </section>
     <section className="publication-history"><div><p className="eyebrow">PUBLICATION HISTORY</p><h2>Versioned catalog snapshots</h2></div>{publications.length?<div>{publications.map(item=><article key={item.id}><strong>{item.catalog_version}</strong><span>{new Date(item.published_at).toLocaleString("en-US")}</span><small>Fit {item.fit_methodology_version} · Legit {item.legit_methodology_version}</small></article>)}</div>:<p>No catalog snapshots published yet.</p>}</section>
   </main>;
 }

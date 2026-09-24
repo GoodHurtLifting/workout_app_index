@@ -11,6 +11,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1,
     },
+    ...["editorial-standards", "corrections", "submit-app"].map((path) => ({
+      url: `${baseUrl}/${path}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    })),
     ...apps.map((app) => ({
       url: `${baseUrl}/apps/${app.id}`,
       lastModified: new Date(),

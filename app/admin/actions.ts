@@ -3,9 +3,22 @@
 import { revalidatePath } from "next/cache";
 import { apps, catalogEvidenceSeeds, type AiStatus, type AppRecord, type ResearchStatus } from "@/lib/catalog";
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
+import { getAdminFirestore } from "@/lib/firebase-admin";
 import { getCatalogRecord, listAllEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveEvidence, savePublication } from "@/lib/catalog-repository";
 
 const splitList=(value:FormDataEntryValue|null)=>String(value??"").split(",").map(item=>item.trim()).filter(Boolean);
+
+export async function markEditorialRequestReviewed(formData: FormData) {
+  const user = await getCatalogAdminForAction();
+  const id = String(formData.get("id") ?? "").trim();
+  if (!/^[A-Za-z0-9]{20}$/.test(id)) throw new Error("Invalid request");
+  await getAdminFirestore().collection("editorialRequests").doc(id).update({
+    status: "reviewed",
+    reviewedAt: Date.now(),
+    reviewedBy: user.userId,
+  });
+  revalidatePath("/admin");
+}
 
 export async function importPreliminaryCatalog(){
   const user=await getCatalogAdminForAction(); const now=Date.now();

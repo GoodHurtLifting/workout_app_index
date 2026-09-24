@@ -33,9 +33,6 @@ export function AnalyticsConsent() {
     window.localStorage.setItem(STORAGE_KEY, nextChoice);
     window.gtag?.("consent", "update", {
       analytics_storage: nextChoice,
-      ad_storage: "denied",
-      ad_user_data: "denied",
-      ad_personalization: "denied",
     });
     setChoice(nextChoice);
   };
@@ -55,10 +52,7 @@ export function AnalyticsConsent() {
 function gtag(){dataLayer.push(arguments);}
 window.gtag = gtag;
 gtag('consent', 'default', {
-  analytics_storage: 'granted',
-  ad_storage: 'denied',
-  ad_user_data: 'denied',
-  ad_personalization: 'denied'
+  analytics_storage: 'granted'
 });
 gtag('js', new Date());
 gtag('config', '${measurementId}', { anonymize_ip: true });`}
