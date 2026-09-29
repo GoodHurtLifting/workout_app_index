@@ -121,7 +121,7 @@ export function fitScore(
     score += 20;
   const relationship = getTrainingRelationship(app.id);
   const planningMatches: Record<string, typeof relationship.planningStyle> = {
-    "Show me the next workout—no decisions needed": "Follow a complete path",
+    "Show me the next workout, with no decisions needed": "Follow a complete path",
     "Give me a few proven programs to choose from": "Choose a proven path",
     "Adjust the workout based on my recent training": "Let the app adapt",
     "Let me build exactly what I want": "Build it yourself",

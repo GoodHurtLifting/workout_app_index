@@ -4,6 +4,15 @@ export type AiStatus =
 export type ResearchStatus =
   "Candidate" | "Researching" | "Evaluation ready" | "Reviewed";
 
+export type PersonAssociation = {
+  name: string;
+  aliases: string[];
+  role: "Creator" | "Founder" | "Trainer" | "Program author" | "Featured athlete";
+  relationship: string;
+  sourceUrl: string;
+  checkedAt: string;
+};
+
 export type AppRecord = {
   id: string;
   name: string;
@@ -36,6 +45,7 @@ export type AppRecord = {
   researchStatus: ResearchStatus;
   verifiedSections: number;
   totalSections: number;
+  people?: PersonAssociation[];
 };
 
 export const apps: AppRecord[] = [
@@ -577,6 +587,7 @@ export const apps: AppRecord[] = [
   {
     id: "rp-hypertrophy",
     name: "RP Hypertrophy",
+    people: [{ name: "Mike Israetel", aliases: ["Dr. Mike Israetel", "Dr Mike"], role: "Founder", relationship: "Co-founded RP Strength, the company behind the RP Hypertrophy app.", sourceUrl: "https://rpstrength.com/pages/about", checkedAt: "2026-09-29" }],
     initials: "RP",
     color: "#cf245e",
     type: "Adaptive program",
@@ -990,6 +1001,7 @@ export const apps: AppRecord[] = [
   {
     id: "sweat",
     name: "Sweat",
+    people: [{ name: "Kayla Itsines", aliases: [], role: "Trainer", relationship: "Co-founder and head trainer with programs in the Sweat app.", sourceUrl: "https://sweat.com/trainers/kayla-itsines", checkedAt: "2026-09-29" }],
     initials: "SW",
     color: "#f36b9d",
     type: "Women-centered program library",
@@ -1037,6 +1049,7 @@ export const apps: AppRecord[] = [
   {
     id: "centr",
     name: "Centr",
+    people: [{ name: "Chris Hemsworth", aliases: [], role: "Creator", relationship: "Created Centr, whose training app is Centr Coach.", sourceUrl: "https://centr.com/pages/about-us", checkedAt: "2026-09-29" }],
     initials: "CE",
     color: "#e0b15a",
     type: "Integrated fitness and wellness",
@@ -1420,13 +1433,13 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     continuity: "User-directed",
     customization: "Full control",
     decisionsRemoved:
-      "Logging, exercise history, progress tracking, and—if you use Hevy Trainer—initial program generation and progression suggestions.",
+      "Logging, exercise history, progress tracking, and initial program generation and progression suggestions if you use Hevy Trainer.",
     decisionsRemaining:
       "In the normal logger experience, you choose or build the routine and decide how the pieces fit together.",
     tradeoff:
       "You get broad control and useful optional guidance, but not one opinionated training system that governs the whole experience.",
     idealUser:
-      "You already have a routine—or enjoy creating one—and want fast logging, progress data, and a social layer without giving up control.",
+      "You already have a routine or enjoy creating one, and want fast logging, progress data, and a social layer without giving up control.",
     notFor:
       "You want one opinionated training system to make nearly every programming decision for you.",
   },
@@ -1523,7 +1536,7 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     continuity: "User-directed",
     customization: "Full control",
     decisionsRemoved:
-      "Logging, exercise reference, analytics, and—if you select its Adaptive Plan—weekly exercise, load, and rep recommendations.",
+      "Logging, exercise reference, analytics, and weekly exercise, load, and rep recommendations if you select its Adaptive Plan.",
     decisionsRemaining:
       "You decide whether to build, download, browse, instantly generate, or adapt a routine, then navigate a large set of tools and options.",
     tradeoff:
@@ -1591,7 +1604,7 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     decisionsRemoved:
       "It handles workout recording, exercise history, routines, timers, records, export, and backup without ads or a required account.",
     decisionsRemaining:
-      "Every programming choice—exercise selection, schedule, progression, fatigue management, and when to change course—remains yours.",
+      "Every programming choice remains yours, including exercise selection, schedule, progression, fatigue management, and when to change course.",
     tradeoff:
       "You get a simple, free, privacy-friendly logbook that stays out of the way, in exchange for receiving essentially no training guidance.",
     idealUser:
@@ -1658,7 +1671,7 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
     decisionsRemoved:
       "A purchased program, team, or coach can supply the training calendar, demonstrations, community, and progression context.",
     decisionsRemaining:
-      "You must decide whether to self-program, buy a static plan, join an ongoing team, or work with a coach—and evaluate the quality and price of individual sellers.",
+      "You must decide whether to self-program, buy a static plan, join an ongoing team, or work with a coach. You also need to evaluate the quality and price of individual sellers.",
     tradeoff:
       "The marketplace can connect almost any athlete to expert programming, but the platform cannot eliminate the work of choosing which coach or product to trust.",
     idealUser:

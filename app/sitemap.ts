@@ -1,9 +1,11 @@
 import type { MetadataRoute } from "next";
-import { apps } from "@/lib/catalog";
+import { getPublicCatalog } from "@/lib/catalog-repository";
 
 const baseUrl = "https://workoutappindex.com";
+export const dynamic = "force-dynamic";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { apps } = await getPublicCatalog();
   return [
     {
       url: baseUrl,

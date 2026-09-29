@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { apps, getOriginalityProfile, getTrainingRelationship } from "@/lib/catalog";
+import { getOriginalityProfile, getTrainingRelationship } from "@/lib/catalog";
+import { getPublicCatalog } from "@/lib/catalog-repository";
 import { AdSlot } from "@/components/ad-slot";
 
 type Props = { params: Promise<{ id: string }> };
 
-export function generateStaticParams() { return apps.map((app) => ({ id: app.id })); }
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
+  const { apps } = await getPublicCatalog();
   const app = apps.find((candidate) => candidate.id === id);
   if (!app) return {};
   const title = `${app.name} Review, Pricing & Best Fit | Workout App Index`;
@@ -19,6 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AppProfilePage({ params }: Props) {
   const { id } = await params;
+  const { apps } = await getPublicCatalog();
   const app = apps.find((candidate) => candidate.id === id);
   if (!app) notFound();
   const relationship = getTrainingRelationship(app.id);
@@ -38,6 +41,7 @@ export default async function AppProfilePage({ params }: Props) {
         <article className="relationship-card"><p className="eyebrow">HOW THIS APP EXPECTS YOU TO TRAIN</p><div className="relationship-summary"><div><span>Planning</span><strong>{relationship.planningStyle}</strong></div><div><span>Choice load</span><strong>{relationship.choiceLoad}</strong></div><div><span>Continuity</span><strong>{relationship.continuity}</strong></div><div><span>Customization</span><strong>{relationship.customization}</strong></div></div><div className="relationship-decisions"><div><h3>Decisions it makes easier</h3><p>{relationship.decisionsRemoved}</p></div><div><h3>Decisions you still own</h3><p>{relationship.decisionsRemaining}</p></div><div><h3>The tradeoff</h3><p>{relationship.tradeoff}</p></div></div><div className="relationship-fit"><div><h3>This may sound like you</h3><p>{relationship.idealUser}</p></div><div><h3>Probably not your fit</h3><p>{relationship.notFor}</p></div></div></article>
         <article className="quality-card"><p className="eyebrow">ORIGINALITY &amp; IDENTITY</p><h2>{originality.score}/100 · {originality.level}</h2><p>{originality.summary}</p><small className="evidence-note">{originality.evidenceNote}</small></article>
       </div>
+      {app.people?.length ? <section className="related-apps people-connections" aria-labelledby="people-heading"><p className="eyebrow">DOCUMENTED PEOPLE CONNECTIONS</p><h2 id="people-heading">Creators and trainers</h2><div>{app.people.map((person) => <article key={`${person.name}-${person.role}`}><strong>{person.name}</strong><span>{person.role}: {person.relationship}</span><a href={person.sourceUrl} target="_blank" rel="noopener noreferrer">View source</a></article>)}</div></section> : null}
       <AdSlot placement="profile" />
       <section className="related-apps"><p className="eyebrow">RELATED OPTIONS</p><h2>Compare nearby fits</h2><div>{related.map((candidate) => <Link href={`/apps/${candidate.id}`} key={candidate.id}><strong>{candidate.name}</strong><span>{candidate.bestFor}</span></Link>)}</div></section>
       <div className="verification-note"><strong>Research status: {app.researchStatus}</strong><p>{app.verifiedSections} of {app.totalSections} research sections currently have evidence.</p></div>

@@ -1,4 +1,6 @@
 import { FieldValue } from "firebase-admin/firestore";
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { apps, type AppRecord, type ResearchStatus } from "@/lib/catalog";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 
@@ -34,11 +36,21 @@ export async function listPublications(): Promise<PublicationRow[]> {
   return snapshot.docs.map(doc => ({id:doc.id, ...doc.data()} as PublicationRow));
 }
 
-export async function getLatestPublishedCatalog():Promise<AppRecord[]|null>{
+export const getLatestPublishedCatalog = unstable_cache(async ():Promise<AppRecord[]|null> => {
   const snapshot=await getAdminFirestore().collection("catalogPublications").orderBy("published_at","desc").limit(1).get();
   if(snapshot.empty) return null;
   return (snapshot.docs[0].data().snapshot as AppRecord[]|undefined)??null;
-}
+}, ["latest-published-catalog"], { revalidate: 60, tags: ["public-catalog"] });
+
+export const getPublicCatalog = cache(async (): Promise<{ apps: AppRecord[]; source: "published" | "preliminary" }> => {
+  try {
+    const published = await getLatestPublishedCatalog();
+    if (published?.length) return { apps: published, source: "published" };
+  } catch (error) {
+    console.error("Could not load the published catalog", error);
+  }
+  return { apps, source: "preliminary" };
+});
 
 export async function saveCatalogRecord(record:AppRecord,userId:string){
   const ref=getAdminFirestore().collection("catalogApps").doc(record.id);
