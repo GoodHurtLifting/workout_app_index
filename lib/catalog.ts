@@ -297,7 +297,7 @@ export const apps: AppRecord[] = [
     bestFor: "A complete scored system without program hunting",
     description:
       "An Android strength-training system built around 12 four-week programs, proprietary Lift, Workout, and Block Scores, fast guided logging, custom block creation, deep progress tracking, and opt-in social accountability.",
-    price: "30-day free trial / $2.99 monthly",
+    price: "$2.99 monthly",
     monthlyPrice: 2.99,
     hasUsableFreeTier: false,
     freeTierCapabilities: {
@@ -2499,7 +2499,7 @@ export const catalogEvidenceSeeds: CatalogEvidenceSeed[] = [
     sourceType: "First-party product update",
     url: "https://theliftleague.com/",
     claimSupported:
-      "The product owner confirmed a 30-day free trial followed by a $2.99 monthly subscription.",
+      "The product owner confirmed the 30-day free trial was removed; the subscription is $2.99 monthly.",
     public: true,
   },
   {
