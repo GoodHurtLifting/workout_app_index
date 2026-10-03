@@ -10,7 +10,17 @@ export const metadata: Metadata = {
     "Independent fitness-app guidance designed to help you find the app that fits how you actually train.",
 };
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ finder?: string }>;
+}) {
   const { apps } = await getPublicCatalog();
-  return <WorkoutAppIndex initialApps={apps} />;
+  const { finder } = await searchParams;
+  return (
+    <WorkoutAppIndex
+      initialApps={apps}
+      restoreFinderOnMount={finder === "results"}
+    />
+  );
 }

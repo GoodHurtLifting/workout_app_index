@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -133,6 +133,91 @@ const questions = [
   },
 ];
 
+const finderStorageKey = "wai-finder-results-v1";
+const finderHistoryKey = "waiFinderAnswers";
+const finderScrollKey = "waiFinderScrollY";
+
+function validFinderAnswers(value: unknown): value is Record<string, string> {
+  if (!value || typeof value !== "object") return false;
+  const answers = value as Record<string, unknown>;
+  return questions.every(
+    (question) =>
+      typeof answers[question.key] === "string" &&
+      (question.options.includes(answers[question.key] as string) ||
+        answers[question.key] === "Not sure"),
+  );
+}
+
+function restoreFinderAnswers(): Record<string, string> | null {
+  const historyAnswers = window.history.state?.[finderHistoryKey];
+  if (validFinderAnswers(historyAnswers)) return historyAnswers;
+  try {
+    const saved = window.sessionStorage.getItem(finderStorageKey);
+    const parsed: unknown = saved ? JSON.parse(saved) : null;
+    return validFinderAnswers(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function rememberFinderResults(answers: Record<string, string>) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("finder", "results");
+  window.history.replaceState(
+    { ...window.history.state, [finderHistoryKey]: answers },
+    "",
+    url,
+  );
+  try {
+    window.sessionStorage.setItem(finderStorageKey, JSON.stringify(answers));
+  } catch {
+    // The history entry still holds the answers if session storage is blocked.
+  }
+}
+
+function rememberFinderScroll() {
+  const scrollY = window.scrollY;
+  window.history.replaceState(
+    { ...window.history.state, [finderScrollKey]: scrollY },
+    "",
+    window.location.href,
+  );
+  try {
+    window.sessionStorage.setItem(finderScrollKey, String(scrollY));
+  } catch {
+    // History state still retains the position if session storage is blocked.
+  }
+}
+
+function savedFinderScroll(): number | null {
+  let value: unknown = window.history.state?.[finderScrollKey];
+  if (value == null) {
+    try {
+      value = window.sessionStorage.getItem(finderScrollKey);
+    } catch {
+      return null;
+    }
+  }
+  const scrollY = Number(value);
+  return Number.isFinite(scrollY) && scrollY >= 0 ? scrollY : null;
+}
+
+function clearFinderResults() {
+  const url = new URL(window.location.href);
+  if (url.searchParams.get("finder") !== "results") return;
+  url.searchParams.delete("finder");
+  const state = { ...window.history.state };
+  delete state[finderHistoryKey];
+  delete state[finderScrollKey];
+  window.history.replaceState(state, "", url);
+  try {
+    window.sessionStorage.removeItem(finderStorageKey);
+    window.sessionStorage.removeItem(finderScrollKey);
+  } catch {
+    // Browsers can disable session storage without affecting navigation.
+  }
+}
+
 const featuredProfiles = [
   {
     id: "lift-league",
@@ -161,12 +246,14 @@ function AppCard({
   score,
   selected,
   onCompare,
+  onOpenProfile,
   personMatches = [],
 }: {
   app: AppRecord;
   score?: number;
   selected: boolean;
   onCompare: () => void;
+  onOpenProfile?: () => void;
   personMatches?: string[];
 }) {
   return (
@@ -224,7 +311,10 @@ function AppCard({
         <Button variant="ghost" asChild>
           <Link
             href={`/apps/${app.id}`}
-            onClick={() => trackEvent("view_app_profile", { app_id: app.id })}
+            onClick={() => {
+              onOpenProfile?.();
+              trackEvent("view_app_profile", { app_id: app.id });
+            }}
           >
             View profile <ChevronRight />
           </Link>
@@ -234,7 +324,13 @@ function AppCard({
   );
 }
 
-export default function Home({ initialApps }: { initialApps: AppRecord[] }) {
+export default function Home({
+  initialApps,
+  restoreFinderOnMount = false,
+}: {
+  initialApps: AppRecord[];
+  restoreFinderOnMount?: boolean;
+}) {
   const apps = initialApps;
   const availableFeatured = featuredProfiles.filter((profile) => apps.some((app) => app.id === profile.id));
   const carouselProfiles = availableFeatured.length ? availableFeatured : [{ id: apps[0].id, highlights: apps[0].features.slice(0, 3), spectrum: 50 }];
@@ -260,6 +356,42 @@ export default function Home({ initialApps }: { initialApps: AppRecord[] }) {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showResults, setShowResults] = useState(false);
+  const [restorePending, setRestorePending] = useState(restoreFinderOnMount);
+  const scrollToRestore = useRef<number | null>(null);
+  useEffect(() => {
+    const restoreFromHistory = () => {
+      if (new URL(window.location.href).searchParams.get("finder") !== "results") {
+        setRestorePending(false);
+        return;
+      }
+      const saved = restoreFinderAnswers();
+      if (saved) {
+        scrollToRestore.current = savedFinderScroll();
+        setAnswers(saved);
+        setStep(questions.length - 1);
+        setShowResults(true);
+        setView("finder");
+      } else {
+        clearFinderResults();
+      }
+      setRestorePending(false);
+    };
+    window.addEventListener("popstate", restoreFromHistory);
+    const frame = window.requestAnimationFrame(restoreFromHistory);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("popstate", restoreFromHistory);
+    };
+  }, [restoreFinderOnMount]);
+  useLayoutEffect(() => {
+    if (view !== "finder" || !showResults || scrollToRestore.current === null)
+      return;
+    const frame = window.requestAnimationFrame(() => {
+      window.scrollTo({ top: scrollToRestore.current ?? 0, behavior: "instant" });
+      scrollToRestore.current = null;
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [view, showResults]);
   const [query, setQuery] = useState("");
   const [aiOnly, setAiOnly] = useState(false);
   const [typeFilter, setTypeFilter] = useState("All");
@@ -345,6 +477,7 @@ export default function Home({ initialApps }: { initialApps: AppRecord[] }) {
     });
   };
   const navigate = (next: typeof view) => {
+    if (next !== "finder" || !showResults) clearFinderResults();
     setView(next);
     trackEvent("page_view", {
       page_path: next === "home" ? "/" : `/${next}`,
@@ -354,8 +487,10 @@ export default function Home({ initialApps }: { initialApps: AppRecord[] }) {
   };
   const answer = (value: string) => {
     const q = questions[step];
-    setAnswers((a) => ({ ...a, [q.key]: value }));
+    const updatedAnswers = { ...answers, [q.key]: value };
+    setAnswers(updatedAnswers);
     if (step === questions.length - 1) {
+      rememberFinderResults(updatedAnswers);
       trackEvent("complete_app_finder");
       setShowResults(true);
     }
@@ -369,6 +504,13 @@ export default function Home({ initialApps }: { initialApps: AppRecord[] }) {
   const compared = compare
     .map((id) => apps.find((a) => a.id === id))
     .filter(Boolean) as AppRecord[];
+  if (restorePending) {
+    return (
+      <main className="product-shell finder-shell" aria-live="polite">
+        <p>Restoring your app matches…</p>
+      </main>
+    );
+  }
   return (
     <main className="product-shell">
       <header className="site-header">
@@ -627,6 +769,7 @@ export default function Home({ initialApps }: { initialApps: AppRecord[] }) {
             <Button
               variant="outline"
               onClick={() => {
+                clearFinderResults();
                 setStep(0);
                 setShowResults(false);
               }}
@@ -643,6 +786,7 @@ export default function Home({ initialApps }: { initialApps: AppRecord[] }) {
                   score={score}
                   selected={compare.includes(app.id)}
                   onCompare={() => toggleCompare(app.id)}
+                  onOpenProfile={rememberFinderScroll}
                 />
               ))}
             </div>
@@ -682,9 +826,10 @@ export default function Home({ initialApps }: { initialApps: AppRecord[] }) {
                     <Button variant="outline" asChild>
                       <Link
                         href={`/apps/${app.id}`}
-                        onClick={() =>
+                        onClick={() => {
+                          rememberFinderScroll();
                           trackEvent("view_app_profile", { app_id: app.id })
-                        }
+                        }}
                       >
                         View profile <ChevronRight />
                       </Link>
