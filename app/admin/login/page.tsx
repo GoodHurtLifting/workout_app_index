@@ -10,7 +10,8 @@ function AdminLoginForm(){
   const params=useSearchParams();
   const [error,setError]=useState("");
   const [busy,setBusy]=useState(false);
-  const returnTo=params.get("returnTo")?.startsWith("/")?params.get("returnTo")!:"/admin";
+  const requestedReturnTo=params.get("returnTo");
+  const returnTo=requestedReturnTo && /^\/admin(?:\/|\?|$)/.test(requestedReturnTo) ? requestedReturnTo : "/admin";
   async function signIn(){
     setBusy(true); setError("");
     try {

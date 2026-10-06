@@ -298,7 +298,7 @@ function AppCard({
         <span>
           <Sparkles size={16} /> Originality &amp; Identity
         </span>
-        <strong>{getOriginalityProfile(app.id).score}/100</strong>
+        <strong>{getOriginalityProfile(app).score}/100</strong>
       </div>
       <p className="caveat">
         <strong>Watch for:</strong> {app.caveat}
@@ -497,8 +497,8 @@ export default function Home({
     else setStep((s) => s + 1);
   };
   const profile = apps.find((a) => a.id === profileId) ?? apps[0];
-  const profileRelationship = getTrainingRelationship(profile.id);
-  const profileOriginality = getOriginalityProfile(profile.id);
+  const profileRelationship = getTrainingRelationship(profile);
+  const profileOriginality = getOriginalityProfile(profile);
   const featuredProfile = carouselProfiles[featuredIndex % carouselProfiles.length];
   const heroFeatured = apps.find((app) => app.id === featuredProfile.id) ?? apps[0];
   const compared = compare
@@ -604,7 +604,7 @@ export default function Home({
                   <span>{heroFeatured.bestFor}</span>
                 </div>
                 <div className="hero-score">
-                  <strong>{getOriginalityProfile(heroFeatured.id).score}</strong>
+                  <strong>{getOriginalityProfile(heroFeatured).score}</strong>
                   <span>ORIGINALITY</span>
                 </div>
               </div>
@@ -1147,35 +1147,35 @@ export default function Home({
                     [
                       "Planning style",
                       (a: AppRecord) =>
-                        getTrainingRelationship(a.id).planningStyle,
+                        getTrainingRelationship(a).planningStyle,
                     ],
                     [
                       "Choice load",
                       (a: AppRecord) =>
-                        getTrainingRelationship(a.id).choiceLoad,
+                        getTrainingRelationship(a).choiceLoad,
                     ],
                     [
                       "Other ways to use it",
                       (a: AppRecord) =>
-                        getTrainingRelationship(a.id).secondaryStyles?.join(
+                        getTrainingRelationship(a).secondaryStyles?.join(
                           ", ",
                         ) || "None identified",
                     ],
                     [
                       "Decisions you still own",
                       (a: AppRecord) =>
-                        getTrainingRelationship(a.id).decisionsRemaining ||
+                        getTrainingRelationship(a).decisionsRemaining ||
                         "Not yet evaluated",
                     ],
                     [
                       "Ideal user",
-                      (a: AppRecord) => getTrainingRelationship(a.id).idealUser,
+                      (a: AppRecord) => getTrainingRelationship(a).idealUser,
                     ],
                     ["Legit Score", (a: AppRecord) => `${a.legit}/100`],
                     [
                       "Originality & identity",
                       (a: AppRecord) => {
-                        const originality = getOriginalityProfile(a.id);
+                        const originality = getOriginalityProfile(a);
                         return `${originality.score}/100 · ${originality.level}`;
                       },
                     ],

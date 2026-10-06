@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
 import { redirect } from "next/navigation";
 import { getAdminAuth } from "@/lib/firebase-admin";
 
@@ -9,9 +8,9 @@ function configuredAdminEmail(): string | undefined {
   return process.env.CATALOG_ADMIN_EMAIL?.trim().toLowerCase();
 }
 
-export function isConfiguredAdmin(user:{uid:string;email?:string}):boolean {
+export function isConfiguredAdmin(user:{uid:string;email?:string;email_verified?:boolean;firebase?:{sign_in_provider?:string}}):boolean {
   const email=configuredAdminEmail();
-  return Boolean(email&&user.email?.trim().toLowerCase()===email);
+  return Boolean(email&&user.email?.trim().toLowerCase()===email&&user.email_verified===true&&user.firebase?.sign_in_provider==="google.com");
 }
 
 export async function getCatalogAdmin(){
@@ -27,7 +26,6 @@ export async function getCatalogAdmin(){
 export async function requireCatalogAdmin(returnTo: string) {
   const user = await getCatalogAdmin();
   if (!user) redirect(`/admin/login?returnTo=${encodeURIComponent(returnTo)}`);
-  if (!isConfiguredAdmin({uid:user.userId,email:user.email})) notFound();
   return user;
 }
 

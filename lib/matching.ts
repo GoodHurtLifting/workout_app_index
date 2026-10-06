@@ -13,7 +13,7 @@ const budgetCeiling: Record<string, number> = {
 };
 
 function supportsProvenProgramChoice(app: AppRecord): boolean {
-  const relationship = getTrainingRelationship(app.id);
+  const relationship = getTrainingRelationship(app);
   return (
     app.programLibrary ||
     relationship.planningStyle === "Choose a proven path" ||
@@ -119,7 +119,7 @@ export function fitScore(
     (app.type === "Workout logger" || app.features.includes("Fast logging"))
   )
     score += 20;
-  const relationship = getTrainingRelationship(app.id);
+  const relationship = getTrainingRelationship(app);
   const planningMatches: Record<string, typeof relationship.planningStyle> = {
     "Show me the next workout, with no decisions needed": "Follow a complete path",
     "Give me a few proven programs to choose from": "Choose a proven path",
@@ -161,7 +161,7 @@ export function fitScore(
   if (answers.priority === "Distinctive experience") {
     score += Math.max(
       0,
-      Math.min(12, Math.round((getOriginalityProfile(app.id).score - 50) / 4)),
+      Math.min(12, Math.round((getOriginalityProfile(app).score - 50) / 4)),
     );
   } else if (priorityMatches[answers.priority]?.(app)) {
     score += 12;

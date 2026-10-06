@@ -46,6 +46,8 @@ export type AppRecord = {
   verifiedSections: number;
   totalSections: number;
   people?: PersonAssociation[];
+  trainingRelationship?: TrainingRelationship;
+  originalityProfile?: OriginalityProfile;
 };
 
 export const apps: AppRecord[] = [
@@ -1904,8 +1906,10 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
   "home-workout-leap":{planningStyle:"Follow a complete path",secondaryStyles:["Choose a proven path"],choiceLoad:"Low",continuity:"Program-based",customization:"Follow as written",decisionsRemoved:"Daily plans provide bodyweight exercises, warm-ups, stretching, instruction, reminders, and tracking.",decisionsRemaining:"You choose a target plan, judge exercise difficulty, and tolerate or remove advertising.",tradeoff:"It offers an extremely accessible free path but monetizes attention and remains limited to bodyweight training.",idealUser:"You want a free Android plan at home with no equipment and simple guidance.",notFor:"You dislike ads or need gym-equipment progression and deep analytics."},
 };
 
-export function getTrainingRelationship(appId: string): TrainingRelationship {
+export function getTrainingRelationship(app: string | AppRecord): TrainingRelationship {
+  const appId = typeof app === "string" ? app : app.id;
   return (
+    (typeof app === "string" ? undefined : app.trainingRelationship) ??
     trainingRelationships[appId] ?? {
       planningStyle: "Build it yourself",
       choiceLoad: "Moderate",
@@ -2269,8 +2273,10 @@ export const originalityProfiles: Record<string, OriginalityProfile> = {
   "home-workout-leap":{score:73,level:"Clear identity",originalMechanics:68,productPointOfView:78,visualIdentity:65,meaningfulDifferentiation:74,defensibility:81,summary:"Its distinction comes from extreme accessibility, enormous Android reach, no-equipment daily plans, and an ad-supported free model.",evidenceNote:"Bodyweight plans, guidance, ads, personalization, tracking, and scale are documented publicly; comparative judgments remain editorial."},
 };
 
-export function getOriginalityProfile(appId: string): OriginalityProfile {
+export function getOriginalityProfile(app: string | AppRecord): OriginalityProfile {
+  const appId = typeof app === "string" ? app : app.id;
   return (
+    (typeof app === "string" ? undefined : app.originalityProfile) ??
     originalityProfiles[appId] ?? {
       score: 50,
       level: "Conventional",
