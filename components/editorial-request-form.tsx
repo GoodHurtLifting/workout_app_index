@@ -81,7 +81,7 @@ export function EditorialRequestForm({ kind }: { kind: "app" | "correction" }) {
         {message ? <p className={`editorial-form-message ${status}`} role="status">{message}</p> : null}
       </form>
       <p className="editorial-request-fallback">
-        If the form does not work for you, email <a href="mailto:ryan@theliftleague.com">ryan@theliftleague.com</a>.
+        If the form does not work for you, email <a href="mailto:ryan@workoutappindex.com">ryan@workoutappindex.com</a>.
       </p>
     </section>
   );

@@ -2,6 +2,7 @@ import "server-only";
 
 import { createHash } from "node:crypto";
 import { Timestamp } from "firebase-admin/firestore";
+import type { DocumentReference } from "firebase-admin/firestore";
 import { z } from "zod";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 
@@ -47,17 +48,71 @@ export type EditorialRequest = z.infer<typeof requestSchema> & {
 
 export class EditorialRateLimitError extends Error {}
 
+type NotificationJob = {
+  to: string;
+  message: { subject: string; text: string };
+};
+
+async function deliverSubmissionAlert(ref: DocumentReference, job: NotificationJob): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const from = process.env.SUBMISSION_NOTIFICATION_FROM?.trim();
+  if (!apiKey || !from) return;
+
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        "Idempotency-Key": ref.id,
+      },
+      body: JSON.stringify({ from, to: [job.to], subject: job.message.subject, text: job.message.text }),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) throw new Error(`Resend returned HTTP ${response.status}`);
+    const result = await response.json() as { id?: string };
+    await ref.update({ delivery: {
+      state: "SUCCESS",
+      provider: "resend",
+      providerMessageId: result.id ?? null,
+      attemptedAt: Date.now(),
+    } });
+  } catch (error) {
+    console.error("Submission alert delivery failed", error);
+    try {
+      await ref.update({ delivery: {
+        state: "ERROR",
+        provider: "resend",
+        error: error instanceof Error ? error.message : "Unknown delivery error",
+        attemptedAt: Date.now(),
+      } });
+    } catch (updateError) {
+      console.error("Could not record submission alert delivery failure", updateError);
+    }
+  }
+}
+
 export async function saveEditorialRequest(input: unknown): Promise<void> {
   const request = requestSchema.parse(input);
   if (request.companyWebsite) return;
 
   const db = getAdminFirestore();
+  const notificationEmail = process.env.SUBMISSION_NOTIFICATION_EMAIL?.trim()
+    || process.env.CATALOG_ADMIN_EMAIL?.trim();
   const now = Date.now();
   const day = new Date(now).toISOString().slice(0, 10);
   const emailHash = createHash("sha256").update(request.email.toLowerCase()).digest("hex");
   const limitRef = db.collection("editorialRequestLimits").doc(`${day}-${emailHash}`);
   const dailyRef = db.collection("editorialRequestLimits").doc(`${day}-site-total`);
   const entryRef = db.collection("editorialRequests").doc();
+  const notificationRef = db.collection("editorialNotifications").doc(`app-${entryRef.id}`);
+  const notificationJob: NotificationJob = {
+    to: notificationEmail ?? "",
+    message: {
+      subject: "New Workout App Index app submission",
+      text: `A new app submission for ${request.kind === "app" ? request.appName : ""} is waiting for review.\n\nOpen the editorial inbox: https://workoutappindex.com/admin\n\nSubmission ID: ${entryRef.id}`,
+    },
+  };
 
   await db.runTransaction(async (transaction) => {
     const [limit, daily] = await Promise.all([
@@ -79,7 +134,16 @@ export async function saveEditorialRequest(input: unknown): Promise<void> {
     const { companyWebsite: _honeypot, ...content } = request;
     void _honeypot;
     transaction.create(entryRef, { ...content, createdAt: now, status: "new" });
+    if (request.kind === "app" && notificationEmail) {
+      transaction.create(notificationRef, { ...notificationJob, delivery: { state: "PENDING" }, createdAt: now });
+    }
   });
+  if (request.kind === "app" && notificationEmail) {
+    await deliverSubmissionAlert(notificationRef, notificationJob);
+  }
+  if (request.kind === "app" && !notificationEmail) {
+    console.error("App submission saved without notification: no notification email is configured");
+  }
 }
 
 export async function listEditorialRequests(): Promise<EditorialRequest[]> {

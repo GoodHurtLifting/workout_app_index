@@ -1,0 +1,9 @@
+env:
+  - variable: SUBMISSION_NOTIFICATION_FROM
+    value: Workout App Index <notifications@workoutappindex.com>
+    availability:
+      - RUNTIME
+  - variable: RESEND_API_KEY
+    secret: RESEND_API_KEY
+    availability:
+      - RUNTIME

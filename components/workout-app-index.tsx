@@ -1324,9 +1324,9 @@ export default function Home({
             <h2>Contact</h2>
             <p>
               Questions or correction requests can be sent to Turf King LLC at
-              ryan@theliftleague.com.
+              <a href="mailto:ryan@workoutappindex.com">ryan@workoutappindex.com</a>.
             </p>
-            <p className="privacy-updated">Last updated: September 23, 2026</p>
+            <p className="privacy-updated">Last updated: October 7, 2026</p>
           </div>
         </section>
       )}

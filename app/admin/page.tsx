@@ -4,6 +4,7 @@ import { catalogVersion } from "@/lib/catalog";
 import { requireCatalogAdmin } from "@/lib/admin-auth";
 import { listCatalogRecords, listPublications } from "@/lib/catalog-repository";
 import { listEditorialRequests } from "@/lib/editorial-requests";
+import { CopyResearchBrief } from "@/components/copy-research-brief";
 import { importPreliminaryCatalog, markEditorialRequestReviewed, publishApprovedCatalog } from "./actions";
 import "./admin.css";
 
@@ -46,6 +47,7 @@ export default async function AdminPage() {
               <a href={request.sourceUrl} target="_blank" rel="noopener noreferrer">Source</a>
             </div>
           )}
+          {request.kind === "app" ? <CopyResearchBrief submission={request} /> : null}
           {request.status === "new" ? <form action={markEditorialRequestReviewed}><input type="hidden" name="id" value={request.id}/><button type="submit">Mark reviewed</button></form> : null}
         </article>
       )) : <p>No submissions yet.</p>}
