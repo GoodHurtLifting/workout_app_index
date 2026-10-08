@@ -4,6 +4,7 @@ import { updateCatalogApp } from "@/app/admin/actions";
 import { PersonAssociationEditor } from "@/components/person-association-editor";
 
 const planningStyles = [
+  "Not assessed",
   "Follow a complete path",
   "Choose a proven path",
   "Let the app adapt",
@@ -40,7 +41,7 @@ export function CatalogReviewForm({ app }: { app: AppRecord }) {
         <label>Price summary<input name="price" defaultValue={app.price} required /></label>
         <label>Monthly price in USD, if applicable<input name="monthlyPrice" type="number" min="0" step="0.01" defaultValue={app.monthlyPrice ?? ""} /></label>
         <label>Programming authorship<input name="authorship" defaultValue={app.authorship} /></label>
-        <label>AI status<select name="ai" defaultValue={app.ai}><option>No AI identified</option><option>Optional AI</option><option>AI supporting features</option><option>AI central</option></select></label>
+        <label>AI status<select name="ai" defaultValue={app.ai}><option>Not assessed</option><option>No AI identified</option><option>Optional AI</option><option>AI supporting features</option><option>AI central</option></select></label>
       </div>
       <label>Platforms, comma separated<input name="platforms" defaultValue={app.platforms.join(", ")} /></label>
       <label>Experience levels, comma separated<input name="level" defaultValue={app.level.join(", ")} /></label>
@@ -67,9 +68,9 @@ export function CatalogReviewForm({ app }: { app: AppRecord }) {
       <div className="form-grid">
         <label>Primary planning style<select name="planningStyle" defaultValue={relationship.planningStyle}>{planningStyles.map(value => <option key={value}>{value}</option>)}</select></label>
         <label>Secondary styles, comma separated<input name="secondaryStyles" defaultValue={relationship.secondaryStyles?.join(", ") ?? ""} /></label>
-        <label>Choice load<select name="choiceLoad" defaultValue={relationship.choiceLoad}>{["Low","Moderate","High"].map(value => <option key={value}>{value}</option>)}</select></label>
-        <label>Continuity<select name="continuity" defaultValue={relationship.continuity}>{["Single coherent system","Program-based","Session-adaptive","User-directed"].map(value => <option key={value}>{value}</option>)}</select></label>
-        <label>Customization<select name="customization" defaultValue={relationship.customization}>{["Follow as written","Guided flexibility","Full control"].map(value => <option key={value}>{value}</option>)}</select></label>
+        <label>Choice load<select name="choiceLoad" defaultValue={relationship.choiceLoad}>{["Not assessed","Low","Moderate","High"].map(value => <option key={value}>{value}</option>)}</select></label>
+        <label>Continuity<select name="continuity" defaultValue={relationship.continuity}>{["Not assessed","Single coherent system","Program-based","Session-adaptive","User-directed"].map(value => <option key={value}>{value}</option>)}</select></label>
+        <label>Customization<select name="customization" defaultValue={relationship.customization}>{["Not assessed","Follow as written","Guided flexibility","Full control"].map(value => <option key={value}>{value}</option>)}</select></label>
       </div>
       <label>Decisions the app makes easier<textarea name="decisionsRemoved" defaultValue={relationship.decisionsRemoved ?? ""} rows={3} /></label>
       <label>Decisions the user still owns<textarea name="decisionsRemaining" defaultValue={relationship.decisionsRemaining ?? ""} rows={3} /></label>
@@ -83,7 +84,7 @@ export function CatalogReviewForm({ app }: { app: AppRecord }) {
       <div className="form-grid">
         <ScoreField label="Legit Score" name="legit" value={app.legit} />
         <ScoreField label="Originality score" name="originalityScore" value={originality.score} />
-        <label>Originality level<select name="originalityLevel" defaultValue={originality.level}>{["Conventional","Clear identity","Distinctive","Category-defining"].map(value => <option key={value}>{value}</option>)}</select></label>
+        <label>Originality level<select name="originalityLevel" defaultValue={originality.level}>{["Not assessed","Conventional","Clear identity","Distinctive","Category-defining"].map(value => <option key={value}>{value}</option>)}</select></label>
         <ScoreField label="Original mechanics" name="originalMechanics" value={originality.originalMechanics} />
         <ScoreField label="Product point of view" name="productPointOfView" value={originality.productPointOfView} />
         <ScoreField label="Visual identity" name="visualIdentity" value={originality.visualIdentity} />

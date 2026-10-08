@@ -1,5 +1,5 @@
 export type AiStatus =
-  "No AI identified" | "Optional AI" | "AI supporting features" | "AI central";
+  "Not assessed" | "No AI identified" | "Optional AI" | "AI supporting features" | "AI central";
 
 export type ResearchStatus =
   "Candidate" | "Researching" | "Evaluation ready" | "Reviewed";
@@ -1391,6 +1391,7 @@ export type CatalogEvidenceSeed = {
 };
 
 export type PlanningStyle =
+  | "Not assessed"
   | "Follow a complete path"
   | "Choose a proven path"
   | "Let the app adapt"
@@ -1400,13 +1401,14 @@ export type PlanningStyle =
 export type TrainingRelationship = {
   planningStyle: PlanningStyle;
   secondaryStyles?: PlanningStyle[];
-  choiceLoad: "Low" | "Moderate" | "High";
+  choiceLoad: "Not assessed" | "Low" | "Moderate" | "High";
   continuity:
+    | "Not assessed"
     | "Single coherent system"
     | "Program-based"
     | "Session-adaptive"
     | "User-directed";
-  customization: "Follow as written" | "Guided flexibility" | "Full control";
+  customization: "Not assessed" | "Follow as written" | "Guided flexibility" | "Full control";
   decisionsRemoved?: string;
   decisionsRemaining?: string;
   tradeoff?: string;
@@ -1417,7 +1419,7 @@ export type TrainingRelationship = {
 export type OriginalityProfile = {
   score: number;
   level:
-    "Conventional" | "Clear identity" | "Distinctive" | "Category-defining";
+    "Not assessed" | "Conventional" | "Clear identity" | "Distinctive" | "Category-defining";
   originalMechanics: number;
   productPointOfView: number;
   visualIdentity: number;

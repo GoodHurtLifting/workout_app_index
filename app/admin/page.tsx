@@ -5,7 +5,7 @@ import { requireCatalogAdmin } from "@/lib/admin-auth";
 import { listCatalogRecords, listPublications } from "@/lib/catalog-repository";
 import { listEditorialRequests } from "@/lib/editorial-requests";
 import { CopyResearchBrief } from "@/components/copy-research-brief";
-import { deleteAppSubmission, importPreliminaryCatalog, markEditorialRequestReviewed, publishApprovedCatalog } from "./actions";
+import { acceptAppSubmissionForResearch, deleteAppSubmission, importPreliminaryCatalog, markEditorialRequestSeen, publishApprovedCatalog } from "./actions";
 import "./admin.css";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +16,7 @@ export default async function AdminPage() {
   const publications = await listPublications();
   const editorialRequests = await listEditorialRequests();
   const newRequests = editorialRequests.filter(request => request.status === "new").length;
-  const ready = apps.filter(app => ["Evaluation ready", "Reviewed"].includes(app.researchStatus)).length;
+  const reviewed = apps.filter(app => app.researchStatus === "Reviewed").length;
   const verified = apps.reduce((sum, app) => sum + app.verifiedSections, 0);
   const total = apps.reduce((sum, app) => sum + app.totalSections, 0);
 
@@ -29,12 +29,12 @@ export default async function AdminPage() {
       <a href="#publication-history">Publication history</a>
     </nav>
     <section className="editorial-inbox" id="editorial-inbox">
-      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>App submissions and corrections</h2></div>
+      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>App submissions and corrections</h2><p className="editor-help">Mark seen to acknowledge a request. Accept for research to add an unpublished Candidate; submitted claims still need verification.</p></div>
       {editorialRequests.length ? editorialRequests.map((request) => (
-        <article key={request.id}>
+        <article id={`submission-${request.id}`} key={request.id}>
           <div className="editorial-inbox-heading">
             <strong>{request.kind === "app" ? `App submission: ${request.appName}` : "Correction request"}</strong>
-            <span>{request.status} · {new Date(request.createdAt).toLocaleDateString("en-US")}</span>
+            <span>{request.status === "accepted" ? "Accepted for research" : request.status === "new" ? "New" : "Seen"} · {new Date(request.createdAt).toLocaleDateString("en-US")}</span>
           </div>
           <p>From {request.name} · <a href={`mailto:${request.email}`}>{request.email}</a></p>
           <p>{request.details}</p>
@@ -52,7 +52,11 @@ export default async function AdminPage() {
             </div>
           )}
           {request.kind === "app" ? <CopyResearchBrief submission={request} /> : null}
-          {request.status === "new" ? <form action={markEditorialRequestReviewed}><input type="hidden" name="id" value={request.id}/><button type="submit">Mark reviewed</button></form> : null}
+          <div className="editorial-actions">
+            {request.status === "new" ? <form action={markEditorialRequestSeen}><input type="hidden" name="id" value={request.id}/><button type="submit">Mark seen</button></form> : null}
+            {request.kind === "app" && request.status !== "accepted" ? <form action={acceptAppSubmissionForResearch}><input type="hidden" name="id" value={request.id}/><button className="accept-candidate" type="submit">Accept for research</button></form> : null}
+            {request.kind === "app" && request.candidateAppId ? <Link href={`/admin/apps/${request.candidateAppId}`}>Open catalog evaluation →</Link> : null}
+          </div>
           {request.kind === "app" ? <details className="editorial-delete">
             <summary>Delete submission</summary>
             <p>This permanently removes this submission and its notification record. It does not change the catalog.</p>
@@ -65,7 +69,7 @@ export default async function AdminPage() {
         </article>
       )) : <p>No submissions yet.</p>}
     </section>
-    <div className="admin-stats"><article><span>{apps.length}</span><p>Candidate profiles</p></article><article><span>{ready}</span><p>Ready to publish</p></article><article><span>{apps.length-ready}</span><p>Need verification</p></article><article><span>{verified}/{total}</span><p>Sections verified</p></article></div>
+    <div className="admin-stats"><article><span>{apps.length}</span><p>Catalog evaluations</p></article><article><span>{reviewed}</span><p>Owner-reviewed profiles</p></article><article><span>{apps.length-reviewed}</span><p>Still in review</p></article><article><span>{verified}/{total}</span><p>Sections verified</p></article></div>
     <div className="admin-work" id="app-evaluations"><div className="admin-list"><div className="admin-list-head"><h2>App evaluations</h2><span>Research state</span></div>{apps.map(app=><Link className="admin-row" href={`/admin/apps/${app.id}`} key={app.id}><span className="app-logo" style={{background:app.color}}>{app.initials}</span><span><strong>{app.name}</strong><small>{app.type}</small></span><i className={app.researchStatus.toLowerCase().replace(" ","-")}>{app.researchStatus}</i><span className="freshness">{app.verifiedSections} of {app.totalSections} sections</span><ChevronRight/></Link>)}</div><aside><p className="eyebrow">PUBLISHING GATE</p><h2>Nothing goes public by accident.</h2><ul><li><Check/> Platforms and access checked</li><li><Check/> Pricing dated and sourced</li><li><Check/> AI status classified</li><li><Check/> Feature evidence attached</li><li><Check/> Legit Score reviewed</li><li><Check/> Disclosures complete</li></ul><p>Only records marked Reviewed and backed by evidence enter a public snapshot.</p><form action={publishApprovedCatalog}><button className="publish-button" type="submit" disabled={!apps.some(app=>app.researchStatus==="Reviewed")}>Publish approved catalog</button></form></aside></div>
     <section className="publication-history" id="publication-history"><div><p className="eyebrow">PUBLICATION HISTORY</p><h2>Versioned catalog snapshots</h2></div>{publications.length?<div>{publications.map(item=><article key={item.id}><strong>{item.catalog_version}</strong><span>{new Date(item.published_at).toLocaleString("en-US")}</span><small>Fit {item.fit_methodology_version} · Legit {item.legit_methodology_version}</small></article>)}</div>:<p>No catalog snapshots published yet.</p>}</section>
   </main>;

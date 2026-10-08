@@ -13,11 +13,12 @@ export type PublicationRow = { id:string; catalog_version:string; fit_methodolog
 
 export async function listCatalogRecords(): Promise<AppRecord[]> {
   const snapshot = await getAdminFirestore().collection("catalogApps").orderBy("name").get();
-  if (snapshot.empty) return apps;
-  return snapshot.docs.map(doc => {
+  const records = new Map(apps.map(app => [app.id, app]));
+  for (const doc of snapshot.docs) {
     const row = doc.data() as CatalogRow;
-    return {...row.record, researchStatus: row.publication_status};
-  });
+    records.set(doc.id, {...row.record, researchStatus: row.publication_status});
+  }
+  return [...records.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function getCatalogRecord(id:string): Promise<AppRecord|null> {

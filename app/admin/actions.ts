@@ -25,6 +25,38 @@ function count(data:FormData,name:string):number {
 }
 const personRoles = new Set<PersonAssociation["role"]>(["Creator", "Founder", "Trainer", "Program author", "Featured athlete"]);
 
+function candidateFromSubmission(id: string, name: string): AppRecord {
+  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]?.toUpperCase() ?? "").join("") || "?";
+  return {
+    id, name, initials, color: "#536b83", type: "Unclassified",
+    bestFor: "Not yet assessed",
+    description: "Developer-submitted candidate. Product claims have not been independently verified.",
+    price: "Not verified", monthlyPrice: null,
+    hasUsableFreeTier: false,
+    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
+    platforms: [], ai: "Not assessed", legit: 0, goals: [], features: [], level: [],
+    authorship: "Not assessed", caveat: "Not yet assessed",
+    deliversCompleteProgram: false, programLibrary: false, adaptiveProgramming: false,
+    supportedTrainingEnvironments: [], researchStatus: "Candidate", verifiedSections: 0, totalSections: 7,
+    trainingRelationship: {
+      planningStyle: "Not assessed", choiceLoad: "Not assessed", continuity: "Not assessed",
+      customization: "Not assessed", decisionsRemoved: "Not yet assessed",
+      decisionsRemaining: "Not yet assessed", tradeoff: "Not yet assessed",
+      idealUser: "Not yet assessed", notFor: "Not yet assessed",
+    },
+    originalityProfile: {
+      score: 0, level: "Not assessed", originalMechanics: 0, productPointOfView: 0,
+      visualIdentity: 0, meaningfulDifferentiation: 0, defensibility: 0,
+      summary: "Not yet assessed.", evidenceNote: "Developer claims have not been independently verified.",
+    },
+  };
+}
+
+function candidateId(name: string): string {
+  return name.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60).replace(/-$/g, "") || "app";
+}
+
 function parsePeople(value: FormDataEntryValue | null): PersonAssociation[] {
   const parsed: unknown = JSON.parse(String(value ?? "[]"));
   if (!Array.isArray(parsed) || parsed.length > 30) throw new Error("Invalid people list");
@@ -46,14 +78,64 @@ function parsePeople(value: FormDataEntryValue | null): PersonAssociation[] {
   return people;
 }
 
-export async function markEditorialRequestReviewed(formData: FormData) {
+export async function markEditorialRequestSeen(formData: FormData) {
   const user = await getCatalogAdminForAction();
   const id = String(formData.get("id") ?? "").trim();
   if (!/^[A-Za-z0-9]{20}$/.test(id)) throw new Error("Invalid request");
-  await getAdminFirestore().collection("editorialRequests").doc(id).update({
-    status: "reviewed",
-    reviewedAt: Date.now(),
-    reviewedBy: user.userId,
+  const db = getAdminFirestore();
+  const ref = db.collection("editorialRequests").doc(id);
+  await db.runTransaction(async (transaction) => {
+    const request = await transaction.get(ref);
+    if (!request.exists) throw new Error("Submission not found");
+    if (request.data()?.status === "new") {
+      transaction.update(ref, { status: "seen", seenAt: Date.now(), seenBy: user.userId });
+    }
+  });
+  revalidatePath("/admin");
+}
+
+export async function acceptAppSubmissionForResearch(formData: FormData) {
+  const user = await getCatalogAdminForAction();
+  const id = String(formData.get("id") ?? "").trim();
+  if (!/^[A-Za-z0-9]{20}$/.test(id)) throw new Error("Invalid request");
+
+  const db = getAdminFirestore();
+  const requestRef = db.collection("editorialRequests").doc(id);
+  await db.runTransaction(async (transaction) => {
+    const request = await transaction.get(requestRef);
+    const data = request.data();
+    if (!request.exists || data?.kind !== "app" || typeof data.appName !== "string") {
+      throw new Error("App submission not found");
+    }
+    if (data.status === "accepted" && data.candidateAppId) return;
+    if (!["new", "seen", "reviewed"].includes(data.status)) throw new Error("Submission cannot be accepted");
+
+    const name = data.appName.trim();
+    if (!name) throw new Error("App name is required");
+    const baseId = candidateId(name);
+    const baseRef = db.collection("catalogApps").doc(baseId);
+    const baseRecord = await transaction.get(baseRef);
+    const bundled = apps.find(app => app.id === baseId);
+    const baseName = String(baseRecord.data()?.name ?? bundled?.name ?? "");
+    const sameApp = baseName.toLowerCase() === name.toLowerCase();
+    const appId = baseName && !sameApp ? `${baseId}-${id.slice(0, 8).toLowerCase()}` : baseId;
+    const appRef = db.collection("catalogApps").doc(appId);
+    const existing = appId === baseId ? baseRecord : await transaction.get(appRef);
+    if (appId !== baseId && existing.exists) throw new Error("Candidate already exists");
+
+    const now = Date.now();
+    if (!existing.exists && !(appId === baseId && bundled && sameApp)) {
+      const record = candidateFromSubmission(appId, name);
+      transaction.create(appRef, {
+        id: appId, slug: appId, name, publication_status: "Candidate", record,
+        source_submission_id: id, created_at: now, updated_at: now, updated_by: user.userId,
+      });
+    }
+    transaction.update(requestRef, {
+      status: "accepted", candidateAppId: appId, acceptedAt: now, acceptedBy: user.userId,
+      seenAt: data.seenAt ?? data.reviewedAt ?? now,
+      seenBy: data.seenBy ?? data.reviewedBy ?? user.userId,
+    });
   });
   revalidatePath("/admin");
 }
@@ -146,11 +228,26 @@ export async function updateCatalogApp(formData:FormData){
   if(!Number.isFinite(record.monthlyPrice??0)||(record.monthlyPrice??0)<0) throw new Error("Monthly price must be zero or greater");
   if(verifiedSections>totalSections) throw new Error("Verified sections cannot exceed total sections");
   if(!["Candidate","Researching","Evaluation ready","Reviewed"].includes(researchStatus)) throw new Error("Invalid research status");
-  const styles=["Follow a complete path","Choose a proven path","Let the app adapt","Build it yourself","Just log the work"];
+  if(!["Not assessed","No AI identified","Optional AI","AI supporting features","AI central"].includes(record.ai)) throw new Error("Invalid AI status");
+  const styles=["Not assessed","Follow a complete path","Choose a proven path","Let the app adapt","Build it yourself","Just log the work"];
   if(!styles.includes(relationship.planningStyle)||relationship.secondaryStyles?.some(style=>!styles.includes(style))) throw new Error("Invalid training style");
-  if(!["Low","Moderate","High"].includes(relationship.choiceLoad)||!["Single coherent system","Program-based","Session-adaptive","User-directed"].includes(relationship.continuity)||!["Follow as written","Guided flexibility","Full control"].includes(relationship.customization)) throw new Error("Invalid training relationship");
-  if(!["Conventional","Clear identity","Distinctive","Category-defining"].includes(originality.level)||!originality.summary||!originality.evidenceNote) throw new Error("Complete the originality assessment");
+  if(!["Not assessed","Low","Moderate","High"].includes(relationship.choiceLoad)||!["Not assessed","Single coherent system","Program-based","Session-adaptive","User-directed"].includes(relationship.continuity)||!["Not assessed","Follow as written","Guided flexibility","Full control"].includes(relationship.customization)) throw new Error("Invalid training relationship");
+  if(!["Not assessed","Conventional","Clear identity","Distinctive","Category-defining"].includes(originality.level)||!originality.summary||!originality.evidenceNote) throw new Error("Complete the originality assessment");
   if(!relationship.idealUser||!relationship.notFor) throw new Error("Complete the fit assessment");
+  if(researchStatus==="Reviewed"&&(
+    record.type==="Unclassified"||record.bestFor==="Not yet assessed"||
+    record.description==="Developer-submitted candidate. Product claims have not been independently verified."||
+    record.authorship==="Not assessed"||record.caveat==="Not yet assessed"||
+    record.price==="Not verified"||record.ai==="Not assessed"||record.legit===0||
+    !record.platforms.length||!record.features.length||originality.score===0||
+    originality.level==="Not assessed"||originality.summary==="Not yet assessed."||
+    originality.evidenceNote==="Developer claims have not been independently verified."||
+    relationship.planningStyle==="Not assessed"||relationship.choiceLoad==="Not assessed"||
+    relationship.continuity==="Not assessed"||relationship.customization==="Not assessed"||
+    relationship.decisionsRemoved==="Not yet assessed"||
+    relationship.decisionsRemaining==="Not yet assessed"||relationship.tradeoff==="Not yet assessed"||
+    relationship.idealUser==="Not yet assessed"||relationship.notFor==="Not yet assessed"
+  )) throw new Error("Replace candidate placeholders with verified profile details before marking Reviewed");
   if(researchStatus==="Reviewed"&&!checked(formData,"confirmReview")) throw new Error("Confirm that you reviewed this exact profile before marking it Reviewed");
   if(researchStatus==="Reviewed"&&!(await listEvidence(id)).some(isRecheckedEvidence)) throw new Error("Recheck and attach at least one current source before marking this profile Reviewed");
   if (JSON.stringify(record).includes("\u2014")) throw new Error("Replace em dashes in public copy before saving");

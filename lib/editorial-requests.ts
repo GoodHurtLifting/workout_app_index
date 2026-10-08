@@ -50,7 +50,8 @@ const requestSchema = z.discriminatedUnion("kind", [
 export type EditorialRequest = z.infer<typeof requestSchema> & {
   id: string;
   createdAt: number;
-  status: "new" | "reviewed";
+  status: "new" | "seen" | "accepted" | "reviewed";
+  candidateAppId?: string;
 };
 
 export class EditorialRateLimitError extends Error {}

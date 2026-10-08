@@ -27,3 +27,9 @@ Keep the default card brief enough to review on a phone. Offer additional eviden
 - Do not take down the existing public catalog merely because a newer Firebase publication has not yet been created. The bundled catalog is the documented fallback until an intentional, tested cutover.
 
 The private Firebase catalog manager can remain an optional internal editing tool. Its `Reviewed` status and publish controls must not be used as a shortcut around the owner's card review.
+
+## Developer submission intake
+
+- `Mark seen` only acknowledges that the owner has looked at an inbox request. It does not create a catalog entry or approve any claims.
+- `Accept for research` links the submission to an existing evaluation with the same app name or creates an unpublished `Candidate` with explicit unverified placeholders. Keep the original submission in the inbox as a lead, not as independent evidence.
+- Research and edit the Candidate separately. Only the approval gate above can move its catalog record to `Reviewed`, and publication remains a separate action.
