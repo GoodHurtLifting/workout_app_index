@@ -58,6 +58,25 @@ export async function markEditorialRequestReviewed(formData: FormData) {
   revalidatePath("/admin");
 }
 
+export async function deleteAppSubmission(formData: FormData) {
+  await getCatalogAdminForAction();
+  const id = String(formData.get("id") ?? "").trim();
+  if (!/^[A-Za-z0-9]{20}$/.test(id) || formData.get("confirmDelete") !== "on") {
+    throw new Error("Confirm the app submission to delete");
+  }
+
+  const db = getAdminFirestore();
+  const requestRef = db.collection("editorialRequests").doc(id);
+  const notificationRef = db.collection("editorialNotifications").doc(`app-${id}`);
+  await db.runTransaction(async (transaction) => {
+    const request = await transaction.get(requestRef);
+    if (!request.exists || request.data()?.kind !== "app") throw new Error("App submission not found");
+    transaction.delete(requestRef);
+    transaction.delete(notificationRef);
+  });
+  revalidatePath("/admin");
+}
+
 export async function importPreliminaryCatalog(){
   const user=await getCatalogAdminForAction(); const now=Date.now();
   const db=getAdminFirestore();
