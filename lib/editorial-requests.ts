@@ -60,6 +60,21 @@ type NotificationJob = {
   message: { subject: string; text: string };
 };
 
+async function resendFailure(response: Response): Promise<Error> {
+  const fallback = `Resend returned HTTP ${response.status}`;
+  try {
+    const body: unknown = await response.json();
+    if (!body || typeof body !== "object") return new Error(fallback);
+    const details = body as Record<string, unknown>;
+    const name = typeof details.name === "string" ? details.name.slice(0, 100) : "";
+    const message = typeof details.message === "string" ? details.message.slice(0, 500) : "";
+    const reason = [name, message].filter(Boolean).join(": ");
+    return new Error(reason ? `${fallback}: ${reason}` : fallback);
+  } catch {
+    return new Error(fallback);
+  }
+}
+
 async function deliverSubmissionAlert(ref: DocumentReference, job: NotificationJob): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const from = process.env.SUBMISSION_NOTIFICATION_FROM?.trim();
@@ -76,7 +91,7 @@ async function deliverSubmissionAlert(ref: DocumentReference, job: NotificationJ
       body: JSON.stringify({ from, to: [job.to], subject: job.message.subject, text: job.message.text }),
       signal: AbortSignal.timeout(8000),
     });
-    if (!response.ok) throw new Error(`Resend returned HTTP ${response.status}`);
+    if (!response.ok) throw await resendFailure(response);
     const result = await response.json() as { id?: string };
     await ref.update({ delivery: {
       state: "SUCCESS",
