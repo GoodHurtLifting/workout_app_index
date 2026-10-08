@@ -7,9 +7,16 @@ import { z } from "zod";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 
 const text = (max: number) => z.string().trim().min(1).max(max);
+function parseUrl(value: string): URL | null {
+  try {
+    return new URL(value);
+  } catch {
+    return null;
+  }
+}
 const publicUrl = z.string().url().refine((value) => {
-  const url = new URL(value);
-  return url.protocol === "https:" || url.protocol === "http:";
+  const url = parseUrl(value);
+  return url !== null && (url.protocol === "https:" || url.protocol === "http:");
 }, "Use a website URL.");
 
 const requestSchema = z.discriminatedUnion("kind", [
@@ -32,7 +39,7 @@ const requestSchema = z.discriminatedUnion("kind", [
     email: z.string().trim().email().max(254),
     companyWebsite: z.string().max(500).optional(),
     pageUrl: publicUrl.refine((value) => {
-      const hostname = new URL(value).hostname;
+      const hostname = parseUrl(value)?.hostname;
       return hostname === "workoutappindex.com" || hostname === "www.workoutappindex.com";
     }, "Use a Workout App Index page URL."),
     sourceUrl: publicUrl,
