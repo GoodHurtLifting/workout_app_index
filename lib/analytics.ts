@@ -15,7 +15,12 @@ export function trackEvent(
   parameters: AnalyticsParameters = {},
 ) {
   if (typeof window === "undefined") return;
-  window.gtag?.("event", name, parameters);
+  try {
+    if (window.localStorage.getItem("wai-analytics-consent") !== "granted") return;
+    window.gtag?.("event", name, parameters);
+  } catch {
+    // Analytics must never interrupt a form submission or outbound navigation.
+  }
 }
 
 export function openAnalyticsPreferences() {

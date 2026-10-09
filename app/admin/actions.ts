@@ -5,6 +5,7 @@ import { apps, catalogEvidenceSeeds, getOriginalityProfile, getTrainingRelations
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { getCatalogRecord, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveEvidence, savePublication } from "@/lib/catalog-repository";
+import { canTransition, monthKey, MONTHLY_ACCEPTANCE_LIMIT, MONTHLY_SCREENING_LIMIT, normalizeAppSubmissionStatus } from "@/lib/submission-workflow";
 
 const splitList=(value:FormDataEntryValue|null)=>String(value??"").split(",").map(item=>item.trim()).filter(Boolean);
 const field=(data:FormData,name:string)=>String(data.get(name)??"").trim();
@@ -87,9 +88,61 @@ export async function markEditorialRequestSeen(formData: FormData) {
   await db.runTransaction(async (transaction) => {
     const request = await transaction.get(ref);
     if (!request.exists) throw new Error("Submission not found");
-    if (request.data()?.status === "new") {
-      transaction.update(ref, { status: "seen", seenAt: Date.now(), seenBy: user.userId });
+    if (!request.data()?.seenAt) {
+      transaction.update(ref, { seenAt: Date.now(), seenBy: user.userId,
+        ...(request.data()?.status === "new" ? { status: "received" } : {}) });
     }
+  });
+  revalidatePath("/admin");
+}
+
+const screeningCriteria = ["liveProduct", "substantiveTraining", "workingListing", "privacyPolicy", "pricingAndPlatforms", "reviewAccess"] as const;
+
+export async function startSubmissionScreening(formData: FormData) {
+  const user = await getCatalogAdminForAction();
+  const id = field(formData, "id");
+  if (!/^[A-Za-z0-9]{20}$/.test(id)) throw new Error("Invalid submission");
+  const db = getAdminFirestore();
+  const ref = db.collection("editorialRequests").doc(id);
+  const now = Date.now();
+  const month = monthKey(now);
+  const capacityRef = db.collection("editorialCapacity").doc(month);
+  await db.runTransaction(async transaction => {
+    const [request, capacity] = await Promise.all([transaction.get(ref), transaction.get(capacityRef)]);
+    const data = request.data();
+    if (!request.exists || data?.kind !== "app") throw new Error("App submission not found");
+    const status = normalizeAppSubmissionStatus(data.status);
+    if (!canTransition(status, "screening") && !canTransition(status, "waitlisted_unassessed")) throw new Error("This submission cannot enter screening");
+    const count = Number(capacity.data()?.screenings ?? 0);
+    if (count >= MONTHLY_SCREENING_LIMIT) {
+      if (status !== "waitlisted_unassessed") transaction.update(ref, { status: "waitlisted_unassessed", statusChangedAt: now, statusBy: user.userId });
+      return;
+    }
+    transaction.set(capacityRef, { screenings: count + 1 }, { merge: true });
+    transaction.update(ref, { status: "screening", screeningStartedAt: now, screeningMonth: month,
+      statusChangedAt: now, statusBy: user.userId, seenAt: data.seenAt ?? now, seenBy: data.seenBy ?? user.userId });
+  });
+  revalidatePath("/admin");
+}
+
+export async function completeSubmissionScreening(formData: FormData) {
+  const user = await getCatalogAdminForAction();
+  const id = field(formData, "id");
+  const decision = field(formData, "decision");
+  if (!/^[A-Za-z0-9]{20}$/.test(id) || !["waitlisted_eligible", "not_scheduled", "declined"].includes(decision)) throw new Error("Invalid screening decision");
+  const criteria = Object.fromEntries(screeningCriteria.map(key => [key, checked(formData, key)]));
+  if (decision === "waitlisted_eligible" && !screeningCriteria.every(key => criteria[key])) throw new Error("All eligibility checks must pass before adding an app to the eligible waitlist");
+  const note = field(formData, "note");
+  if (note.length > 500) throw new Error("Keep the screening note under 500 characters");
+  if (decision !== "waitlisted_eligible" && !note) throw new Error("Record a brief reason for this decision");
+  const db = getAdminFirestore();
+  const ref = db.collection("editorialRequests").doc(id);
+  await db.runTransaction(async transaction => {
+    const request = await transaction.get(ref);
+    const data = request.data();
+    if (!request.exists || data?.kind !== "app" || normalizeAppSubmissionStatus(data.status) !== "screening") throw new Error("App must be in screening");
+    transaction.update(ref, { status: decision, screeningCriteria: criteria, screeningNote: note,
+      screeningCompletedAt: Date.now(), statusChangedAt: Date.now(), statusBy: user.userId });
   });
   revalidatePath("/admin");
 }
@@ -107,8 +160,25 @@ export async function acceptAppSubmissionForResearch(formData: FormData) {
     if (!request.exists || data?.kind !== "app" || typeof data.appName !== "string") {
       throw new Error("App submission not found");
     }
-    if (data.status === "accepted" && data.candidateAppId) return;
-    if (!["new", "seen", "reviewed"].includes(data.status)) throw new Error("Submission cannot be accepted");
+    const status = normalizeAppSubmissionStatus(data.status);
+    if (status === "accepted_for_research" && data.candidateAppId) return;
+    if (!canTransition(status, "accepted_for_research")) throw new Error("Screen the submission before accepting it for research");
+    if (!data.screeningCompletedAt || !screeningCriteria.every(key => data.screeningCriteria?.[key])) throw new Error("Complete all eligibility checks before accepting research");
+
+    const now = Date.now();
+    const month = monthKey(now);
+    const capacityRef = db.collection("editorialCapacity").doc(month);
+    const capacity = await transaction.get(capacityRef);
+    let acceptedCount = Number(capacity.data()?.acceptances ?? 0);
+    if (!capacity.data()?.acceptancesInitialized) {
+      const monthStart = Date.parse(`${month}-01T00:00:00.000Z`);
+      const nextMonth = new Date(monthStart);
+      nextMonth.setUTCMonth(nextMonth.getUTCMonth() + 1);
+      const prior = await transaction.get(db.collection("editorialRequests")
+        .where("acceptedAt", ">=", monthStart).where("acceptedAt", "<", nextMonth.getTime()));
+      acceptedCount = prior.size;
+    }
+    if (!data.acceptedAt && acceptedCount >= MONTHLY_ACCEPTANCE_LIMIT) throw new Error("Monthly research acceptance is full. Keep this submission on the eligible waitlist.");
 
     const name = data.appName.trim();
     if (!name) throw new Error("App name is required");
@@ -123,7 +193,6 @@ export async function acceptAppSubmissionForResearch(formData: FormData) {
     const existing = appId === baseId ? baseRecord : await transaction.get(appRef);
     if (appId !== baseId && existing.exists) throw new Error("Candidate already exists");
 
-    const now = Date.now();
     if (!existing.exists && !(appId === baseId && bundled && sameApp)) {
       const record = candidateFromSubmission(appId, name);
       transaction.create(appRef, {
@@ -132,10 +201,46 @@ export async function acceptAppSubmissionForResearch(formData: FormData) {
       });
     }
     transaction.update(requestRef, {
-      status: "accepted", candidateAppId: appId, acceptedAt: now, acceptedBy: user.userId,
+      status: "accepted_for_research", candidateAppId: appId, acceptedAt: now, acceptedMonth: month, acceptedBy: user.userId,
       seenAt: data.seenAt ?? data.reviewedAt ?? now,
       seenBy: data.seenBy ?? data.reviewedBy ?? user.userId,
     });
+    if (!data.acceptedAt || !capacity.data()?.acceptancesInitialized) transaction.set(capacityRef, {
+      acceptances: acceptedCount + (data.acceptedAt ? 0 : 1), acceptancesInitialized: true,
+    }, { merge: true });
+  });
+  revalidatePath("/admin");
+}
+
+export async function changeSubmissionReviewStage(formData: FormData) {
+  const user = await getCatalogAdminForAction();
+  const id = field(formData, "id");
+  const target = field(formData, "target");
+  if (!/^[A-Za-z0-9]{20}$/.test(id) || !["active_review", "research_ready", "not_scheduled", "waitlisted_eligible", "declined"].includes(target)) throw new Error("Invalid stage");
+  const note = field(formData, "note");
+  if (note.length > 500 || (target === "not_scheduled" && !note)) throw new Error("Record a brief reason, up to 500 characters");
+  const db = getAdminFirestore();
+  const ref = db.collection("editorialRequests").doc(id);
+  const activeRef = db.collection("editorialWorkflow").doc("active-review");
+  await db.runTransaction(async transaction => {
+    const [request, active] = await Promise.all([transaction.get(ref), transaction.get(activeRef)]);
+    const data = request.data();
+    if (!request.exists || data?.kind !== "app") throw new Error("App submission not found");
+    const status = normalizeAppSubmissionStatus(data.status);
+    if (!canTransition(status, target as typeof status)) throw new Error("That stage change is not allowed");
+    if (target === "active_review") {
+      if (!data.candidateAppId) throw new Error("Link a catalog Candidate before starting deep review");
+      if (active.data()?.submissionId && active.data()?.submissionId !== id) throw new Error("Finish the current deep review before starting another");
+      transaction.set(activeRef, { submissionId: id, startedAt: Date.now() });
+    }
+    if (target === "research_ready" || (target === "not_scheduled" && status === "active_review")) {
+      if (active.data()?.submissionId !== id) throw new Error("This app is not the active review");
+      transaction.set(activeRef, { submissionId: null, completedAt: Date.now() });
+    }
+    transaction.update(ref, { status: target, statusChangedAt: Date.now(), statusBy: user.userId,
+      ...(note ? { statusNote: note } : {}),
+      ...(target === "active_review" ? { activeReviewStartedAt: Date.now() } : {}),
+      ...(target === "research_ready" ? { researchReadyAt: Date.now() } : {}) });
   });
   revalidatePath("/admin");
 }
@@ -150,11 +255,13 @@ export async function deleteAppSubmission(formData: FormData) {
   const db = getAdminFirestore();
   const requestRef = db.collection("editorialRequests").doc(id);
   const notificationRef = db.collection("editorialNotifications").doc(`app-${id}`);
+  const activeRef = db.collection("editorialWorkflow").doc("active-review");
   await db.runTransaction(async (transaction) => {
-    const request = await transaction.get(requestRef);
+    const [request, active] = await Promise.all([transaction.get(requestRef), transaction.get(activeRef)]);
     if (!request.exists || request.data()?.kind !== "app") throw new Error("App submission not found");
     transaction.delete(requestRef);
     transaction.delete(notificationRef);
+    if (active.data()?.submissionId === id) transaction.set(activeRef, { submissionId: null, completedAt: Date.now() });
   });
   revalidatePath("/admin");
 }

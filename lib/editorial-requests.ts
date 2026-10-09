@@ -5,6 +5,8 @@ import { Timestamp } from "firebase-admin/firestore";
 import type { DocumentReference } from "firebase-admin/firestore";
 import { z } from "zod";
 import { getAdminFirestore } from "@/lib/firebase-admin";
+import type { SubmissionStatus } from "@/lib/submission-workflow";
+import { monthKey } from "@/lib/submission-workflow";
 
 const text = (max: number) => z.string().trim().min(1).max(max);
 function parseUrl(value: string): URL | null {
@@ -50,8 +52,19 @@ const requestSchema = z.discriminatedUnion("kind", [
 export type EditorialRequest = z.infer<typeof requestSchema> & {
   id: string;
   createdAt: number;
-  status: "new" | "seen" | "accepted" | "reviewed";
+  status: SubmissionStatus;
   candidateAppId?: string;
+  seenAt?: number;
+  screeningStartedAt?: number;
+  screeningCompletedAt?: number;
+  screeningMonth?: string;
+  screeningNote?: string;
+  screeningCriteria?: Record<string, boolean>;
+  acceptedAt?: number;
+  acceptedMonth?: string;
+  activeReviewStartedAt?: number;
+  researchReadyAt?: number;
+  statusNote?: string;
 };
 
 export class EditorialRateLimitError extends Error {}
@@ -115,9 +128,9 @@ async function deliverSubmissionAlert(ref: DocumentReference, job: NotificationJ
   }
 }
 
-export async function saveEditorialRequest(input: unknown): Promise<void> {
+export async function saveEditorialRequest(input: unknown): Promise<boolean> {
   const request = requestSchema.parse(input);
-  if (request.companyWebsite) return;
+  if (request.companyWebsite) return false;
 
   const db = getAdminFirestore();
   const notificationEmail = process.env.SUBMISSION_NOTIFICATION_EMAIL?.trim()
@@ -156,7 +169,7 @@ export async function saveEditorialRequest(input: unknown): Promise<void> {
     });
     const { companyWebsite: _honeypot, ...content } = request;
     void _honeypot;
-    transaction.create(entryRef, { ...content, createdAt: now, status: "new" });
+    transaction.create(entryRef, { ...content, createdAt: now, status: "received", classification: "unverified research lead" });
     if (request.kind === "app" && notificationEmail) {
       transaction.create(notificationRef, { ...notificationJob, delivery: { state: "PENDING" }, createdAt: now });
     }
@@ -167,13 +180,41 @@ export async function saveEditorialRequest(input: unknown): Promise<void> {
   if (request.kind === "app" && !notificationEmail) {
     console.error("App submission saved without notification: no notification email is configured");
   }
+  return true;
 }
 
-export async function listEditorialRequests(): Promise<EditorialRequest[]> {
-  const snapshot = await getAdminFirestore()
-    .collection("editorialRequests")
-    .orderBy("createdAt", "desc")
-    .limit(30)
-    .get();
-  return snapshot.docs.map((document) => ({ id: document.id, ...document.data() }) as EditorialRequest);
+export async function listEditorialRequests(cursor?: string): Promise<{ requests: EditorialRequest[]; nextCursor: string | null }> {
+  const collection = getAdminFirestore().collection("editorialRequests");
+  let query = collection.orderBy("createdAt", "desc").limit(31);
+  if (cursor && /^[A-Za-z0-9]{20}$/.test(cursor)) {
+    const previous = await collection.doc(cursor).get();
+    if (previous.exists) query = query.startAfter(previous);
+  }
+  const snapshot = await query.get();
+  const page = snapshot.docs.slice(0, 30);
+  return {
+    requests: page.map((document) => ({ id: document.id, ...document.data() }) as EditorialRequest),
+    nextCursor: snapshot.docs.length > 30 ? page[page.length - 1].id : null,
+  };
+}
+
+export async function getEditorialCapacity() {
+  const db = getAdminFirestore();
+  const month = monthKey(Date.now());
+  const [capacity, active] = await Promise.all([
+    db.collection("editorialCapacity").doc(month).get(),
+    db.collection("editorialWorkflow").doc("active-review").get(),
+  ]);
+  const monthStart = Date.parse(`${month}-01T00:00:00.000Z`);
+  const nextMonth = new Date(monthStart);
+  nextMonth.setUTCMonth(nextMonth.getUTCMonth() + 1);
+  const prior = !capacity.data()?.acceptancesInitialized
+    ? await db.collection("editorialRequests").where("acceptedAt", ">=", monthStart)
+      .where("acceptedAt", "<", nextMonth.getTime()).count().get()
+    : null;
+  return {
+    screenings: Number(capacity.data()?.screenings ?? 0),
+    acceptances: prior ? prior.data().count : Number(capacity.data()?.acceptances ?? 0),
+    activeSubmissionId: typeof active.data()?.submissionId === "string" ? active.data()!.submissionId as string : null,
+  };
 }

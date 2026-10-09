@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
     if (raw.length > 12000) {
       return NextResponse.json({ message: "The request is too long." }, { status: 413 });
     }
-    await saveEditorialRequest(JSON.parse(raw));
-    return NextResponse.json({ ok: true }, { status: 201 });
+    const saved = await saveEditorialRequest(JSON.parse(raw));
+    return NextResponse.json({ ok: saved }, { status: saved ? 201 : 200 });
   } catch (error) {
     if (error instanceof ZodError || error instanceof SyntaxError) {
       return NextResponse.json({ message: "Please check the required fields and URLs." }, { status: 400 });

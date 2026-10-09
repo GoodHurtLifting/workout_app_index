@@ -1,10 +1,21 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export function EditorialRequestForm({ kind }: { kind: "app" | "correction" }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [message, setMessage] = useState("");
+  const started = useRef(false);
+
+  function recordStart(event: FormEvent<HTMLFormElement>) {
+    if (kind !== "app" || started.current) return;
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) return;
+    if (target.name === "companyWebsite" || !target.value.trim()) return;
+    started.current = true;
+    trackEvent("submission_started");
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -19,11 +30,12 @@ export function EditorialRequestForm({ kind }: { kind: "app" | "correction" }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...payload, kind }),
       });
-      const result = (await response.json()) as { message?: string };
-      if (!response.ok) throw new Error(result.message || "We could not send your request.");
+      const result = (await response.json()) as { message?: string; ok?: boolean };
+      if (response.status !== 201 || result.ok !== true) throw new Error(result.message || "We could not send your request.");
       form.reset();
       setStatus("sent");
-      setMessage("Thank you. Your request is in our editorial review queue.");
+      setMessage(kind === "app" ? "We received your submission. Submission is free and does not guarantee testing, review, listing, or a timeline." : "We received your correction request.");
+      if (kind === "app") trackEvent("submission_completed");
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "We could not send your request.");
@@ -38,7 +50,7 @@ export function EditorialRequestForm({ kind }: { kind: "app" | "correction" }) {
         if we need clarification. Please do not include passwords or private
         health information.
       </p>
-      <form className="editorial-request-form" onSubmit={submit}>
+      <form className="editorial-request-form" onSubmit={submit} onInputCapture={recordStart}>
         <div className="editorial-form-pair">
           <label>
             Your name <input name="name" required maxLength={100} autoComplete="name" />

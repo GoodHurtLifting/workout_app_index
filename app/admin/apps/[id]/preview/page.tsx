@@ -23,7 +23,7 @@ export default async function CatalogDraftPreview({ params }: { params: Promise<
     : [];
 
   return <>
-    <div className="admin-preview-banner"><strong>Private draft preview</strong><span>This is the saved catalog record, not necessarily what visitors see.</span><Link href={"/admin/apps/" + id}>Back to editor</Link></div>
+    <div className="admin-preview-banner"><strong>Private draft preview</strong><span>This is the editor draft, not necessarily what visitors see. Save any prefilled research before relying on it in Firebase.</span><Link href={"/admin/apps/" + id}>Back to editor</Link></div>
     <AppProfileContent app={app} apps={apps} publicEvidence={publicEvidence} />
   </>;
 }

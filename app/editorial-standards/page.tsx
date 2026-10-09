@@ -58,6 +58,15 @@ export default function EditorialStandardsPage() {
         </p>
       </section>
       <section>
+        <h2>Private developer audits</h2>
+        <p>
+          A developer may separately purchase a private positioning audit.
+          Payment never affects whether WAI selects or publishes an app, its
+          scores or ranking, or our editorial conclusions. Submitting an app
+          remains free and does not require an audit.
+        </p>
+      </section>
+      <section>
         <h2>Updates and corrections</h2>
         <p>
           Apps change. We review documented corrections and update profiles

@@ -30,11 +30,13 @@ export function AnalyticsConsent() {
   }, []);
 
   const choose = (nextChoice: Exclude<ConsentChoice, null>) => {
+    const wasGranted = window.localStorage.getItem(STORAGE_KEY) === "granted";
     window.localStorage.setItem(STORAGE_KEY, nextChoice);
     window.gtag?.("consent", "update", {
       analytics_storage: nextChoice,
     });
     setChoice(nextChoice);
+    if (wasGranted && nextChoice === "denied") window.location.reload();
   };
 
   if (!measurementId) return null;

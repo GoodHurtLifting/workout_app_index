@@ -45,9 +45,10 @@ export default function SubmitAppPage() {
           </li>
         </ol>
         <p>
-          Submission is free. It does not guarantee inclusion, a particular
-          score, a favorable review, or a response by a fixed date. Advertising
-          has no effect on editorial decisions.
+          Submission is free. We may screen or waitlist an app according to
+          editorial capacity. Submission does not guarantee testing, review,
+          listing, publication, or a timeline. Advertising and private paid
+          services have no effect on editorial decisions or scores.
         </p>
       </section>
       <EditorialRequestForm kind="app" />

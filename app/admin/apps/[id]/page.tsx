@@ -4,22 +4,31 @@ import { requireCatalogAdmin } from "@/lib/admin-auth";
 import { getCatalogRecord, getPublicCatalog, isRecheckedEvidence, listEvidence } from "@/lib/catalog-repository";
 import { addEvidence } from "../../actions";
 import { CatalogReviewForm } from "@/components/catalog-review-form";
+import { catalogResearchDrafts, catalogResearchSources, getUnmodifiedCandidateResearchDraft } from "@/lib/catalog-research-drafts";
+import { getAdminFirestore } from "@/lib/firebase-admin";
+import { isLegacyPublicApp } from "@/lib/legacy-public-catalog";
 import "../../admin.css";
 
 export const dynamic="force-dynamic";
 
 export default async function CatalogAppPage({params}:{params:Promise<{id:string}>}){
   const {id}=await params; await requireCatalogAdmin(`/admin/apps/${id}`); const app=await getCatalogRecord(id); if(!app) notFound(); const evidence=await listEvidence(id);
+  const stored=await getAdminFirestore().collection("catalogApps").doc(id).get();
+  const hasUnsavedResearchDraft=!stored.exists ? Boolean(catalogResearchDrafts[id]) : Boolean(getUnmodifiedCandidateResearchDraft(stored.data()?.record, stored.data()?.source_submission_id));
+  const researchSources=catalogResearchSources[id] ?? [];
   const publicCatalog=await getPublicCatalog();
   const publicApp=publicCatalog.apps.find(item=>item.id===id);
   const draftMatchesPublic=publicApp ? JSON.stringify(publicApp)===JSON.stringify(app) : false;
   const checks=[{label:"Identity and description",pass:Boolean(app.name&&app.description&&app.type&&app.type!=="Unclassified"&&!app.description.startsWith("Developer-submitted candidate."))},{label:"Platforms confirmed",pass:app.platforms.length>0},{label:"Pricing recorded",pass:Boolean(app.price&&app.price!=="Not verified")},{label:"AI status classified",pass:Boolean(app.ai&&app.ai!=="Not assessed")},{label:"Feature inventory",pass:app.features.length>0},{label:"Rechecked evidence attached",pass:evidence.some(isRecheckedEvidence)},{label:"Owner review confirmed",pass:app.researchStatus==="Reviewed"}];
   const ready=checks.every(check=>check.pass);
   return <main className="admin-page standalone-admin editor-page"><div className="admin-utility"><Link href="/admin">← Research dashboard</Link><span>{app.name}</span></div><div className="editor-heading"><div><p className="eyebrow">CATALOG RECORD</p><h1>{app.name}</h1><p>Review every public and finder-facing field, attach evidence, and preview the saved draft.</p></div><span className={ready?"gate-ready":"gate-blocked"}>{ready?"Review checks complete":"Review checks incomplete"}</span></div>
-  <div className="admin-review-tools"><p><strong>Public version:</strong> {publicApp ? draftMatchesPublic ? "Current editor values match what visitors see." : "The public profile differs from this saved draft." : "Not listed publicly."}</p><div><Link href={`/admin/apps/${id}/preview`}>Preview saved draft</Link>{publicApp?<Link href={`/apps/${id}`} target="_blank">Open public profile ↗</Link>:null}</div></div>
+  <div className="admin-review-tools"><p><strong>Public version:</strong> {publicApp ? draftMatchesPublic ? "Current editor values match what visitors see." : "The public profile differs from this editor draft." : "Not listed publicly."}</p><div><Link href={`/admin/apps/${id}/preview`}>Preview editor draft</Link>{publicApp?<Link href={`/apps/${id}`} target="_blank">Open public profile ↗</Link>:null}</div></div>
+  {isLegacyPublicApp(id)?<p className="editor-help">Legacy public listing: this app was among the original 36 shown before owner review. It stays public when you publish newer approved entries. Its current research status is not an approval.</p>:null}
+  {hasUnsavedResearchDraft?<p className="editor-help">A research draft is prefilled below. It is not yet saved in Firebase or visible to visitors. The zero scores and unassessed AI status are placeholders, not judgments. Review and save the catalog record to keep your edits.</p>:null}
   <div className="editor-layout"><CatalogReviewForm app={app} />
   <aside className="editor-sidebar">
     <section><p className="eyebrow">REVIEW CHECKLIST</p><h2>{checks.filter(check=>check.pass).length} of {checks.length} checks passed</h2><ul className="gate-list">{checks.map(check=><li className={check.pass?"passed":"missing"} key={check.label}><span>{check.pass?"✓":"!"}</span>{check.label}</li>)}</ul><p className="editor-help">These checks are a guide, not a substitute for reviewing the claims and sources.</p></section>
+    {researchSources.length?<section><p className="eyebrow">RESEARCH STARTING POINTS</p><h2>Sources and test notes</h2><p className="editor-help">These notes informed the draft, but are not attached evidence and do not pass the review gate. Recheck each claim before adding an evidence entry.</p>{researchSources.map(source=><article key={source.label}>{source.url?<a href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a>:<strong>{source.label}</strong>}<p>{source.supports}</p>{source.followUp?<small>{source.followUp}</small>:null}</article>)}</section>:null}
     <section>
       <p className="eyebrow">ADD EVIDENCE</p>
       <h2>Source or test note</h2>

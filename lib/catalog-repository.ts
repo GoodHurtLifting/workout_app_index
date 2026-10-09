@@ -2,9 +2,11 @@ import { FieldValue } from "firebase-admin/firestore";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { apps, type AppRecord, type ResearchStatus } from "@/lib/catalog";
+import { catalogResearchDrafts, getUnmodifiedCandidateResearchDraft } from "@/lib/catalog-research-drafts";
+import { getLegacyPublicApps, mergePublishedCatalog } from "@/lib/legacy-public-catalog";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 
-type CatalogRow = { id:string; record:AppRecord; publication_status:ResearchStatus; updated_at:number };
+type CatalogRow = { id:string; record:AppRecord; publication_status:ResearchStatus; updated_at:number; source_submission_id?:string };
 export type EvidenceRow = { id:string; source_type:string; url:string|null; claim_supported:string; checked_at:number; public:number; internal_note:string|null };
 export function isRecheckedEvidence(source: EvidenceRow): boolean {
   return !source.internal_note?.startsWith("Seeded from the source catalog");
@@ -13,10 +15,11 @@ export type PublicationRow = { id:string; catalog_version:string; fit_methodolog
 
 export async function listCatalogRecords(): Promise<AppRecord[]> {
   const snapshot = await getAdminFirestore().collection("catalogApps").orderBy("name").get();
-  const records = new Map(apps.map(app => [app.id, app]));
+  const records = new Map([...apps, ...Object.values(catalogResearchDrafts)].map(app => [app.id, app]));
   for (const doc of snapshot.docs) {
     const row = doc.data() as CatalogRow;
-    records.set(doc.id, {...row.record, researchStatus: row.publication_status});
+    const record = {...row.record, researchStatus: row.publication_status};
+    records.set(doc.id, getUnmodifiedCandidateResearchDraft(record, row.source_submission_id) ?? record);
   }
   return [...records.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -25,9 +28,10 @@ export async function getCatalogRecord(id:string): Promise<AppRecord|null> {
   const snapshot = await getAdminFirestore().collection("catalogApps").doc(id).get();
   if (snapshot.exists) {
     const row = snapshot.data() as CatalogRow;
-    return {...row.record, researchStatus:row.publication_status};
+    const record = {...row.record, researchStatus:row.publication_status};
+    return getUnmodifiedCandidateResearchDraft(record, row.source_submission_id) ?? record;
   }
-  return apps.find(app=>app.id===id) ?? null;
+  return apps.find(app=>app.id===id) ?? catalogResearchDrafts[id] ?? null;
 }
 
 export async function listEvidence(appId:string): Promise<EvidenceRow[]> {
@@ -47,20 +51,16 @@ export const getLatestPublishedCatalog = unstable_cache(async ():Promise<AppReco
 }, ["latest-published-catalog"], { revalidate: 60, tags: ["public-catalog"] });
 
 export const getPublicCatalog = cache(async (): Promise<{ apps: AppRecord[]; source: "published" | "preliminary" }> => {
+  const legacyApps = getLegacyPublicApps(apps);
   try {
     const published = await getLatestPublishedCatalog();
     if (published?.length) {
-      const reviewed = new Map(published.map((app) => [app.id, app]));
-      const merged = apps.map((app) => reviewed.get(app.id) ?? app);
-      for (const app of published) {
-        if (!apps.some((preliminary) => preliminary.id === app.id)) merged.push(app);
-      }
-      return { apps: merged, source: "published" };
+      return { apps: mergePublishedCatalog(legacyApps, published), source: "published" };
     }
   } catch (error) {
     console.error("Could not load the published catalog", error);
   }
-  return { apps, source: "preliminary" };
+  return { apps: legacyApps, source: "preliminary" };
 });
 
 export async function saveCatalogRecord(record:AppRecord,userId:string){

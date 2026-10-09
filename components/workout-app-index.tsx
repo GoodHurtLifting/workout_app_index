@@ -479,10 +479,6 @@ export default function Home({
   const navigate = (next: typeof view) => {
     if (next !== "finder" || !showResults) clearFinderResults();
     setView(next);
-    trackEvent("page_view", {
-      page_path: next === "home" ? "/" : `/${next}`,
-      page_title: `Workout App Index - ${next}`,
-    });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const answer = (value: string) => {

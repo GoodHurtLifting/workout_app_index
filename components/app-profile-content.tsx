@@ -2,8 +2,9 @@ import Link from "next/link";
 import { getOriginalityProfile, getTrainingRelationship, type AppRecord } from "@/lib/catalog";
 import type { EvidenceRow } from "@/lib/catalog-repository";
 import { AdSlot } from "@/components/ad-slot";
+import { OutboundAppButton } from "@/components/outbound-app-button";
 
-export function AppProfileContent({ app, apps, publicEvidence = [] }: { app: AppRecord; apps: AppRecord[]; publicEvidence?: EvidenceRow[] }) {
+export function AppProfileContent({ app, apps, publicEvidence = [], destinations = { official_site: null, store: null } }: { app: AppRecord; apps: AppRecord[]; publicEvidence?: EvidenceRow[]; destinations?: { official_site: string | null; store: string | null } }) {
   const relationship = getTrainingRelationship(app);
   const originality = getOriginalityProfile(app);
   const related = apps.filter((candidate) => candidate.id !== app.id && candidate.goals.some((goal) => app.goals.includes(goal))).sort((a, b) => b.legit - a.legit).slice(0, 3);
@@ -14,7 +15,7 @@ export function AppProfileContent({ app, apps, publicEvidence = [] }: { app: App
     <section className="profile-page">
       <nav className="public-profile-nav" aria-label="Profile navigation"><Link href="/">Workout App Index</Link><Link href="/">Browse all apps</Link></nav>
       <div className="profile-hero"><div className="profile-title"><span className="app-logo profile-logo" style={{ background: app.color }}>{app.initials}</span><div><p className="eyebrow">{app.type}</p><h1>{app.name}</h1><p>{app.description}</p></div></div><div className="profile-score"><span>LEGIT SCORE</span><strong>{app.legit}</strong><small>{app.researchStatus}</small></div></div>
-      <div className="profile-verdict"><div><p className="eyebrow">QUICK VERDICT</p><h2>Best for {app.bestFor.toLowerCase()}.</h2><p>{app.caveat}</p></div><Link className="profile-finder-link" href="/">Find my app</Link></div>
+      <div className="profile-verdict"><div><p className="eyebrow">QUICK VERDICT</p><h2>Best for {app.bestFor.toLowerCase()}.</h2><p>{app.caveat}</p><div className="profile-outbound-actions">{destinations.official_site ? <OutboundAppButton destinationType="official_site" appSlug={app.id} url={destinations.official_site}/> : null}{destinations.store ? <OutboundAppButton destinationType="store" appSlug={app.id} url={destinations.store}/> : null}</div></div><Link className="profile-finder-link" href="/">Find my app</Link></div>
       <div className="profile-grid">
         <article><p className="eyebrow">AT A GLANCE</p><dl><div><dt>Price</dt><dd>{app.price}</dd></div><div><dt>Platforms</dt><dd>{app.platforms.join(", ")}</dd></div><div><dt>Programming</dt><dd>{app.authorship}</dd></div><div><dt>AI status</dt><dd>{app.ai}</dd></div><div><dt>Experience</dt><dd>{app.level.join(", ")}</dd></div></dl></article>
         <article><p className="eyebrow">NOTABLE FEATURES</p><div className="feature-list">{app.features.map((feature) => <span key={feature}>✓ {feature}</span>)}</div></article>
