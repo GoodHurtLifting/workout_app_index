@@ -1,5 +1,5 @@
 import type { AppRecord } from "@/lib/catalog";
-import { getOriginalityProfile, getTrainingRelationship } from "@/lib/catalog";
+import { calculateLegitScore, calculateOriginalityScore, getOriginalityProfile, getTrainingRelationship } from "@/lib/catalog";
 import { updateCatalogApp } from "@/app/admin/actions";
 import { PersonAssociationEditor } from "@/components/person-association-editor";
 
@@ -80,10 +80,10 @@ export function CatalogReviewForm({ app }: { app: AppRecord }) {
     </section>
     <section>
       <h2>Scores and originality</h2>
-      <p className="editor-help">These are WAI editorial judgments. Check the supporting evidence and rationale before approval. The smaller Legit Score breakdown shown in the finder is currently calculated from the overall score.</p>
+      <p className="editor-help">These are WAI editorial judgments. Check the supporting evidence and rationale before approval. Initial-v1 assessments use five equally weighted criteria; legacy entries still need reassessment.</p>
       <div className="form-grid">
-        <ScoreField label="Legit Score" name="legit" value={app.legit} />
-        <ScoreField label="Originality score" name="originalityScore" value={originality.score} />
+        {app.legitAssessment ? <label>Provisional Legit Score<output>{calculateLegitScore(app.legitAssessment)}/100 (calculated from the five criteria below)</output></label> : <ScoreField label="Legit Score" name="legit" value={app.legit} />}
+        {app.legitAssessment ? <label>Provisional originality score<output>{calculateOriginalityScore(originality)}/100 (calculated from the five dimensions below)</output></label> : <ScoreField label="Originality score" name="originalityScore" value={originality.score} />}
         <label>Originality level<select name="originalityLevel" defaultValue={originality.level}>{["Not assessed","Conventional","Clear identity","Distinctive","Category-defining"].map(value => <option key={value}>{value}</option>)}</select></label>
         <ScoreField label="Original mechanics" name="originalMechanics" value={originality.originalMechanics} />
         <ScoreField label="Product point of view" name="productPointOfView" value={originality.productPointOfView} />
@@ -91,6 +91,17 @@ export function CatalogReviewForm({ app }: { app: AppRecord }) {
         <ScoreField label="Meaningful differentiation" name="meaningfulDifferentiation" value={originality.meaningfulDifferentiation} />
         <ScoreField label="Defensibility" name="defensibility" value={originality.defensibility} />
       </div>
+      {app.legitAssessment ? <>
+        <div className="form-grid">
+          <ScoreField label="Core execution" name="coreExecution" value={app.legitAssessment.coreExecution} />
+          <ScoreField label="Usability" name="usability" value={app.legitAssessment.usability} />
+          <ScoreField label="Reliability" name="reliability" value={app.legitAssessment.reliability} />
+          <ScoreField label="Value" name="value" value={app.legitAssessment.value} />
+          <ScoreField label="Support and privacy" name="supportPrivacy" value={app.legitAssessment.supportPrivacy} />
+          <label>Assessment confidence<select name="legitConfidence" defaultValue={app.legitAssessment.confidence}>{["Low","Moderate","High"].map(value => <option key={value}>{value}</option>)}</select></label>
+        </div>
+        <label>Legit Score rationale<textarea name="legitRationale" defaultValue={app.legitAssessment.rationale} rows={4} required /></label>
+      </> : null}
       <label>Public originality summary<textarea name="originalitySummary" defaultValue={originality.summary} rows={3} required /></label>
       <label>Public evidence note<textarea name="originalityEvidenceNote" defaultValue={originality.evidenceNote} rows={3} required /></label>
     </section>

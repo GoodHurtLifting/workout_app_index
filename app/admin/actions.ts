@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath, updateTag } from "next/cache";
-import { apps, catalogEvidenceSeeds, getOriginalityProfile, getTrainingRelationship, type AiStatus, type AppRecord, type OriginalityProfile, type PersonAssociation, type PlanningStyle, type ResearchStatus, type TrainingRelationship } from "@/lib/catalog";
+import { apps, calculateLegitScore, calculateOriginalityScore, catalogEvidenceSeeds, getOriginalityProfile, getTrainingRelationship, type AiStatus, type AppRecord, type LegitAssessment, type OriginalityProfile, type PersonAssociation, type PlanningStyle, type ResearchStatus, type TrainingRelationship } from "@/lib/catalog";
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { getCatalogRecord, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveEvidence, savePublication } from "@/lib/catalog-repository";
@@ -300,7 +300,7 @@ export async function updateCatalogApp(formData:FormData){
   };
   const originality:OriginalityProfile={
     ...getOriginalityProfile(existing),
-    score:score(formData,"originalityScore"),
+    score:existing.legitAssessment?0:score(formData,"originalityScore"),
     level:field(formData,"originalityLevel") as OriginalityProfile["level"],
     originalMechanics:score(formData,"originalMechanics"),
     productPointOfView:score(formData,"productPointOfView"),
@@ -310,6 +310,19 @@ export async function updateCatalogApp(formData:FormData){
     summary:field(formData,"originalitySummary"),
     evidenceNote:field(formData,"originalityEvidenceNote"),
   };
+  if(existing.legitAssessment) originality.score=calculateOriginalityScore(originality);
+  const legitAssessment:LegitAssessment|undefined=existing.legitAssessment ? {
+    ...existing.legitAssessment,
+    rubricVersion:"initial-v1",
+    coreExecution:score(formData,"coreExecution"),
+    usability:score(formData,"usability"),
+    reliability:score(formData,"reliability"),
+    value:score(formData,"value"),
+    supportPrivacy:score(formData,"supportPrivacy"),
+    confidence:field(formData,"legitConfidence") as LegitAssessment["confidence"],
+    rationale:field(formData,"legitRationale"),
+  } : undefined;
+  if(legitAssessment&&(!["Low","Moderate","High"].includes(legitAssessment.confidence)||!legitAssessment.rationale)) throw new Error("Complete the Legit Score assessment");
   const verifiedSections=count(formData,"verifiedSections");
   const totalSections=count(formData,"totalSections");
   const researchStatus=field(formData,"researchStatus") as ResearchStatus;
@@ -323,7 +336,9 @@ export async function updateCatalogApp(formData:FormData){
     hasUsableFreeTier:checked(formData,"hasUsableFreeTier"),
     freeTierCapabilities:{completeProgram:checked(formData,"freeCompleteProgram"),adaptiveProgramming:checked(formData,"freeAdaptiveProgramming"),programLibrary:checked(formData,"freeProgramLibrary")},
     platforms:splitList(formData.get("platforms")), ai:field(formData,"ai") as AiStatus,
-    legit:score(formData,"legit"), goals:splitList(formData.get("goals")), features:splitList(formData.get("features")),
+    legit:legitAssessment?calculateLegitScore(legitAssessment):score(formData,"legit"),
+    ...(legitAssessment?{legitAssessment}:{}),
+    goals:splitList(formData.get("goals")), features:splitList(formData.get("features")),
     level:splitList(formData.get("level")), authorship:field(formData,"authorship"),
     deliversCompleteProgram:checked(formData,"deliversCompleteProgram"),programLibrary:checked(formData,"programLibrary"),adaptiveProgramming:checked(formData,"adaptiveProgramming"),
     supportedTrainingEnvironments:splitList(formData.get("supportedTrainingEnvironments")),

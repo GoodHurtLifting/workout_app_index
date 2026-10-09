@@ -3,6 +3,7 @@ import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { apps, type AppRecord, type ResearchStatus } from "@/lib/catalog";
 import { catalogResearchDrafts, getUnmodifiedCandidateResearchDraft } from "@/lib/catalog-research-drafts";
+import { withPrivateLegacyScoreDraft } from "@/lib/legacy-score-drafts";
 import { getLegacyPublicApps, mergePublishedCatalog } from "@/lib/legacy-public-catalog";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 
@@ -15,11 +16,13 @@ export type PublicationRow = { id:string; catalog_version:string; fit_methodolog
 
 export async function listCatalogRecords(): Promise<AppRecord[]> {
   const snapshot = await getAdminFirestore().collection("catalogApps").orderBy("name").get();
-  const records = new Map([...apps, ...Object.values(catalogResearchDrafts)].map(app => [app.id, app]));
+  const bundledById = new Map(apps.map(app => [app.id, app]));
+  const records = new Map([...apps.map(app => withPrivateLegacyScoreDraft(app, app)), ...Object.values(catalogResearchDrafts)].map(app => [app.id, app]));
   for (const doc of snapshot.docs) {
     const row = doc.data() as CatalogRow;
     const record = {...row.record, researchStatus: row.publication_status};
-    records.set(doc.id, getUnmodifiedCandidateResearchDraft(record, row.source_submission_id) ?? record);
+    const bundled = bundledById.get(doc.id);
+    records.set(doc.id, bundled ? withPrivateLegacyScoreDraft(record, bundled) : getUnmodifiedCandidateResearchDraft(record, row.source_submission_id) ?? record);
   }
   return [...records.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -29,9 +32,11 @@ export async function getCatalogRecord(id:string): Promise<AppRecord|null> {
   if (snapshot.exists) {
     const row = snapshot.data() as CatalogRow;
     const record = {...row.record, researchStatus:row.publication_status};
-    return getUnmodifiedCandidateResearchDraft(record, row.source_submission_id) ?? record;
+    const bundled = apps.find(app=>app.id===id);
+    return bundled ? withPrivateLegacyScoreDraft(record, bundled) : getUnmodifiedCandidateResearchDraft(record, row.source_submission_id) ?? record;
   }
-  return apps.find(app=>app.id===id) ?? catalogResearchDrafts[id] ?? null;
+  const bundled = apps.find(app=>app.id===id);
+  return bundled ? withPrivateLegacyScoreDraft(bundled, bundled) : catalogResearchDrafts[id] ?? null;
 }
 
 export async function listEvidence(appId:string): Promise<EvidenceRow[]> {

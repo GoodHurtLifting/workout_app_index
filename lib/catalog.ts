@@ -4,6 +4,27 @@ export type AiStatus =
 export type ResearchStatus =
   "Candidate" | "Researching" | "Evaluation ready" | "Reviewed";
 
+// Optional until each legacy entry has been reassessed against the same rubric.
+export type LegitAssessment = {
+  rubricVersion: "initial-v1";
+  coreExecution: number;
+  usability: number;
+  reliability: number;
+  value: number;
+  supportPrivacy: number;
+  confidence: "Low" | "Moderate" | "High";
+  rationale: string;
+  checkedAt?: string;
+  sourceUrls?: string[];
+};
+
+export function calculateLegitScore(assessment: LegitAssessment): number {
+  return Math.round((
+    assessment.coreExecution + assessment.usability + assessment.reliability +
+    assessment.value + assessment.supportPrivacy
+  ) / 5);
+}
+
 export type PersonAssociation = {
   name: string;
   aliases: string[];
@@ -33,6 +54,7 @@ export type AppRecord = {
   platforms: string[];
   ai: AiStatus;
   legit: number;
+  legitAssessment?: LegitAssessment;
   goals: string[];
   features: string[];
   level: string[];
@@ -1428,6 +1450,13 @@ export type OriginalityProfile = {
   summary: string;
   evidenceNote: string;
 };
+
+export function calculateOriginalityScore(profile: OriginalityProfile): number {
+  return Math.round((
+    profile.originalMechanics + profile.productPointOfView + profile.visualIdentity +
+    profile.meaningfulDifferentiation + profile.defensibility
+  ) / 5);
+}
 
 export const trainingRelationships: Record<string, TrainingRelationship> = {
   hevy: {

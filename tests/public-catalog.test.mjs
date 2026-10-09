@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { apps } from "../lib/catalog.ts";
+import { apps, calculateLegitScore, calculateOriginalityScore } from "../lib/catalog.ts";
 import { getLegacyPublicApps, isLegacyPublicApp, legacyPublicAppIds, mergePublishedCatalog } from "../lib/legacy-public-catalog.ts";
+import { legacyScoreDrafts, legacyOriginalityDrafts, withPrivateLegacyScoreDraft } from "../lib/legacy-score-drafts.ts";
 import { catalogResearchDrafts, getUnmodifiedCandidateResearchDraft } from "../lib/catalog-research-drafts.ts";
 
 test("the original 36 retain an explicit legacy-public marker", () => {
@@ -11,6 +12,25 @@ test("the original 36 retain an explicit legacy-public marker", () => {
   assert.equal(legacy.length, 36);
   assert.deepEqual(new Set(legacy.map((app) => app.id)), new Set(legacyPublicAppIds));
   assert.ok(legacy.some((app) => app.researchStatus !== "Reviewed"));
+});
+
+test("all 36 legacy apps have private, criteria-based score drafts", () => {
+  assert.deepEqual(new Set(Object.keys(legacyScoreDrafts)), new Set(legacyPublicAppIds));
+  assert.deepEqual(new Set(Object.keys(legacyOriginalityDrafts)), new Set(legacyPublicAppIds));
+  for (const app of getLegacyPublicApps(apps)) {
+    const draft = withPrivateLegacyScoreDraft(app, app);
+    assert.equal(draft.legit, calculateLegitScore(legacyScoreDrafts[app.id]));
+    assert.equal(draft.originalityProfile.score, calculateOriginalityScore(draft.originalityProfile));
+    assert.deepEqual([
+      draft.originalityProfile.originalMechanics, draft.originalityProfile.productPointOfView,
+      draft.originalityProfile.visualIdentity, draft.originalityProfile.meaningfulDifferentiation,
+      draft.originalityProfile.defensibility,
+    ], legacyOriginalityDrafts[app.id]);
+    assert.notEqual(draft, app);
+    assert.ok(draft.legitAssessment.sourceUrls.length);
+    assert.equal(app.legitAssessment, undefined);
+    assert.equal(withPrivateLegacyScoreDraft({...app, legit: app.legit + 1}, app).legit, app.legit + 1);
+  }
 });
 
 test("a bundled research Candidate does not become public by default", () => {
@@ -34,6 +54,18 @@ test("Aldo and Stark research drafts stay private and do not overwrite saved edi
   };
   assert.equal(getUnmodifiedCandidateResearchDraft(placeholder)?.id, "aldo-coach");
   assert.equal(getUnmodifiedCandidateResearchDraft({ ...placeholder, type: "Owner-edited type" }), null);
+});
+
+test("initial candidate scores are calculated from documented dimensions", () => {
+  for (const id of ["aldo-coach", "stark"]) {
+    const draft = catalogResearchDrafts[id];
+    assert.equal(draft.researchStatus, "Candidate");
+    assert.ok(draft.legitAssessment);
+    assert.equal(draft.legit, calculateLegitScore(draft.legitAssessment));
+    assert.equal(draft.legitAssessment.rubricVersion, "initial-v1");
+    assert.ok(draft.legitAssessment.rationale.length > 50);
+    assert.equal(draft.originalityProfile.score, calculateOriginalityScore(draft.originalityProfile));
+  }
 });
 
 test("publishing a new Reviewed app preserves all 36 legacy listings", () => {

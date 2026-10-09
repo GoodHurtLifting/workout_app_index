@@ -1043,13 +1043,20 @@ export default function Home({
             </article>
             <article className="quality-card">
               <p className="eyebrow">LEGIT SCORE BREAKDOWN</p>
-              {[
+              {profile.legitAssessment ? <p>{profile.researchStatus === "Reviewed" ? "Scored with five equally weighted criteria." : `Provisional assessment · ${profile.legitAssessment.confidence.toLowerCase()} confidence`}</p> : null}
+              {(profile.legitAssessment ? [
+                ["Core execution", profile.legitAssessment.coreExecution],
+                ["Usability", profile.legitAssessment.usability],
+                ["Reliability", profile.legitAssessment.reliability],
+                ["Value", profile.legitAssessment.value],
+                ["Support & privacy", profile.legitAssessment.supportPrivacy],
+              ] : [
                 ["Core execution", Math.min(96, profile.legit + 3)],
                 ["Usability", profile.legit],
                 ["Reliability", Math.max(70, profile.legit - 2)],
                 ["Value", Math.min(94, profile.legit + 1)],
                 ["Support & privacy", Math.max(72, profile.legit - 4)],
-              ].map(([label, value]) => (
+              ]).map(([label, value]) => (
                 <div className="quality-row" key={label}>
                   <span>{label}</span>
                   <i>
@@ -1058,6 +1065,7 @@ export default function Home({
                   <strong>{value}</strong>
                 </div>
               ))}
+              {profile.legitAssessment ? <small>{profile.legitAssessment.rationale}</small> : null}
             </article>
             <article className="quality-card">
               <p className="eyebrow">ORIGINALITY &amp; IDENTITY</p>

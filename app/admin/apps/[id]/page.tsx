@@ -15,6 +15,7 @@ export default async function CatalogAppPage({params}:{params:Promise<{id:string
   const {id}=await params; await requireCatalogAdmin(`/admin/apps/${id}`); const app=await getCatalogRecord(id); if(!app) notFound(); const evidence=await listEvidence(id);
   const stored=await getAdminFirestore().collection("catalogApps").doc(id).get();
   const hasUnsavedResearchDraft=!stored.exists ? Boolean(catalogResearchDrafts[id]) : Boolean(getUnmodifiedCandidateResearchDraft(stored.data()?.record, stored.data()?.source_submission_id));
+  const hasUnsavedLegacyScoreDraft=isLegacyPublicApp(id)&&Boolean(app.legitAssessment)&&!stored.data()?.record?.legitAssessment;
   const researchSources=catalogResearchSources[id] ?? [];
   const publicCatalog=await getPublicCatalog();
   const publicApp=publicCatalog.apps.find(item=>item.id===id);
@@ -24,7 +25,8 @@ export default async function CatalogAppPage({params}:{params:Promise<{id:string
   return <main className="admin-page standalone-admin editor-page"><div className="admin-utility"><Link href="/admin">← Research dashboard</Link><span>{app.name}</span></div><div className="editor-heading"><div><p className="eyebrow">CATALOG RECORD</p><h1>{app.name}</h1><p>Review every public and finder-facing field, attach evidence, and preview the saved draft.</p></div><span className={ready?"gate-ready":"gate-blocked"}>{ready?"Review checks complete":"Review checks incomplete"}</span></div>
   <div className="admin-review-tools"><p><strong>Public version:</strong> {publicApp ? draftMatchesPublic ? "Current editor values match what visitors see." : "The public profile differs from this editor draft." : "Not listed publicly."}</p><div><Link href={`/admin/apps/${id}/preview`}>Preview editor draft</Link>{publicApp?<Link href={`/apps/${id}`} target="_blank">Open public profile ↗</Link>:null}</div></div>
   {isLegacyPublicApp(id)?<p className="editor-help">Legacy public listing: this app was among the original 36 shown before owner review. It stays public when you publish newer approved entries. Its current research status is not an approval.</p>:null}
-  {hasUnsavedResearchDraft?<p className="editor-help">A research draft is prefilled below. It is not yet saved in Firebase or visible to visitors. The zero scores and unassessed AI status are placeholders, not judgments. Review and save the catalog record to keep your edits.</p>:null}
+  {hasUnsavedResearchDraft?<p className="editor-help">A research draft is prefilled below. It is not yet saved in Firebase or visible to visitors. Any initial scores are provisional editorial assessments, not approved judgments. Review and save the catalog record to keep your edits.</p>:null}
+  {hasUnsavedLegacyScoreDraft?<p className="editor-help">A provisional legacy rescoring is prefilled below for private review. It is not saved in Firebase and does not change the public profile. Check the source and rationale before saving; saving as Researching still does not publish a revised score.</p>:null}
   <div className="editor-layout"><CatalogReviewForm app={app} />
   <aside className="editor-sidebar">
     <section><p className="eyebrow">REVIEW CHECKLIST</p><h2>{checks.filter(check=>check.pass).length} of {checks.length} checks passed</h2><ul className="gate-list">{checks.map(check=><li className={check.pass?"passed":"missing"} key={check.label}><span>{check.pass?"✓":"!"}</span>{check.label}</li>)}</ul><p className="editor-help">These checks are a guide, not a substitute for reviewing the claims and sources.</p></section>
