@@ -31,6 +31,8 @@ Keep the default card brief enough to review on a phone. Offer additional eviden
 
 The private Firebase catalog manager can remain an optional internal editing tool. Its `Reviewed` status and publish controls must not be used as a shortcut around the owner's card review.
 
+For an app in active hands-on testing, maintain the internal Google Doc as the detailed observation and potential private-audit record. When a substantive observation is added or corrected in the local research draft, update the corresponding Doc in the same work session and check that the concise admin-card summary still reflects it. Do not copy raw test notes wholesale into the public listing, and do not turn an observation into a confirmed defect without verification.
+
 ## Developer submission intake
 
 - `Mark seen` only acknowledges that the owner has looked at an inbox request. It does not create a catalog entry or approve any claims.

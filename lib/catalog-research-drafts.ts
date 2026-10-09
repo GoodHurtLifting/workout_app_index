@@ -33,7 +33,7 @@ export const catalogResearchDrafts: Record<string, AppRecord> = {
       value: 90,
       supportPrivacy: 75,
       confidence: "Moderate",
-      rationale: "Provisional. Owner testing confirms a useful generated plan, warm-ups, set logging, and responsive load suggestions. Long onboarding, unclear adjustment/navigation moments, and a rest-timer reset limit usability. Free access is strong current value, but sustained reliability and privacy controls need longer testing and rechecking.",
+      rationale: "Provisional. Owner testing confirms a useful generated plan, warm-ups, set logging, and responsive load suggestions. Long onboarding, unclear adjustment/navigation moments, a rest-timer reset, and ambiguous set references in AI feedback limit usability. Free access is strong current value, but sustained reliability and privacy controls need longer testing and rechecking.",
       checkedAt: "2026-10-09",
       sourceUrls: ["https://apps.apple.com/us/app/aldo-coach-ai-workout-plan/id6802822375"],
     },
@@ -190,6 +190,11 @@ export const catalogResearchSources: Record<string, ResearchSource[]> = {
       label: "Owner hands-on test, October 2026: workout and follow-up",
       supports: "Set logging and AI load suggestions worked in a completed workout. The owner liked adjusted warm-ups, lift summaries, the log interface, and the option to turn AI off. Editing a lift reset the rest timer; a proposed 20-pound increase and later program-adjustment flow needed clearer context. The post-workout route back to the broader dashboard was hard to find.",
       followUp: "Recheck the timer, suggestion clarity, and post-workout navigation after product updates. These are observed usability issues, not proof of a persistent defect.",
+    },
+    {
+      label: "Owner hands-on test, October 2026: second workout set references",
+      supports: "During a second workout, AI feedback referred to a change for 'set 2' while two preceding warm-up sets made that appear to correspond to the fourth set shown in the workout. This made the intended target of the recommendation unclear.",
+      followUp: "Verify whether the AI counts warm-up sets in its set number, whether the recommendation was applied to the correct working set, and whether this repeats. Do not classify this as an incorrect load change without checking the actual applied set.",
     },
     {
       label: "Developer correspondence, October 2026",
