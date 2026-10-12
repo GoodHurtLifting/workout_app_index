@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  canTransition, monthKey, MONTHLY_ACCEPTANCE_LIMIT, MONTHLY_SCREENING_LIMIT,
+  canTransition, monthKey,
   normalizeAppSubmissionStatus,
 } from "../lib/submission-workflow.ts";
 
@@ -21,9 +21,7 @@ test("screening and research stages cannot skip the editorial gates", () => {
   assert.equal(canTransition("research_ready", "accepted_for_research"), false);
 });
 
-test("capacity settings and UTC month keys are explicit", () => {
-  assert.equal(MONTHLY_SCREENING_LIMIT, 8);
-  assert.equal(MONTHLY_ACCEPTANCE_LIMIT, 2);
+test("UTC month keys remain available for editorial activity counts", () => {
   assert.equal(monthKey(Date.parse("2026-10-31T23:59:59Z")), "2026-10");
   assert.equal(monthKey(Date.parse("2026-11-01T00:00:00Z")), "2026-11");
 });

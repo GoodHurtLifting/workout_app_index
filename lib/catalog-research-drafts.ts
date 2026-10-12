@@ -188,7 +188,7 @@ export const catalogResearchSources: Record<string, ResearchSource[]> = {
     },
     {
       label: "Owner hands-on test, October 2026: workout and follow-up",
-      supports: "Set logging and AI load suggestions worked in a completed workout. The owner liked adjusted warm-ups, lift summaries, the log interface, and the option to turn AI off. Editing a lift reset the rest timer; a proposed 20-pound increase and later program-adjustment flow needed clearer context. The post-workout route back to the broader dashboard was hard to find.",
+      supports: "Set logging and AI load suggestions worked in a completed workout. The owner liked adjusted warm-ups, lift summaries, and the log interface. Hands-on use confirmed multiple AI controls: a response can be canceled for one set, or AI can be turned off more broadly. Editing a lift reset the rest timer; a proposed 20-pound increase and later program-adjustment flow needed clearer context. The post-workout route back to the broader dashboard was hard to find.",
       followUp: "Recheck the timer, suggestion clarity, and post-workout navigation after product updates. These are observed usability issues, not proof of a persistent defect.",
     },
     {
@@ -199,7 +199,7 @@ export const catalogResearchSources: Record<string, ResearchSource[]> = {
     {
       label: "Developer correspondence, October 2026",
       supports: "The developer reported availability in the US, Canada, UK, EU, Iceland, and Norway; AI-off logging for a lift or whole workout; Claude Opus 5.5 for program work and Sonnet 5.5 for set coaching; and paid tiers planned later.",
-      followUp: "These are developer claims. Reconfirm countries, model versions, and future pricing before publication.",
+      followUp: "The AI-off control is now corroborated by owner testing. Reconfirm countries, model versions, and future pricing before publication. Turning AI off does not by itself establish how data is processed.",
     },
   ],
   stark: [

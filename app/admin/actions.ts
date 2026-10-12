@@ -5,7 +5,7 @@ import { apps, calculateLegitScore, calculateOriginalityScore, catalogEvidenceSe
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { getCatalogRecord, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveEvidence, savePublication } from "@/lib/catalog-repository";
-import { canTransition, monthKey, MONTHLY_ACCEPTANCE_LIMIT, MONTHLY_SCREENING_LIMIT, normalizeAppSubmissionStatus } from "@/lib/submission-workflow";
+import { canTransition, monthKey, normalizeAppSubmissionStatus } from "@/lib/submission-workflow";
 
 const splitList=(value:FormDataEntryValue|null)=>String(value??"").split(",").map(item=>item.trim()).filter(Boolean);
 const field=(data:FormData,name:string)=>String(data.get(name)??"").trim();
@@ -114,10 +114,6 @@ export async function startSubmissionScreening(formData: FormData) {
     const status = normalizeAppSubmissionStatus(data.status);
     if (!canTransition(status, "screening") && !canTransition(status, "waitlisted_unassessed")) throw new Error("This submission cannot enter screening");
     const count = Number(capacity.data()?.screenings ?? 0);
-    if (count >= MONTHLY_SCREENING_LIMIT) {
-      if (status !== "waitlisted_unassessed") transaction.update(ref, { status: "waitlisted_unassessed", statusChangedAt: now, statusBy: user.userId });
-      return;
-    }
     transaction.set(capacityRef, { screenings: count + 1 }, { merge: true });
     transaction.update(ref, { status: "screening", screeningStartedAt: now, screeningMonth: month,
       statusChangedAt: now, statusBy: user.userId, seenAt: data.seenAt ?? now, seenBy: data.seenBy ?? user.userId });
@@ -178,8 +174,6 @@ export async function acceptAppSubmissionForResearch(formData: FormData) {
         .where("acceptedAt", ">=", monthStart).where("acceptedAt", "<", nextMonth.getTime()));
       acceptedCount = prior.size;
     }
-    if (!data.acceptedAt && acceptedCount >= MONTHLY_ACCEPTANCE_LIMIT) throw new Error("Monthly research acceptance is full. Keep this submission on the eligible waitlist.");
-
     const name = data.appName.trim();
     if (!name) throw new Error("App name is required");
     const baseId = candidateId(name);

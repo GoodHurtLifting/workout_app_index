@@ -5,7 +5,7 @@ import { isLegacyPublicApp } from "@/lib/legacy-public-catalog";
 import { requireCatalogAdmin } from "@/lib/admin-auth";
 import { listCatalogRecords, listPublications } from "@/lib/catalog-repository";
 import { getEditorialCapacity, listEditorialRequests } from "@/lib/editorial-requests";
-import { MONTHLY_ACCEPTANCE_LIMIT, MONTHLY_SCREENING_LIMIT, normalizeAppSubmissionStatus, statusLabels } from "@/lib/submission-workflow";
+import { normalizeAppSubmissionStatus, statusLabels } from "@/lib/submission-workflow";
 import { CopyResearchBrief } from "@/components/copy-research-brief";
 import { acceptAppSubmissionForResearch, changeSubmissionReviewStage, completeSubmissionScreening, deleteAppSubmission, importPreliminaryCatalog, markEditorialRequestSeen, publishApprovedCatalog, startSubmissionScreening } from "./actions";
 import "./admin.css";
@@ -34,8 +34,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       <a href="#publication-history">Publication history</a>
     </nav>
     <section className="editorial-inbox" id="editorial-inbox">
-      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>App submissions and corrections</h2><p className="editor-help">Submissions are internal unverified research leads. Mark seen only acknowledges receipt. Screen up to {MONTHLY_SCREENING_LIMIT} and accept up to {MONTHLY_ACCEPTANCE_LIMIT} for research per calendar month. One app can be in active deep review at a time. Submission, research, owner approval, and publication remain separate.</p>
-      <p className="editor-help">This month: {capacity.screenings}/{MONTHLY_SCREENING_LIMIT} screens · {capacity.acceptances}/{MONTHLY_ACCEPTANCE_LIMIT} research acceptances. Active deep review: {capacity.activeSubmissionId ? activeApp?.kind === "app" ? activeApp.appName : "An app on another page" : "None"}. No developer stage emails are sent.</p></div>
+      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>App submissions and corrections</h2><p className="editor-help">Submissions are internal unverified research leads. Mark seen only acknowledges receipt. Screen and accept multiple eligible apps for initial research; acceptance creates or links a private Candidate evaluation, not a public listing. Only one app can be in active deep review for publication at a time. Owner approval and publication remain separate.</p>
+      <p className="editor-help">This month: {capacity.screenings} screens · {capacity.acceptances} research acceptances. Active deep review: {capacity.activeSubmissionId ? activeApp?.kind === "app" ? activeApp.appName : "An app on another page" : "None"}. No developer stage emails are sent.</p></div>
       {editorialRequests.length ? editorialRequests.map((request) => (
         <article id={`submission-${request.id}`} key={request.id}>
           <div className="editorial-inbox-heading">

@@ -1,6 +1,3 @@
-export const MONTHLY_SCREENING_LIMIT = 8;
-export const MONTHLY_ACCEPTANCE_LIMIT = 2;
-
 export const appSubmissionStatuses = [
   "received", "screening", "waitlisted_unassessed", "waitlisted_eligible",
   "accepted_for_research", "active_review", "research_ready", "not_scheduled", "declined",
