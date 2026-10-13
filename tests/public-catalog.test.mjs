@@ -41,9 +41,9 @@ test("a bundled research Candidate does not become public by default", () => {
   assert.equal(legacy.some((app) => app.id === stark.id), false);
 });
 
-test("Aldo and Stark research drafts stay private and do not overwrite saved edits", () => {
+test("developer research drafts stay private and do not overwrite saved edits", () => {
   const legacy = getLegacyPublicApps(apps);
-  for (const id of ["aldo-coach", "stark"]) {
+  for (const id of ["aldo-coach", "stark", "gir-iron"]) {
     assert.ok(catalogResearchDrafts[id]);
     assert.equal(legacy.some((app) => app.id === id), false);
   }
@@ -54,10 +54,17 @@ test("Aldo and Stark research drafts stay private and do not overwrite saved edi
   };
   assert.equal(getUnmodifiedCandidateResearchDraft(placeholder)?.id, "aldo-coach");
   assert.equal(getUnmodifiedCandidateResearchDraft({ ...placeholder, type: "Owner-edited type" }), null);
+  const aegirPlaceholder = {
+    ...catalogResearchDrafts["gir-iron"],
+    type: "Unclassified",
+    description: "Developer-submitted candidate. Product claims have not been independently verified.",
+  };
+  assert.equal(getUnmodifiedCandidateResearchDraft(aegirPlaceholder, "bZbRXp2hmnLHuuzqWLNF")?.name, "Ægir Iron");
+  assert.equal(getUnmodifiedCandidateResearchDraft(aegirPlaceholder, "another-submission"), null);
 });
 
 test("initial candidate scores are calculated from documented dimensions", () => {
-  for (const id of ["aldo-coach", "stark"]) {
+  for (const id of ["aldo-coach", "stark", "gir-iron"]) {
     const draft = catalogResearchDrafts[id];
     assert.equal(draft.researchStatus, "Candidate");
     assert.ok(draft.legitAssessment);

@@ -3,6 +3,7 @@ import type { AppRecord } from "@/lib/catalog";
 // Admin-only research drafts. Never add these to the bundled public `apps` list.
 export const catalogResearchSubmissionIds: Record<string, string> = {
   stark: "0Rbzea15uA9TZdX2rwZh",
+  "gir-iron": "bZbRXp2hmnLHuuzqWLNF",
 };
 
 export const catalogResearchDrafts: Record<string, AppRecord> = {
@@ -157,6 +158,82 @@ export const catalogResearchDrafts: Record<string, AppRecord> = {
       evidenceNote: "Low-confidence editorial assessment from the current App Store and website. WAI has not completed hands-on training sessions in Stark or a full direct-competitor comparison.",
     },
   },
+  "gir-iron": {
+    id: "gir-iron",
+    name: "Ægir Iron",
+    initials: "ÆI",
+    color: "#425c72",
+    type: "Strength-sport programs, logging, and coach tools",
+    bestFor: "Self-coached strength athletes who want structured programs, detailed logs, and meet tools without a solo subscription",
+    description: "Ægir Iron combines a strength-program library, guided multi-week program builder, workout logging, and meet planning across powerlifting, Olympic weightlifting, and strongman. Its optional AI assistant is separate from the rule-based core, according to the developer.",
+    price: "Individual lifters: free with no time limit, per current store and site listings. Optional AI: $4.99 or $9.99 monthly. Coach roster plans: $3.99 to $49.99 monthly after a 30-day trial.",
+    monthlyPrice: 0,
+    hasUsableFreeTier: true,
+    freeTierCapabilities: {
+      completeProgram: true,
+      adaptiveProgramming: true,
+      programLibrary: true,
+    },
+    platforms: ["iOS", "Android", "Web", "Apple Watch"],
+    ai: "Optional AI",
+    legit: 71,
+    legitAssessment: {
+      rubricVersion: "initial-v1",
+      coreExecution: 70,
+      usability: 65,
+      reliability: 60,
+      value: 90,
+      supportPrivacy: 70,
+      confidence: "Low",
+      rationale: "Provisional desk assessment, not a hands-on test. Live US iOS and Android listings and a detailed site support the product's existence and current free-solo pricing. The deep programming, strength-sport logging, offline sync, progression decisions, and coach workflow have not been exercised by WAI. Breadth may add setup complexity. The privacy policy is unusually specific about services and controls, but its practices are developer-reported and unverified.",
+      checkedAt: "2026-10-13",
+      sourceUrls: [
+        "https://apps.apple.com/us/app/%C3%A6gir-iron/id6763792846",
+        "https://play.google.com/store/apps/details?id=com.aegirlab.app.twa",
+        "https://www.aegirlab.com/",
+        "https://www.aegirlab.com/privacy/",
+      ],
+    },
+    goals: ["Get stronger", "Powerlifting", "Track workouts", "Build muscle"],
+    features: [
+      "Program library", "Custom workouts", "Automatic progression", "Fast logging",
+      "Offline use", "Detailed analytics", "Wearables", "Meet planning",
+      "Optional AI coach", "Coach tools",
+    ],
+    level: ["Intermediate", "Advanced"],
+    authorship: "Mixed",
+    caveat: "WAI has not tested a workout, program cycle, offline sync, or meet workflow. The Apple listing says English while the site advertises multilingual tools; exercise-library counts differ across the submission, site, and Play listing. The free individual tier is described by the developer and stores, but exact in-app gates need checking. The privacy policy discloses Firebase, Vercel Analytics, Sentry, and optional Anthropic processing; do not equate optional AI with no data collection.",
+    deliversCompleteProgram: true,
+    programLibrary: true,
+    adaptiveProgramming: true,
+    supportedTrainingEnvironments: ["Commercial gym", "Home gym", "Barbell and plates", "Bodyweight"],
+    researchStatus: "Candidate",
+    verifiedSections: 0,
+    totalSections: 7,
+    trainingRelationship: {
+      planningStyle: "Choose a proven path",
+      secondaryStyles: ["Build it yourself", "Follow a complete path"],
+      choiceLoad: "Moderate",
+      continuity: "Program-based",
+      customization: "Full control",
+      decisionsRemoved: "A chosen template or the guided wizard can supply a multi-week structure and prefilled sessions. The app describes rule-based load calculations and proposed training-max updates from logged results.",
+      decisionsRemaining: "You choose a training path and equipment, judge the program's suitability, log accurately, review proposed changes, and remain responsible for technique and recovery.",
+      tradeoff: "Its broad strength-sport tools offer more structure and control than a plain logger, but the number of program and adjustment choices may demand more setup and training knowledge.",
+      idealUser: "You lift seriously, want an established or self-built plan with detailed strength-sport tracking, and prefer to make the final training decisions yourself.",
+      notFor: "You want the quickest possible first workout, a minimal logbook, or an app with no AI features available at all.",
+    },
+    originalityProfile: {
+      score: 72,
+      level: "Clear identity",
+      originalMechanics: 75,
+      productPointOfView: 80,
+      visualIdentity: 70,
+      meaningfulDifferentiation: 75,
+      defensibility: 60,
+      summary: "Its specific strength-sport focus brings periodized programs, implement-aware strongman logging, meet planning, and coach-athlete continuity into one product. These pieces create a coherent identity, though their uniqueness against direct competitors and depth in use remain untested.",
+      evidenceNote: "Low-confidence editorial assessment from current site and store materials. WAI has not tested the interface or completed a direct feature-by-feature competitor audit; broad feature claims are not proof of originality.",
+    },
+  },
 };
 
 export type ResearchSource = { label: string; url?: string; supports: string; followUp?: string };
@@ -226,6 +303,32 @@ export const catalogResearchSources: Record<string, ResearchSource[]> = {
       url: "https://starkworkout.app/privacy-policy",
       supports: "The policy describes an anonymous guest account with training data stored through Supabase, optional Apple Health and social features, and a JSON export limited to some data types.",
       followUp: "Confirm that the privacy policy matches the current app. In particular, do not paraphrase 'no registration required' as local-only storage.",
+    },
+  ],
+  "gir-iron": [
+    {
+      label: "US App Store listing, checked October 13, 2026",
+      url: "https://apps.apple.com/us/app/%C3%A6gir-iron/id6763792846",
+      supports: "Confirms a live US iPhone listing from AEGir Labs, LLC, Apple Watch compatibility, free download with purchases, and listed coach and AI purchase prices. The developer's listing describes the program wizard, logging, and offline sync; Apple has not independently tested those claims.",
+      followUp: "The store labels the app Designed for iPhone and lists English, while the site describes iPad use and several language tools. Check actual iPad layout, language coverage, purchase labels, and free access in-app.",
+    },
+    {
+      label: "Google Play listing, checked October 13, 2026",
+      url: "https://play.google.com/store/apps/details?id=com.aegirlab.app.twa",
+      supports: "Confirms a live Android listing by AEGir Labs, LLC. Its developer-authored description presents free solo access, program building, strength-sport logging, and coach subscriptions. Its Data safety section declares collection of personal, health/fitness, and app-performance data.",
+      followUp: "Test the Android app and offline sync. The Play description says more than 540 exercises, whereas the submission says 600+ and the site says nearly 1,000. Do not publish a precise count yet.",
+    },
+    {
+      label: "Official website and pricing, checked October 13, 2026",
+      url: "https://www.aegirlab.com/",
+      supports: "The developer describes free solo access, a structured program library and wizard, optional AI add-on, coach tiers, meet planning, and iOS/Android/web access. Its prices match the listed US purchase range.",
+      followUp: "These are first-party product claims. Verify core workflows, current program catalog, deterministic progression, language availability, pricing gates, and international distribution through hands-on review.",
+    },
+    {
+      label: "Developer privacy policy, updated September 6, 2026; checked October 13",
+      url: "https://www.aegirlab.com/privacy/",
+      supports: "Discloses Firebase storage and authentication, Vercel usage analytics, Sentry error reporting, optional Anthropic processing for the paid Assistant Coach, optional Apple Health and Strava integrations, and account deletion and export procedures. It also says free AI helpers have narrower inputs than the paid assistant.",
+      followUp: "This is a developer disclosure, not a privacy or security audit. Check the precise data sent by Captain Ægir and import conversion, consent controls, deletion/export behavior, and how App Store/Play privacy disclosures align with the policy.",
     },
   ],
 };
