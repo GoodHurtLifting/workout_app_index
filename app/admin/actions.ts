@@ -215,22 +215,13 @@ export async function changeSubmissionReviewStage(formData: FormData) {
   if (note.length > 500 || (target === "not_scheduled" && !note)) throw new Error("Record a brief reason, up to 500 characters");
   const db = getAdminFirestore();
   const ref = db.collection("editorialRequests").doc(id);
-  const activeRef = db.collection("editorialWorkflow").doc("active-review");
   await db.runTransaction(async transaction => {
-    const [request, active] = await Promise.all([transaction.get(ref), transaction.get(activeRef)]);
+    const request = await transaction.get(ref);
     const data = request.data();
     if (!request.exists || data?.kind !== "app") throw new Error("App submission not found");
     const status = normalizeAppSubmissionStatus(data.status);
     if (!canTransition(status, target as typeof status)) throw new Error("That stage change is not allowed");
-    if (target === "active_review") {
-      if (!data.candidateAppId) throw new Error("Link a catalog Candidate before starting deep review");
-      if (active.data()?.submissionId && active.data()?.submissionId !== id) throw new Error("Finish the current deep review before starting another");
-      transaction.set(activeRef, { submissionId: id, startedAt: Date.now() });
-    }
-    if (target === "research_ready" || (target === "not_scheduled" && status === "active_review")) {
-      if (active.data()?.submissionId !== id) throw new Error("This app is not the active review");
-      transaction.set(activeRef, { submissionId: null, completedAt: Date.now() });
-    }
+    if (target === "active_review" && !data.candidateAppId) throw new Error("Link a catalog Candidate before starting deep review");
     transaction.update(ref, { status: target, statusChangedAt: Date.now(), statusBy: user.userId,
       ...(note ? { statusNote: note } : {}),
       ...(target === "active_review" ? { activeReviewStartedAt: Date.now() } : {}),
@@ -249,13 +240,11 @@ export async function deleteAppSubmission(formData: FormData) {
   const db = getAdminFirestore();
   const requestRef = db.collection("editorialRequests").doc(id);
   const notificationRef = db.collection("editorialNotifications").doc(`app-${id}`);
-  const activeRef = db.collection("editorialWorkflow").doc("active-review");
   await db.runTransaction(async (transaction) => {
-    const [request, active] = await Promise.all([transaction.get(requestRef), transaction.get(activeRef)]);
+    const request = await transaction.get(requestRef);
     if (!request.exists || request.data()?.kind !== "app") throw new Error("App submission not found");
     transaction.delete(requestRef);
     transaction.delete(notificationRef);
-    if (active.data()?.submissionId === id) transaction.set(activeRef, { submissionId: null, completedAt: Date.now() });
   });
   revalidatePath("/admin");
 }

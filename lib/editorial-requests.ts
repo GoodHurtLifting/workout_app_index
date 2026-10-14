@@ -203,7 +203,7 @@ export async function getEditorialCapacity() {
   const month = monthKey(Date.now());
   const [capacity, active] = await Promise.all([
     db.collection("editorialCapacity").doc(month).get(),
-    db.collection("editorialWorkflow").doc("active-review").get(),
+    db.collection("editorialRequests").where("status", "==", "active_review").count().get(),
   ]);
   const monthStart = Date.parse(`${month}-01T00:00:00.000Z`);
   const nextMonth = new Date(monthStart);
@@ -215,6 +215,6 @@ export async function getEditorialCapacity() {
   return {
     screenings: Number(capacity.data()?.screenings ?? 0),
     acceptances: prior ? prior.data().count : Number(capacity.data()?.acceptances ?? 0),
-    activeSubmissionId: typeof active.data()?.submissionId === "string" ? active.data()!.submissionId as string : null,
+    activeReviews: active.data().count,
   };
 }

@@ -19,7 +19,6 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const publications = await listPublications();
   const { requests: editorialRequests, nextCursor } = await listEditorialRequests(cursor);
   const capacity = await getEditorialCapacity();
-  const activeApp = editorialRequests.find(item => item.id === capacity.activeSubmissionId);
   const newRequests = editorialRequests.filter(request => request.kind === "app" && !request.seenAt).length;
   const reviewed = apps.filter(app => app.researchStatus === "Reviewed").length;
   const verified = apps.reduce((sum, app) => sum + app.verifiedSections, 0);
@@ -34,8 +33,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       <a href="#publication-history">Publication history</a>
     </nav>
     <section className="editorial-inbox" id="editorial-inbox">
-      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>App submissions and corrections</h2><p className="editor-help">Submissions are internal unverified research leads. Mark seen only acknowledges receipt. Screen and accept multiple eligible apps for initial research; acceptance creates or links a private Candidate evaluation, not a public listing. Only one app can be in active deep review for publication at a time. Owner approval and publication remain separate.</p>
-      <p className="editor-help">This month: {capacity.screenings} screens · {capacity.acceptances} research acceptances. Active deep review: {capacity.activeSubmissionId ? activeApp?.kind === "app" ? activeApp.appName : "An app on another page" : "None"}. No developer stage emails are sent.</p></div>
+      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>App submissions and corrections</h2><p className="editor-help">Submissions are internal unverified research leads. Mark seen only acknowledges receipt. Screen and accept eligible apps for initial research; acceptance creates or links a private Candidate evaluation, not a public listing. Multiple apps can be in deep review at once. Owner approval and publication remain separate.</p>
+      <p className="editor-help">This month: {capacity.screenings} screens · {capacity.acceptances} research acceptances. Active deep reviews: {capacity.activeReviews}. No developer stage emails are sent.</p></div>
       {editorialRequests.length ? editorialRequests.map((request) => (
         <article id={`submission-${request.id}`} key={request.id}>
           <div className="editorial-inbox-heading">
