@@ -24,6 +24,26 @@ function count(data:FormData,name:string):number {
   if(!Number.isInteger(value)||value<0) throw new Error(`${name} must be a non-negative whole number`);
   return value;
 }
+async function assertReviewedCatalogRecord(record: AppRecord, confirmed: boolean) {
+  const originality = getOriginalityProfile(record);
+  const relationship = getTrainingRelationship(record);
+  if (
+    record.type === "Unclassified" || record.bestFor === "Not yet assessed" ||
+    record.description === "Developer-submitted candidate. Product claims have not been independently verified." ||
+    record.authorship === "Not assessed" || record.caveat === "Not yet assessed" ||
+    record.price === "Not verified" || record.ai === "Not assessed" || record.legit === 0 ||
+    !record.platforms.length || !record.features.length || originality.score === 0 ||
+    originality.level === "Not assessed" || originality.summary === "Not yet assessed." ||
+    originality.evidenceNote === "Developer claims have not been independently verified." ||
+    relationship.planningStyle === "Not assessed" || relationship.choiceLoad === "Not assessed" ||
+    relationship.continuity === "Not assessed" || relationship.customization === "Not assessed" ||
+    relationship.decisionsRemoved === "Not yet assessed" ||
+    relationship.decisionsRemaining === "Not yet assessed" || relationship.tradeoff === "Not yet assessed" ||
+    relationship.idealUser === "Not yet assessed" || relationship.notFor === "Not yet assessed"
+  ) throw new Error("Replace candidate placeholders with verified profile details before marking Reviewed");
+  if (!confirmed) throw new Error("Confirm that you reviewed this exact profile before marking it Reviewed");
+  if (!(await listEvidence(record.id)).some(isRecheckedEvidence)) throw new Error("Recheck and attach at least one current source before marking this profile Reviewed");
+}
 const personRoles = new Set<PersonAssociation["role"]>(["Creator", "Founder", "Trainer", "Program author", "Featured athlete"]);
 
 function candidateFromSubmission(id: string, name: string): AppRecord {
@@ -308,7 +328,8 @@ export async function updateCatalogApp(formData:FormData){
   if(legitAssessment&&(!["Low","Moderate","High"].includes(legitAssessment.confidence)||!legitAssessment.rationale)) throw new Error("Complete the Legit Score assessment");
   const verifiedSections=count(formData,"verifiedSections");
   const totalSections=count(formData,"totalSections");
-  const researchStatus=field(formData,"researchStatus") as ResearchStatus;
+  // Content saves never change the separately managed research status.
+  const researchStatus=existing.researchStatus;
   const record:AppRecord={
     ...existing,
     name:field(formData,"name"), initials:field(formData,"initials"), color:field(formData,"color"),
@@ -339,24 +360,29 @@ export async function updateCatalogApp(formData:FormData){
   if(!["Not assessed","Low","Moderate","High"].includes(relationship.choiceLoad)||!["Not assessed","Single coherent system","Program-based","Session-adaptive","User-directed"].includes(relationship.continuity)||!["Not assessed","Follow as written","Guided flexibility","Full control"].includes(relationship.customization)) throw new Error("Invalid training relationship");
   if(!["Not assessed","Conventional","Clear identity","Distinctive","Category-defining"].includes(originality.level)||!originality.summary||!originality.evidenceNote) throw new Error("Complete the originality assessment");
   if(!relationship.idealUser||!relationship.notFor) throw new Error("Complete the fit assessment");
-  if(researchStatus==="Reviewed"&&(
-    record.type==="Unclassified"||record.bestFor==="Not yet assessed"||
-    record.description==="Developer-submitted candidate. Product claims have not been independently verified."||
-    record.authorship==="Not assessed"||record.caveat==="Not yet assessed"||
-    record.price==="Not verified"||record.ai==="Not assessed"||record.legit===0||
-    !record.platforms.length||!record.features.length||originality.score===0||
-    originality.level==="Not assessed"||originality.summary==="Not yet assessed."||
-    originality.evidenceNote==="Developer claims have not been independently verified."||
-    relationship.planningStyle==="Not assessed"||relationship.choiceLoad==="Not assessed"||
-    relationship.continuity==="Not assessed"||relationship.customization==="Not assessed"||
-    relationship.decisionsRemoved==="Not yet assessed"||
-    relationship.decisionsRemaining==="Not yet assessed"||relationship.tradeoff==="Not yet assessed"||
-    relationship.idealUser==="Not yet assessed"||relationship.notFor==="Not yet assessed"
-  )) throw new Error("Replace candidate placeholders with verified profile details before marking Reviewed");
-  if(researchStatus==="Reviewed"&&!checked(formData,"confirmReview")) throw new Error("Confirm that you reviewed this exact profile before marking it Reviewed");
-  if(researchStatus==="Reviewed"&&!(await listEvidence(id)).some(isRecheckedEvidence)) throw new Error("Recheck and attach at least one current source before marking this profile Reviewed");
+  if(researchStatus==="Reviewed") await assertReviewedCatalogRecord(record, checked(formData,"confirmReview"));
   if (JSON.stringify(record).includes("\u2014")) throw new Error("Replace em dashes in public copy before saving");
   await saveCatalogRecord(record,user.userId);
+  revalidatePath("/admin"); revalidatePath(`/admin/apps/${id}`);
+}
+
+export async function updateCatalogResearchStatus(formData: FormData) {
+  const user = await getCatalogAdminForAction();
+  const id = field(formData, "id");
+  const researchStatus = field(formData, "targetStatus") as ResearchStatus;
+  if (!/^[a-z0-9-]{1,80}$/.test(id)) throw new Error("Invalid catalog record");
+  if (!["Candidate", "Researching", "Evaluation ready", "Reviewed"].includes(researchStatus)) throw new Error("Invalid research status");
+  const existing = await getCatalogRecord(id);
+  if (!existing) throw new Error("App not found");
+  if (researchStatus === "Reviewed") await assertReviewedCatalogRecord(existing, checked(formData, "confirmReview"));
+  if (JSON.stringify(existing).includes("\u2014")) throw new Error("Replace em dashes in public copy before saving");
+  const ref = getAdminFirestore().collection("catalogApps").doc(id);
+  const stored = await ref.get();
+  if (stored.exists) {
+    await ref.update({ publication_status: researchStatus, "record.researchStatus": researchStatus, updated_by: user.userId, updated_at: Date.now() });
+  } else {
+    await saveCatalogRecord({ ...existing, researchStatus }, user.userId);
+  }
   revalidatePath("/admin"); revalidatePath(`/admin/apps/${id}`);
 }
 
