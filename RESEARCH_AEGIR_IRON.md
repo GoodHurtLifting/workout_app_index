@@ -1,12 +1,19 @@
 # Ægir Iron: private initial assessment
 
-Checked October 13, 2026. Submission `bZbRXp2hmnLHuuzqWLNF` is a developer claim, not independent evidence. This draft is for owner review, not an approved or public WAI listing. The matching internal Candidate identifier is currently `gir-iron` because the intake slugger drops the `Æ`; resolve that before any public listing URL is issued.
+Updated October 14, 2026 after one owner-run onboarding and workout. Submission `bZbRXp2hmnLHuuzqWLNF` is a developer claim, not independent evidence. This draft is for owner review, not an approved or public WAI listing. The matching internal Candidate identifier is `gir-iron`; the owner is comfortable leaving that hidden identifier as is.
 
 ## Preliminary scores
 
-- Legit Score **71/100**, Low confidence: core execution 70, usability 65, reliability 60, value 90, support/privacy 70. The five criteria are equally weighted under `initial-v1`. A live product and attractive free solo offer are documented, but WAI has not tested the training experience, sync, coach workflow, or privacy controls. These scores do not certify the app's claims.
-- Originality & Identity **72/100**, Clear identity: original mechanics 75, product point of view 80, visual identity 70, meaningful differentiation 75, defensibility 60. The strength-sport and coach-athlete combination is coherent; its distinctiveness relative to direct competitors remains untested.
-- Fit: an experienced or intermediate self-coached strength athlete who wants periodized programming, detailed logging, and meet tools, and is willing to choose and adjust a plan. Less suited to someone seeking a minimal logger or instant first workout.
+- Legit Score **73/100**, Low confidence: core execution 80, usability 60, reliability 60, value 90, support/privacy 75. The five criteria are equally weighted under `initial-v1`. One hands-on session supports the wizard's core program-building promise and the ability to complete a workout. The dense log and unclear completion cues lower usability. The thoughtful privacy explanation improves transparency, but actual data handling is unverified. Sync, coach workflow, and longer-term progression remain untested.
+- Originality & Identity **74/100**, Clear identity: original mechanics 75, product point of view 80, visual identity 80, meaningful differentiation 75, defensibility 60. The owner directly observed a cohesive Nordic visual language that fits the strength-sport positioning. Distinctiveness of the mechanics relative to competitors remains untested.
+- Fit: an experienced or intermediate self-coached strength athlete who wants periodized programming, detailed logging, and meet tools, and is willing to learn a dense interface. Less suited to someone seeking a minimal logbook. The owner's personal dislike of logging is a fit preference, not itself a product defect.
+
+## Owner's first session, October 14
+
+- Onboarding: the owner liked the Viking/Nordic styling, privacy explanation, and immediate definitions of cycle, block, week, and session. The wizard offered strength, powerbuilding, powerlifting, and sport-specific functional paths. The owner chose strength and muscle, intermediate, three full-body days, heavy and volume days, six exercises per session, an eight-week cycle, and four-week blocks. The plan was produced without an excessive delay. These choices are an observed path, not a test of every wizard branch.
+- Plan review: muscle-volume and week-layout previews appeared before building. The volume chart and later progression charts were difficult to interpret quickly. In the horizontally scrolling weekly layout, the frozen movement column appeared to overlap day content. The owner skipped long explanatory text. Exercise demos and target-muscle information were useful. Some prescriptions appeared to lack an upper rep-range bound; the reason is unknown. The terms "program" and "cycle" may not be used consistently enough for a new user.
+- Workout: the session screen contained many sections in one vertical scroll. The first day appeared near the bottom of the program list; tapping Log opened near the bottom of that day's exercise list, requiring an upward scroll. The current lb/kg unit was not obvious. Auto rest timing was appreciated. The owner could not tell whether the interface was intended for per-set logging; marking sets and then an exercise complete required discovery. Controls for miss, band, cluster, EMOM, warm-up, AMRAP, and split were not explained in context. A finish warning said some prescribed sets were unlogged but did not identify them. This does not establish that per-set logging is absent or that every user will have the same difficulty.
+- After completion: the app showed a basic workout summary, PRs, and a 12-week 1RM chart for squat that repeated the same value after only one squat session. The owner returned to Home easily and saw updated progress content. They liked the product and developer but would not personally choose it as a daily logger. Separate that preference from the broadly testable navigation and completion-cue issues.
 
 ## Evidence and discrepancies
 
@@ -17,10 +24,10 @@ Checked October 13, 2026. Submission `bZbRXp2hmnLHuuzqWLNF` is a developer claim
 
 ## Before owner approval
 
-1. Complete onboarding and several sessions on one platform. Assess time to first workout, program selection or wizard output, logging speed, load changes, rest timing, and history.
+1. Complete at least two more sessions on the same program. Retest whether the log is per set, whether it opens at the intended exercise, the finish warning and missing-set cues, units, rest timing, and whether the long-form screen becomes easier with familiarity.
 2. Test an actual offline session and later sync, and confirm what an athlete retains when moving between coach and solo modes.
 3. Verify free solo access, optional AI gates, coach trial and prices, and actual availability by country. Confirm the Apple Watch and iPad experiences separately.
 4. Ask the developer to reconcile exercise counts and distinguish fully localized interface languages from glossary/search/assistant languages. Confirm authorship and permission for named third-party programs.
-5. Review privacy controls in-app, including AI-off behavior, import-conversion inputs, data export, deletion, and optional integrations. Do not infer security from policy wording alone.
+5. Review privacy controls in-app, including AI-off behavior, import-conversion inputs, data export, deletion, and optional integrations. The opening explanation was a positive observed usability feature, not proof of security or actual data flows.
 
 The private audit path, if discussed later, is separate from WAI's scores, editorial selection, and publication decision. Aldo remains the active deep review; this Candidate is not one.
