@@ -1,6 +1,6 @@
-# Analytics cutover (deployment pending)
+# Analytics cutover
 
-The production deployment timestamp and Firebase App Hosting rollout ID are **not yet set**. Fill them in only after an approved rollout succeeds. Before that time, `view_app_profile` means a profile link was selected, not that a profile page rendered. Do not rename or rewrite its historical rows. After the rollout, `app_profile_viewed` means a public `/apps/[id]` page rendered in a consented browser; its sole custom parameter is the public `app_slug`.
+Production rollout `rollout-2026-10-15-001` succeeded at **2026-10-15 00:50:08 UTC** (2026-10-14 20:50:08 EDT) from commit `14a2321199eb6bd1bd52610707521977875102a2`. Before this cutover, `view_app_profile` meant a profile link was selected, not that a profile page rendered. Do not rename or rewrite its historical rows. After the rollout, `app_profile_viewed` means a public `/apps/[id]` page rendered in a consented browser; its sole custom parameter is the public `app_slug`.
 
 ## Public-performance reporting
 
@@ -30,7 +30,7 @@ Replace `PROJECT.DATASET` with the actual GA4 export dataset; do not run this as
 
 ## Production checklist requiring owner approval
 
-1. Record the approved App Hosting rollout ID and deployment timestamp here. Verify the new `app_profile_viewed` event only on a successfully rendered public profile, and verify no `view_app_profile` events are emitted by link selection after cutover.
+1. Verify the new `app_profile_viewed` event only on a successfully rendered public profile, and verify no `view_app_profile` events are emitted by link selection after cutover.
 2. Confirm `/admin` and nested routes do not request the Google tag on direct load. Also test public-to-admin client navigation and browser Back: the `ga-disable-<measurement ID>` route gate must prevent collection on admin paths. Confirm sign-in, inbox pagination, record save, and preview still work.
 3. Review GA4 Data stream > Enhanced Measurement > Form interactions. The automatic `form_start`/`form_submit` events do not represent confirmed saves and can include `form_destination`. If approved, turn off Form interactions for the data-flowing stream. Keep page views on for public reporting.
 4. Inspect a small sample of exported `page_location` and `form_destination` parameters for query strings or identifiers before broad reporting use. Do not place contact information or submission IDs in analytics events.
