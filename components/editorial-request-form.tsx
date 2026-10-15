@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackEventWhenReady } from "@/lib/analytics";
 
 export function EditorialRequestForm({ kind }: { kind: "app" | "correction" }) {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
@@ -35,7 +35,7 @@ export function EditorialRequestForm({ kind }: { kind: "app" | "correction" }) {
       form.reset();
       setStatus("sent");
       setMessage(kind === "app" ? "We received your submission. Submission is free and does not guarantee testing, review, listing, or a timeline." : "We received your correction request.");
-      if (kind === "app") trackEvent("submission_completed");
+      if (kind === "app") trackEventWhenReady("submission_completed");
     } catch (error) {
       setStatus("error");
       setMessage(error instanceof Error ? error.message : "We could not send your request.");

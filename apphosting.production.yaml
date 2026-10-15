@@ -4,6 +4,6 @@ env:
     availability:
       - RUNTIME
   - variable: RESEND_API_KEY
-    secret: RESEND_API_KEY
+    secret: wai_resend_api_key
     availability:
       - RUNTIME

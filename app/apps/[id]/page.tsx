@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPublicCatalog, isRecheckedEvidence, listEvidence } from "@/lib/catalog-repository";
 import { AppProfileContent } from "@/components/app-profile-content";
+import { AppProfileViewed } from "@/components/app-profile-viewed";
 import { catalogEvidenceSeeds } from "@/lib/catalog";
 
 type Props = { params: Promise<{ id: string }> };
@@ -32,5 +33,5 @@ export default async function AppProfilePage({ params }: Props) {
   ];
   const link = (types: string[]) => sources.find(source => types.includes(source.type) && source.url?.startsWith("https://"))?.url ?? null;
   const destinations = { official_site: link(["Official website"]), store: link(["Apple App Store", "Google Play"]) };
-  return <AppProfileContent app={app} apps={apps} publicEvidence={publicEvidence} destinations={destinations} />;
+  return <><AppProfileViewed appSlug={app.id} /><AppProfileContent app={app} apps={apps} publicEvidence={publicEvidence} destinations={destinations} /></>;
 }

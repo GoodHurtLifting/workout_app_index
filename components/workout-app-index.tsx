@@ -313,7 +313,6 @@ function AppCard({
             href={`/apps/${app.id}`}
             onClick={() => {
               onOpenProfile?.();
-              trackEvent("view_app_profile", { app_id: app.id });
             }}
           >
             View profile <ChevronRight />
@@ -628,9 +627,6 @@ export default function Home({
                 <span>AI: {heroFeatured.ai}</span>
                 <Link
                   href={`/apps/${heroFeatured.id}`}
-                  onClick={() =>
-                    trackEvent("view_app_profile", { app_id: heroFeatured.id })
-                  }
                 >
                   View profile <ChevronRight />
                 </Link>
@@ -824,7 +820,6 @@ export default function Home({
                         href={`/apps/${app.id}`}
                         onClick={() => {
                           rememberFinderScroll();
-                          trackEvent("view_app_profile", { app_id: app.id })
                         }}
                       >
                         View profile <ChevronRight />

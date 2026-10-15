@@ -1,12 +1,15 @@
 "use client";
 
 import Script from "next/script";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { isPublicAnalyticsPath } from "@/lib/analytics";
 
 const STORAGE_KEY = "wai-analytics-consent";
 type ConsentChoice = "granted" | "denied" | null;
 
 export function AnalyticsConsent() {
+  const pathname = usePathname();
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   const [choice, setChoice] = useState<ConsentChoice>(null);
   const [ready, setReady] = useState(false);
@@ -39,7 +42,7 @@ export function AnalyticsConsent() {
     if (wasGranted && nextChoice === "denied") window.location.reload();
   };
 
-  if (!measurementId) return null;
+  if (!measurementId || !isPublicAnalyticsPath(pathname)) return null;
 
   return (
     <>
@@ -50,14 +53,32 @@ export function AnalyticsConsent() {
             strategy="afterInteractive"
           />
           <Script id="wai-google-analytics" strategy="afterInteractive">
-            {`window.dataLayer = window.dataLayer || [];
+            {`if (!window.__waiAnalyticsGuardInstalled) {
+  window.__waiAnalyticsGuardInstalled = true;
+  const disableKey = 'ga-disable-${measurementId}';
+  const setRouteGate = (url) => {
+    const path = new URL(url || window.location.href, window.location.href).pathname;
+    window[disableKey] = path === '/admin' || path.startsWith('/admin/');
+  };
+  setRouteGate();
+  for (const method of ['pushState', 'replaceState']) {
+    const original = window.history[method];
+    window.history[method] = function(state, title, url) {
+      if (url != null) setRouteGate(url);
+      return original.apply(this, arguments);
+    };
+  }
+  window.addEventListener('popstate', () => setRouteGate(), true);
+}
+window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 window.gtag = gtag;
 gtag('consent', 'default', {
   analytics_storage: 'granted'
 });
 gtag('js', new Date());
-gtag('config', '${measurementId}', { anonymize_ip: true });`}
+gtag('config', '${measurementId}', { anonymize_ip: true });
+window.dispatchEvent(new Event('wai:analytics-ready'));`}
           </Script>
         </>
       ) : null}

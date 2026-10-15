@@ -11,6 +11,7 @@
     "start": "next start",
     "lint": "eslint . --ignore-pattern .next --ignore-pattern dist",
     "test:catalog": "node --experimental-strip-types --test tests/public-catalog.test.mjs tests/submission-workflow.test.mjs",
+    "test:analytics": "node --experimental-strip-types --test tests/analytics.test.mjs",
     "firebase:emulators": "firebase emulators:start --only auth,firestore"
   },
   "dependencies": {
