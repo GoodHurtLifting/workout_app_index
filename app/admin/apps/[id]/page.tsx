@@ -4,7 +4,9 @@ import { requireCatalogAdmin } from "@/lib/admin-auth";
 import { getCatalogRecord, getPublicCatalog, isRecheckedEvidence, listEvidence } from "@/lib/catalog-repository";
 import { addEvidence } from "../../actions";
 import { CatalogReviewForm } from "@/components/catalog-review-form";
+import { CatalogReviewStatusForm } from "@/components/catalog-review-status-form";
 import { CatalogProposalReview } from "@/components/catalog-proposal-review";
+import type { AppRecord, ResearchStatus } from "@/lib/catalog";
 import { catalogResearchDrafts, catalogResearchSources, getUnmodifiedCandidateResearchDraft } from "@/lib/catalog-research-drafts";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { isLegacyPublicApp } from "@/lib/legacy-public-catalog";
@@ -20,16 +22,32 @@ const proposalNotices: Record<string, string> = {
   invalid: "These selected fields could not be saved as a valid catalog record. Review the proposed values.",
 };
 
-export default async function CatalogAppPage({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{proposal?:string}>}){
-  const {id}=await params; const {proposal}=await searchParams; await requireCatalogAdmin(`/admin/apps/${id}`); const app=await getCatalogRecord(id); if(!app) notFound(); const evidence=await listEvidence(id);
+const stageNotices: Record<string, string> = {
+  updated: "Review stage updated. This did not publish the app.",
+  "save-first": "Save the catalog record before changing its review stage.",
+  stale: "The saved card changed since this page opened. Reload it and review the latest version before changing stage.",
+  same: "The card is already at that review stage.",
+  confirm: "Confirm that you reviewed the saved profile before marking it Reviewed.",
+  incomplete: "The saved card still has candidate placeholders. Complete and save it before marking it Reviewed.",
+  evidence: "A dated, rechecked source is required before marking this card Reviewed. Ask WAI to prepare the missing evidence.",
+  emdash: "Replace em dashes in the saved public copy before changing its stage.",
+  invalid: "Choose a valid review stage.",
+  error: "The stage could not be updated. The saved card was not changed; please try again or check the server logs.",
+};
+
+export default async function CatalogAppPage({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{proposal?:string;stage?:string}>}){
+  const {id}=await params; const {proposal,stage}=await searchParams; await requireCatalogAdmin(`/admin/apps/${id}`); const app=await getCatalogRecord(id); if(!app) notFound(); const evidence=await listEvidence(id);
   const stored=await getAdminFirestore().collection("catalogApps").doc(id).get();
+  const savedRecord=stored.exists ? { ...(stored.data()!.record as AppRecord), researchStatus:stored.data()!.publication_status as ResearchStatus } : null;
+  const checklistRecord=savedRecord ?? app;
+  const savedAt=stored.exists && typeof stored.data()?.updated_at === "number" ? stored.data()!.updated_at as number : null;
   const hasUnsavedResearchDraft=!stored.exists ? Boolean(catalogResearchDrafts[id]) : Boolean(getUnmodifiedCandidateResearchDraft(stored.data()?.record, stored.data()?.source_submission_id));
   const hasUnsavedLegacyScoreDraft=isLegacyPublicApp(id)&&Boolean(app.legitAssessment)&&!stored.data()?.record?.legitAssessment;
   const researchSources=catalogResearchSources[id] ?? [];
   const publicCatalog=await getPublicCatalog();
   const publicApp=publicCatalog.apps.find(item=>item.id===id);
   const draftMatchesPublic=publicApp ? JSON.stringify(publicApp)===JSON.stringify(app) : false;
-  const checks=[{label:"Identity and description",pass:Boolean(app.name&&app.description&&app.type&&app.type!=="Unclassified"&&!app.description.startsWith("Developer-submitted candidate."))},{label:"Platforms recorded",pass:app.platforms.length>0},{label:"Pricing recorded",pass:Boolean(app.price&&app.price!=="Not verified")},{label:"AI status classified",pass:Boolean(app.ai&&app.ai!=="Not assessed")},{label:"Feature inventory",pass:app.features.length>0},{label:"Dated research source attached",pass:evidence.some(isRecheckedEvidence)},{label:"Owner review confirmed",pass:app.researchStatus==="Reviewed"}];
+  const checks=[{label:"Identity and description",pass:Boolean(checklistRecord.name&&checklistRecord.description&&checklistRecord.type&&checklistRecord.type!=="Unclassified"&&!checklistRecord.description.startsWith("Developer-submitted candidate."))},{label:"Platforms recorded",pass:checklistRecord.platforms.length>0},{label:"Pricing recorded",pass:Boolean(checklistRecord.price&&checklistRecord.price!=="Not verified")},{label:"AI status classified",pass:Boolean(checklistRecord.ai&&checklistRecord.ai!=="Not assessed")},{label:"Feature inventory",pass:checklistRecord.features.length>0},{label:"Dated research source attached",pass:evidence.some(isRecheckedEvidence)},{label:"Owner review confirmed",pass:checklistRecord.researchStatus==="Reviewed"}];
   const ready=checks.every(check=>check.pass);
   return <main className="admin-page standalone-admin editor-page"><div className="admin-utility"><Link href="/admin">← Research dashboard</Link><span>{app.name}</span></div><div className="editor-heading"><div><p className="eyebrow">CATALOG RECORD</p><h1>{app.name}</h1><p>Review the proposed card and its source log. Research sources are prepared with the local draft; you do not need to enter them one by one.</p></div><span className={ready?"gate-ready":"gate-blocked"}>{ready?"Review checks complete":"Review checks incomplete"}</span></div>
   <div className="admin-review-tools"><p><strong>Public version:</strong> {publicApp ? draftMatchesPublic ? "Current editor values match what visitors see." : "The public profile differs from this editor draft." : "Not listed publicly."}</p><div><Link href={`/admin/apps/${id}/preview`}>Preview editor draft</Link>{publicApp?<Link href={`/apps/${id}`} target="_blank">Open public profile ↗</Link>:null}</div></div>
@@ -37,8 +55,9 @@ export default async function CatalogAppPage({params,searchParams}:{params:Promi
   {hasUnsavedResearchDraft?<p className="editor-help">A research draft is prefilled below. It is not yet saved in Firebase or visible to visitors. Any initial scores are provisional editorial assessments, not approved judgments. Review and save the catalog record to keep your edits.</p>:null}
   {hasUnsavedLegacyScoreDraft?<p className="editor-help">A provisional legacy rescoring is prefilled below for private review. It is not saved in Firebase and does not change the public profile. Check the source and rationale before saving; saving as Researching still does not publish a revised score.</p>:null}
   {proposal&&proposalNotices[proposal]?<p className="catalog-proposal-notice" role="status">{proposalNotices[proposal]}</p>:null}
+  {stage&&stageNotices[stage]?<p className="catalog-proposal-notice" role={stage==="updated"?"status":"alert"}>{stageNotices[stage]}</p>:null}
   {stored.exists&&!hasUnsavedResearchDraft&&catalogResearchDrafts[id]?<CatalogProposalReview saved={{ ...(stored.data()!.record as typeof app), researchStatus: stored.data()!.publication_status }} proposed={catalogResearchDrafts[id]}/>:null}
-  <div className="editor-layout"><CatalogReviewForm app={app} />
+  <div className="editor-layout"><div className="editor-main"><CatalogReviewForm app={app} /><CatalogReviewStatusForm id={id} currentStatus={savedRecord?.researchStatus ?? app.researchStatus} savedAt={savedAt} /></div>
   <aside className="editor-sidebar">
     <section><p className="eyebrow">REVIEW CHECKLIST</p><h2>{checks.filter(check=>check.pass).length} of {checks.length} checks passed</h2><ul className="gate-list">{checks.map(check=><li className={check.pass?"passed":"missing"} key={check.label}><span>{check.pass?"✓":"!"}</span>{check.label}</li>)}</ul><p className="editor-help">These are workflow checks, not a tally of verified product sections. WAI prepares the dated sources; your role is to review the card and confirm it when ready.</p></section>
     {researchSources.length?<section><p className="eyebrow">RESEARCH CONTEXT</p><h2>Sources and test notes</h2><p className="editor-help">These working notes explain the draft and its limits. Only dated, vetted sources in the source log below count toward publication. If a source or claim is missing, flag it in chat for WAI research rather than entering it yourself.</p>{researchSources.map(source=><article key={source.label}>{source.url?<a href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a>:<strong>{source.label}</strong>}<p>{source.supports}</p>{source.followUp?<small>{source.followUp}</small>:null}</article>)}</section>:null}

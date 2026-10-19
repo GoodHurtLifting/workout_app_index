@@ -9,6 +9,7 @@ import { getCatalogRecord, isRecheckedEvidence, listAllEvidence, listEvidence, l
 import { canTransition, monthKey, normalizeAppSubmissionStatus } from "@/lib/submission-workflow";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
 import { applyCatalogProposal, catalogProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
+import { reviewStageProblem } from "@/lib/catalog-review-stage";
 
 const splitList=(value:FormDataEntryValue|null)=>String(value??"").split(",").map(item=>item.trim()).filter(Boolean);
 const field=(data:FormData,name:string)=>String(data.get(name)??"").trim();
@@ -411,26 +412,39 @@ export async function applyCatalogProposalChanges(formData: FormData) {
 export async function updateCatalogResearchStatus(formData: FormData) {
   const user = await getCatalogAdminForAction();
   const id = field(formData, "id");
-  const researchStatus = field(formData, "targetStatus") as ResearchStatus;
   if (!/^[a-z0-9-]{1,80}$/.test(id)) throw new Error("Invalid catalog record");
-  if (!["Candidate", "Researching", "Evaluation ready", "Reviewed"].includes(researchStatus)) throw new Error("Invalid research status");
-  const existing = await getCatalogRecord(id);
-  if (!existing) throw new Error("App not found");
-  if (JSON.stringify(existing).includes("\u2014")) throw new Error("Replace em dashes in public copy before saving");
-  if (researchStatus === "Reviewed") {
-    const confirmed=checked(formData,"confirmReview");
-    if(!confirmed) throw new Error("Confirm that you reviewed this exact profile before marking it Reviewed");
-    await syncPreparedResearchEvidence(id);
-    await assertReviewedCatalogRecord(existing, confirmed);
-  }
   const ref = getAdminFirestore().collection("catalogApps").doc(id);
   const stored = await ref.get();
-  if (stored.exists) {
-    await ref.update({ publication_status: researchStatus, "record.researchStatus": researchStatus, updated_by: user.userId, updated_at: Date.now() });
-  } else {
-    await saveCatalogRecord({ ...existing, researchStatus }, user.userId);
+  const row = stored.data();
+  const researchStatus = field(formData, "targetStatus") as ResearchStatus;
+  const problem = reviewStageProblem({
+    saved: stored.exists,
+    expectedUpdatedAt: field(formData, "expectedUpdatedAt"),
+    actualUpdatedAt: typeof row?.updated_at === "number" ? row.updated_at : undefined,
+    currentStatus: row?.publication_status as ResearchStatus | undefined,
+    targetStatus: researchStatus,
+    confirmed: checked(formData, "confirmReview"),
+  });
+  if (problem) redirect(`/admin/apps/${id}?stage=${problem}`);
+  // Validate the persisted card, never the local draft overlaid in getCatalogRecord.
+  const existing = { ...(row!.record as AppRecord), researchStatus: row!.publication_status as ResearchStatus };
+  if (researchStatus === "Reviewed" && JSON.stringify(existing).includes("\u2014")) redirect(`/admin/apps/${id}?stage=emdash`);
+  if (researchStatus === "Reviewed") {
+    let failure: "incomplete" | "evidence" | "error" | null = null;
+    try {
+      await syncPreparedResearchEvidence(id);
+      await assertReviewedCatalogRecord(existing, true);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      failure = message.startsWith("Replace candidate placeholders") ? "incomplete"
+        : message.startsWith("Recheck and attach") ? "evidence" : "error";
+      if (failure === "error") console.error("Could not validate catalog review stage", error);
+    }
+    if (failure) redirect(`/admin/apps/${id}?stage=${failure}`);
   }
+  await ref.update({ publication_status: researchStatus, "record.researchStatus": researchStatus, updated_by: user.userId, updated_at: Date.now() });
   revalidatePath("/admin"); revalidatePath(`/admin/apps/${id}`);
+  redirect(`/admin/apps/${id}?stage=updated`);
 }
 
 export async function addEvidence(formData:FormData){

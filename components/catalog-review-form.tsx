@@ -1,6 +1,6 @@
 import type { AppRecord } from "@/lib/catalog";
 import { calculateLegitScore, calculateOriginalityScore, getOriginalityProfile, getTrainingRelationship } from "@/lib/catalog";
-import { updateCatalogApp, updateCatalogResearchStatus } from "@/app/admin/actions";
+import { updateCatalogApp } from "@/app/admin/actions";
 import { PersonAssociationEditor } from "@/components/person-association-editor";
 
 const planningStyles = [
@@ -106,19 +106,7 @@ export function CatalogReviewForm({ app }: { app: AppRecord }) {
       <label>Public evidence note<textarea name="originalityEvidenceNote" defaultValue={originality.evidenceNote} rows={3} required /></label>
     </section>
     <PersonAssociationEditor initialPeople={app.people ?? []} />
-    <section>
-      <h2>Review status</h2>
-      <p className="editor-help">Save catalog record keeps the current research status. To change status, save other card edits first, then choose a status below.</p>
-      <p className="editor-help">Current research status: <strong>{app.researchStatus}</strong></p>
-      <label className="review-confirmation"><input type="checkbox" name="confirmReview" required={app.researchStatus === "Reviewed"} /> I have reviewed this exact profile and approve its saved details.</label>
-      <p className="editor-help">{app.researchStatus === "Reviewed" ? "This profile is already Reviewed. Check the box again before every Save catalog record, or the changes will not save. Moving it back to another status does not require confirmation." : "Check the box when marking this profile Reviewed. Ordinary draft saves do not require it."}</p>
-      <div className="editorial-actions">
-        {(["Candidate", "Researching", "Evaluation ready", "Reviewed"] as const).map(status =>
-          <button key={status} type="submit" name="targetStatus" value={status} formAction={updateCatalogResearchStatus} formNoValidate={status !== "Reviewed"} disabled={status === app.researchStatus}>Set {status}</button>
-        )}
-      </div>
-      <p className="editor-help">Changing status does not save other edits or publish the app. Use the dashboard publication control only after checking the preview and evidence.</p>
-    </section>
+    {app.researchStatus === "Reviewed" ? <label className="review-confirmation"><input type="checkbox" name="confirmReview" required /> I have reviewed these edits and approve the updated profile.</label> : null}
     <button className="admin-primary" type="submit">Save catalog record</button>
   </form>;
 }
