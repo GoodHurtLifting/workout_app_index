@@ -4,6 +4,7 @@ import { requireCatalogAdmin } from "@/lib/admin-auth";
 import { getCatalogRecord, getPublicCatalog, isRecheckedEvidence, listEvidence } from "@/lib/catalog-repository";
 import { addEvidence } from "../../actions";
 import { CatalogReviewForm } from "@/components/catalog-review-form";
+import { CatalogProposalReview } from "@/components/catalog-proposal-review";
 import { catalogResearchDrafts, catalogResearchSources, getUnmodifiedCandidateResearchDraft } from "@/lib/catalog-research-drafts";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { isLegacyPublicApp } from "@/lib/legacy-public-catalog";
@@ -11,8 +12,16 @@ import "../../admin.css";
 
 export const dynamic="force-dynamic";
 
-export default async function CatalogAppPage({params}:{params:Promise<{id:string}>}){
-  const {id}=await params; await requireCatalogAdmin(`/admin/apps/${id}`); const app=await getCatalogRecord(id); if(!app) notFound(); const evidence=await listEvidence(id);
+const proposalNotices: Record<string, string> = {
+  applied: "Selected changes were saved to this private catalog record. Review the full card below before changing its status.",
+  stale: "This comparison is out of date. The latest saved values are shown below; review them and choose fields again.",
+  select: "Select one or more currently proposed fields before applying changes.",
+  reviewed: "Move this record back to Researching before accepting a new research update.",
+  invalid: "These selected fields could not be saved as a valid catalog record. Review the proposed values.",
+};
+
+export default async function CatalogAppPage({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{proposal?:string}>}){
+  const {id}=await params; const {proposal}=await searchParams; await requireCatalogAdmin(`/admin/apps/${id}`); const app=await getCatalogRecord(id); if(!app) notFound(); const evidence=await listEvidence(id);
   const stored=await getAdminFirestore().collection("catalogApps").doc(id).get();
   const hasUnsavedResearchDraft=!stored.exists ? Boolean(catalogResearchDrafts[id]) : Boolean(getUnmodifiedCandidateResearchDraft(stored.data()?.record, stored.data()?.source_submission_id));
   const hasUnsavedLegacyScoreDraft=isLegacyPublicApp(id)&&Boolean(app.legitAssessment)&&!stored.data()?.record?.legitAssessment;
@@ -27,6 +36,8 @@ export default async function CatalogAppPage({params}:{params:Promise<{id:string
   {isLegacyPublicApp(id)?<p className="editor-help">Legacy public listing: this app was among the original 36 shown before owner review. It stays public when you publish newer approved entries. Its current research status is not an approval.</p>:null}
   {hasUnsavedResearchDraft?<p className="editor-help">A research draft is prefilled below. It is not yet saved in Firebase or visible to visitors. Any initial scores are provisional editorial assessments, not approved judgments. Review and save the catalog record to keep your edits.</p>:null}
   {hasUnsavedLegacyScoreDraft?<p className="editor-help">A provisional legacy rescoring is prefilled below for private review. It is not saved in Firebase and does not change the public profile. Check the source and rationale before saving; saving as Researching still does not publish a revised score.</p>:null}
+  {proposal&&proposalNotices[proposal]?<p className="catalog-proposal-notice" role="status">{proposalNotices[proposal]}</p>:null}
+  {stored.exists&&!hasUnsavedResearchDraft&&catalogResearchDrafts[id]?<CatalogProposalReview saved={{ ...(stored.data()!.record as typeof app), researchStatus: stored.data()!.publication_status }} proposed={catalogResearchDrafts[id]}/>:null}
   <div className="editor-layout"><CatalogReviewForm app={app} />
   <aside className="editor-sidebar">
     <section><p className="eyebrow">REVIEW CHECKLIST</p><h2>{checks.filter(check=>check.pass).length} of {checks.length} checks passed</h2><ul className="gate-list">{checks.map(check=><li className={check.pass?"passed":"missing"} key={check.label}><span>{check.pass?"✓":"!"}</span>{check.label}</li>)}</ul><p className="editor-help">These checks are a guide, not a substitute for reviewing the claims and sources.</p></section>

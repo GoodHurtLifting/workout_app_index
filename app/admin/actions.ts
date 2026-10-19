@@ -1,11 +1,14 @@
 "use server";
 
 import { revalidatePath, updateTag } from "next/cache";
+import { redirect } from "next/navigation";
 import { apps, calculateLegitScore, calculateOriginalityScore, catalogEvidenceSeeds, getOriginalityProfile, getTrainingRelationship, type AiStatus, type AppRecord, type LegitAssessment, type OriginalityProfile, type PersonAssociation, type PlanningStyle, type ResearchStatus, type TrainingRelationship } from "@/lib/catalog";
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { getCatalogRecord, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveEvidence, savePublication } from "@/lib/catalog-repository";
 import { canTransition, monthKey, normalizeAppSubmissionStatus } from "@/lib/submission-workflow";
+import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
+import { applyCatalogProposal, catalogProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
 
 const splitList=(value:FormDataEntryValue|null)=>String(value??"").split(",").map(item=>item.trim()).filter(Boolean);
 const field=(data:FormData,name:string)=>String(data.get(name)??"").trim();
@@ -364,6 +367,48 @@ export async function updateCatalogApp(formData:FormData){
   if (JSON.stringify(record).includes("\u2014")) throw new Error("Replace em dashes in public copy before saving");
   await saveCatalogRecord(record,user.userId);
   revalidatePath("/admin"); revalidatePath(`/admin/apps/${id}`);
+}
+
+class CatalogProposalReviewError extends Error {
+  constructor(public code: "stale" | "select" | "reviewed" | "invalid") { super(code); }
+}
+
+export async function applyCatalogProposalChanges(formData: FormData) {
+  const user = await getCatalogAdminForAction();
+  const id = field(formData, "id");
+  if (!/^[a-z0-9-]{1,80}$/.test(id)) throw new Error("Invalid catalog record");
+  const draft = catalogResearchDrafts[id];
+  try {
+    if (!draft || field(formData, "proposalFingerprint") !== catalogRecordFingerprint(draft)) {
+      throw new CatalogProposalReviewError("stale");
+    }
+    const selected = formData.getAll("fields").map(value => String(value));
+    const savedFingerprint = field(formData, "savedFingerprint");
+    const ref = getAdminFirestore().collection("catalogApps").doc(id);
+    await getAdminFirestore().runTransaction(async transaction => {
+      const snapshot = await transaction.get(ref);
+      if (!snapshot.exists) throw new CatalogProposalReviewError("stale");
+      const row = snapshot.data()!;
+      const saved = { ...(row.record as AppRecord), researchStatus: row.publication_status as ResearchStatus };
+      if (catalogRecordFingerprint(saved) !== savedFingerprint) throw new CatalogProposalReviewError("stale");
+      if (saved.researchStatus === "Reviewed") throw new CatalogProposalReviewError("reviewed");
+      const changes = catalogProposalChanges(saved, draft);
+      if (!selected.length || selected.some(path => !changes.some(change => change.path === path)) ||
+          new Set(selected).size !== selected.length) throw new CatalogProposalReviewError("select");
+      const updated = applyCatalogProposal(saved, draft, selected);
+      if (!updated.name || !updated.type || !updated.description || !updated.bestFor ||
+          !/^#[0-9a-fA-F]{6}$/.test(updated.color) ||
+          !Number.isFinite(updated.monthlyPrice ?? 0) || (updated.monthlyPrice ?? 0) < 0 ||
+          JSON.stringify(updated).includes("\u2014")) throw new CatalogProposalReviewError("invalid");
+      transaction.update(ref, { record: updated, name: updated.name, updated_by: user.userId, updated_at: Date.now() });
+    });
+  } catch (error) {
+    if (error instanceof CatalogProposalReviewError) redirect(`/admin/apps/${id}?proposal=${error.code}`);
+    throw error;
+  }
+  revalidatePath("/admin");
+  revalidatePath(`/admin/apps/${id}`);
+  redirect(`/admin/apps/${id}?proposal=applied`);
 }
 
 export async function updateCatalogResearchStatus(formData: FormData) {

@@ -4,6 +4,7 @@ import { apps, calculateLegitScore, calculateOriginalityScore } from "../lib/cat
 import { getLegacyPublicApps, isLegacyPublicApp, legacyPublicAppIds, mergePublishedCatalog } from "../lib/legacy-public-catalog.ts";
 import { legacyScoreDrafts, legacyOriginalityDrafts, withPrivateLegacyScoreDraft } from "../lib/legacy-score-drafts.ts";
 import { catalogResearchDrafts, getUnmodifiedCandidateResearchDraft } from "../lib/catalog-research-drafts.ts";
+import { applyCatalogProposal, catalogProposalChanges, catalogRecordFingerprint } from "../lib/catalog-proposals.ts";
 
 test("the original 36 retain an explicit legacy-public marker", () => {
   assert.equal(legacyPublicAppIds.length, 36);
@@ -61,6 +62,67 @@ test("developer research drafts stay private and do not overwrite saved edits", 
   };
   assert.equal(getUnmodifiedCandidateResearchDraft(aegirPlaceholder, "bZbRXp2hmnLHuuzqWLNF")?.name, "Ægir Iron");
   assert.equal(getUnmodifiedCandidateResearchDraft(aegirPlaceholder, "another-submission"), null);
+});
+
+test("local research changes require per-field acceptance and preserve saved owner edits", () => {
+  const draft = catalogResearchDrafts["gir-iron"];
+  const saved = structuredClone(draft);
+  saved.researchStatus = "Researching";
+  saved.description = "Earlier saved description";
+  saved.features.push("Automatic rest timer");
+  saved.trainingRelationship.tradeoff = "Owner's saved tradeoff";
+  const changes = catalogProposalChanges(saved, draft);
+  assert.ok(changes.some(change => change.path === "description"));
+  assert.ok(changes.some(change => change.path === "features"));
+  assert.ok(changes.some(change => change.path === "trainingRelationship.tradeoff"));
+  assert.ok(!changes.some(change => change.path === "researchStatus"));
+  const merged = applyCatalogProposal(saved, draft, ["description", "trainingRelationship.tradeoff"]);
+  assert.equal(merged.description, draft.description);
+  assert.equal(merged.trainingRelationship.tradeoff, draft.trainingRelationship.tradeoff);
+  assert.deepEqual(merged.features, saved.features);
+  assert.equal(merged.researchStatus, "Researching");
+  assert.equal(saved.description, "Earlier saved description");
+  assert.equal(merged.legit, saved.legit);
+  assert.equal(merged.originalityProfile.score, saved.originalityProfile.score);
+  assert.throws(() => applyCatalogProposal(saved, draft, ["researchStatus"]));
+  assert.throws(() => applyCatalogProposal(saved, draft, ["description", "description"]));
+});
+
+test("accepting one score criterion recalculates the total without replacing other criteria", () => {
+  const draft = catalogResearchDrafts["gir-iron"];
+  const saved = structuredClone(draft);
+  saved.legitAssessment.usability = 55;
+  saved.legit = calculateLegitScore(saved.legitAssessment);
+  saved.originalityProfile.visualIdentity = 70;
+  saved.originalityProfile.score = calculateOriginalityScore(saved.originalityProfile);
+  const merged = applyCatalogProposal(saved, draft, ["legitAssessment.usability", "originalityProfile.visualIdentity"]);
+  assert.equal(merged.legitAssessment.usability, draft.legitAssessment.usability);
+  assert.equal(merged.legit, calculateLegitScore(merged.legitAssessment));
+  assert.equal(merged.originalityProfile.score, calculateOriginalityScore(merged.originalityProfile));
+  assert.equal(merged.legitAssessment.reliability, saved.legitAssessment.reliability);
+  assert.equal(catalogRecordFingerprint({ ...saved, name: "One", type: "Two" }),
+    catalogRecordFingerprint({ ...saved, type: "Two", name: "One" }));
+  assert.notEqual(catalogRecordFingerprint(saved), catalogRecordFingerprint(merged));
+});
+
+test("creator associations remain owner-controlled when accepting local research", () => {
+  const draft = structuredClone(catalogResearchDrafts["gir-iron"]);
+  const saved = structuredClone(draft);
+  saved.people = [{
+    name: "Owner-added trainer", aliases: [], role: "Trainer",
+    relationship: "Associated with the app", sourceUrl: "https://example.com",
+    checkedAt: "2026-10-19",
+  }];
+  draft.description = "Updated local research summary";
+  const changes = catalogProposalChanges(saved, draft);
+  assert.ok(!changes.some(change => change.path === "people"));
+  const descriptionOnly = applyCatalogProposal(saved, draft, ["description"]);
+  assert.deepEqual(descriptionOnly.people, saved.people);
+  draft.people = [];
+  assert.ok(catalogProposalChanges(saved, draft).some(change => change.path === "people"));
+  const peopleAccepted = applyCatalogProposal(saved, draft, ["people"]);
+  assert.deepEqual(peopleAccepted.people, []);
+  assert.deepEqual(saved.people, descriptionOnly.people);
 });
 
 test("initial candidate scores are calculated from documented dimensions", () => {

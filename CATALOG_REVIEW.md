@@ -14,14 +14,20 @@ Use this order:
 4. **Differentiation and caveats:** what is genuinely distinctive, what is ordinary, and meaningful limitations. Show score recommendations with a short rationale, not just numbers.
 5. **Evidence and uncertainty:** source links beside the claims they support, check dates, and explicit unknowns or conflicts. Do not convert an unknown into a confident score or eligibility claim.
 6. **Proposed public summary:** the concise wording visitors would see.
-7. **Decision:** ask for **Approve**, **Changes needed**, or **Do not list**. A partial reply is feedback, not approval unless the owner clearly approves the entry.
+7. **Decision:** discuss changes here; for an existing saved entry, the owner accepts proposed fields in admin and separately confirms the exact record as Reviewed. A partial chat reply is feedback, not publication approval.
 
 Keep the default card brief enough to review on a phone. Offer additional evidence or detail only when useful. If a source does not support a claim, revise the claim before presenting the card. A developer submission is a lead, not independent evidence.
+
+## Local research to admin approval
+
+Research, scoring, and proposed copy are prepared in the local project with the owner. A new Candidate can be prefilled from a local research draft, but a saved Firebase record is never overwritten by a later code deployment. When a local draft differs from an existing saved record, the admin editor shows each changed field as **Saved now** versus **Proposed**. The owner accepts only the fields they choose; all other saved fields, including their own edits, remain unchanged. A stale comparison is rejected if the saved record or local proposal changed after the page opened. Score totals are recalculated only when an accepted criterion changes.
+
+Applying selected fields changes the private catalog record only. It does not add evidence, mark the app Reviewed, publish a listing, or trigger a site deployment. After acceptance, the owner reviews the full card and evidence, confirms Reviewed when ready, and uses the separate **Publish approved catalog** control for public changes. Submission tracking remains in the admin inbox. More hands-on testing is optional unless a specific public claim cannot be supported or responsibly qualified without it.
 
 ## Approval gate
 
 - Research and drafting may set an entry to `Candidate`, `Researching`, or `Evaluation ready`. They never set it to `Reviewed` merely because an agent checked sources or filled every field.
-- Set `Reviewed` only after the owner has seen the card and explicitly approved that version of the entry. Record the app ID, approval date, card ID, and any requested edits in a review log alongside the change. Apply requested edits before marking Reviewed.
+- Set `Reviewed` only after the owner has seen the saved admin card and explicitly approved that version of the entry. Apply requested edits before marking Reviewed.
 - A substantial later change to pricing, AI role, programming model, fit, scoring, or claims needs a new card and approval. Routine typo fixes do not.
 - For newly researched apps, proposed scores belong on the private card before owner approval. Use the same documented criteria for each app, distinguish store/developer claims from hands-on observations, show category scores and rationale, and mark evidence-limited scores as provisional. Developer answers may correct facts but do not set WAI scores. See `RESEARCH_ALDO_STARK.md` for the initial-v1 rubric applied to the first two submitted-app drafts.
 - The original 36 have private, evidence-limited Legit and Originality rescoring drafts documented in `LEGACY_RESCORING.md`. Their public scores remain unchanged until each exact revision is approved and published. The admin editor will not overlay a draft onto an owner-edited score or an already Reviewed record.
@@ -29,9 +35,9 @@ Keep the default card brief enough to review on a phone. Offer additional eviden
 - Do not take down the existing public catalog merely because a newer Firebase publication has not yet been created. The fixed 36-ID legacy-public set is the documented baseline, including after later publications. Adding a new app to the bundled source does not make it legacy public.
 - Each publication overlays the latest approved versions onto that legacy baseline and adds approved new entries. Unreviewed new Candidates and research drafts are never included in public listings or the sitemap.
 
-The private Firebase catalog manager can remain an optional internal editing tool. Its `Reviewed` status and publish controls must not be used as a shortcut around the owner's card review.
+The private Firebase catalog manager is the owner's approval and publication surface. Its `Reviewed` status and publish controls remain separate from accepting local research changes field by field.
 
-For an app in active hands-on testing, maintain the internal Google Doc as the detailed observation and potential private-audit record. When a substantive observation is added or corrected in the local research draft, update the corresponding Doc in the same work session and check that the concise admin-card summary still reflects it. Do not copy raw test notes wholesale into the public listing, and do not turn an observation into a confirmed defect without verification.
+Keep routine catalog research and observations in the local project. A separate Google Doc may be used for a paid private audit deliverable, but catalog updates do not require maintaining a parallel document. Do not copy raw test notes wholesale into a public listing, and do not turn an observation into a confirmed defect without verification.
 
 ## Developer submission intake
 
