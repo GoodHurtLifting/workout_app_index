@@ -1,5 +1,7 @@
 # Catalog review with the owner
 
+This is WAI's catalog review process as of October 19, 2026. The dictated review protocol and initial-v1 scoring rubric are its operating standards. Apply them to new reviews and substantive reassessments. A method change must be dated, explained, and applied prospectively; it does not silently rewrite saved or public scores. The owner remains the final editorial approver. A bounded, qualified review is complete when the main product relationship, supported claims, material limitations, scores, and evidence scope are clear, even if optional features remain untested.
+
 The public finder is account-free. This review process is editorial, not a visitor sign-in feature. The original 36 entries are explicitly marked `Legacy public` in the admin dashboard and remain available while their owner review is pending. Their current `Researching` and `Evaluation ready` labels must not be interpreted as owner approval. This is a visibility exception for the existing catalog, not a shortcut for new submissions.
 
 ## One card per proposed entry
@@ -18,7 +20,7 @@ Use this order:
 
 Keep the default card brief enough to review on a phone. Offer additional evidence or detail only when useful. If a source does not support a claim, revise the claim before presenting the card. A developer submission is a lead, not independent evidence.
 
-For routine app evaluation, use `CATALOG_DICTATED_REVIEW_PROTOCOL.md`. The owner dictates observations in chat; WAI tracks the same product checkpoints in the background, asks only targeted follow-ups, reconciles them with dated source claims, and applies `CATALOG_SCORING_RUBRIC.md`. Do not send the owner a form to fill out or require extra workouts merely to complete a checklist.
+For routine app evaluation, use `CATALOG_DICTATED_REVIEW_PROTOCOL.md`. The owner dictates observations in chat; WAI tracks the same product checkpoints in the background, asks only targeted follow-ups, reconciles them with dated source claims, and applies `CATALOG_SCORING_RUBRIC.md`. A normal review budgets about 60-90 minutes of hands-on use across one principal journey, one reasonable retry, and one obvious alternative route. Do not send the owner a form to fill out or require extra workouts merely to complete a checklist.
 
 ## Local research to admin approval
 
@@ -39,6 +41,8 @@ Applying selected fields changes the private catalog record and attaches only mi
 
 The private Firebase catalog manager is the owner's approval and publication surface. Its `Reviewed` status and publish controls remain separate from accepting local research changes field by field.
 
+Developer participation is not required before publication. WAI does not send routine research-stage updates, negotiate scores in advance, or offer prepublication approval. Developers can submit documented factual corrections and material product updates through the site's correction channel. A factual clarification can be requested when necessary, but no response is not itself a support failure or a publication veto. Normal customer-facing support may be evaluated if encountered; editorial correspondence with WAI does not earn Support/privacy points. Verified product changes may affect the applicable product criterion after WAI checks the updated behavior.
+
 Keep routine catalog research and observations in the local project. A separate Google Doc may be used for a paid private audit deliverable, but catalog updates do not require maintaining a parallel document. Do not copy raw test notes wholesale into a public listing, and do not turn an observation into a confirmed defect without verification.
 
 ## Developer submission intake
@@ -51,7 +55,7 @@ Keep routine catalog research and observations in the local project. A separate 
 ### Capacity-controlled queue
 
 - App submissions are internally classified as unverified research leads. The public receipt says only, "We received your submission," and does not promise testing, review, listing, publication, or a timeline.
-- Initial screening and acceptance for research have no monthly quota. The dashboard still counts them by UTC month. A screen should take no more than 10 to 15 minutes. Only one submission can be in active deep review at a time; this is the queue for deeper verification before owner approval and possible publication.
+- Initial screening and acceptance for research have no monthly quota. The dashboard still counts them by UTC month. A screen should take no more than 10 to 15 minutes. Several apps may be in research preparation or carry the admin `active_review` stage, but schedule hands-on testing for only one app at a time. This is an editorial operating limit, not a software-enforced cap or a limit on preparing private cards.
 - Status path: `received` → `screening` → `waitlisted_eligible` → `accepted_for_research` → `active_review` → `research_ready`. Existing `waitlisted_unassessed` submissions can enter screening; no new submissions are placed there because of a quota. `not_scheduled` and `declined` are explicit owner dispositions. Only the owner can move stages in the admin dashboard. Existing `new`, `seen`, and `accepted` submissions are mapped to their closest new state without publishing them.
 - Check a live public product, substantive fitness training or tracking, a working website or store listing, a public privacy policy, stated platforms/pricing, and practical review access. Record a brief note. Passing checks means eligible for consideration, not independently verified for the catalog.
 - `Mark seen` is a timestamp and does not move the app through editorial stages. `Accept for research` still only creates or links an unpublished Candidate. `Research ready` means an owner-review card is ready; it is not catalog `Reviewed` or published.

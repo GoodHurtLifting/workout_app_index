@@ -1234,13 +1234,14 @@ export default function Home({
               </span>
               <h2>Legit Score</h2>
               <p>
-                Our structured assessment of the product’s quality, credibility,
-                usability, support, value, privacy, and maintenance.
+                Our assessment of five equally weighted dimensions: core
+                execution, usability, reliability, value, and support/privacy.
               </p>
               <ul>
+                <li>Uses public documentation and testing when practical</li>
+                <li>Unknowns are disclosed, not assumed to be failures</li>
                 <li>Not influenced by advertising</li>
                 <li>Store ratings remain separate</li>
-                <li>Methodology changes are versioned</li>
               </ul>
             </article>
             <article>
@@ -1261,6 +1262,10 @@ export default function Home({
               </ul>
             </article>
           </div>
+          <p className="method-detail-link">
+            <Link href="/editorial-standards">Read our full review process</Link>,
+            including testing limits, confidence, and publication rules.
+          </p>
           <div className="disclosure">
             <h2>Ownership disclosure</h2>
             <p>

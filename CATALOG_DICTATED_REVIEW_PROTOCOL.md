@@ -8,6 +8,12 @@ Research the official product site, current store listing in a named country, cu
 
 The pre-use brief should take at most a few lines: the product's stated job, its apparent programming model, the access tier, and two or three specific questions worth noticing. These are prompts, not a testing assignment.
 
+### Normal-review testing limit
+
+Budget approximately 60-90 minutes of hands-on use for a routine catalog review, separate from public-source research and drafting. Follow one primary-user journey, allow one reasonable retry after a barrier, and try one obvious alternative route if one exists. Stop when the main journey and material tradeoff are understood, or when the timebox and retry/alternative limit are reached. The owner may continue using an app voluntarily, but extra use is not a publication prerequisite and does not automatically make the review a paid audit.
+
+Do not troubleshoot accounts beyond that ordinary retry, coordinate special tester access, test unreleased builds, or help a developer repair a blocked workflow as part of catalog research. If a consequential feature remains inaccessible, record the attempted path and disclose the limitation; do not claim the feature is absent or working. A subscription or access barrier may be described from current public terms without purchasing access solely to finish a catalog card.
+
 ## 2. Listen for the same seven checkpoints
 
 Let the owner dictate naturally. Track these checkpoints silently and ask a short follow-up only when a material field remains unclear. Ask what happened, not for a 0-100 rating or a feature count. Capture device, app version if known, date, country/store, access tier, goal, and whether a workout was actually performed or only explored/simulated.
@@ -22,7 +28,7 @@ Let the owner dictate naturally. Track these checkpoints silently and ask a shor
 | Support and privacy | If you actually sought help or encountered data controls, what happened? Otherwise, leave support response and real data handling untested. | Support/privacy rationale and any concrete caveat |
 | Identity and fit | What was genuinely distinctive in use, what was familiar, and who would find the tradeoff worthwhile? | Best for, not for, originality dimensions, central tradeoff |
 
-The owner does not need to cover every checkpoint in one session. Do not interpret silence as a failed feature. A simulated log is not a completed workout. A proposed AI change is not an applied change until observed. A visible button is not proof that the underlying operation succeeds.
+The owner does not need to cover every checkpoint in one session. Do not interpret silence as a failed feature. A simulated log is not a completed workout. A proposed AI change is not an applied change until observed. A visible button is not proof that the underlying operation succeeds. Stop at the normal-review limit rather than extending testing merely to fill every checkpoint.
 
 ## 3. Reconcile claims and observations
 
@@ -34,7 +40,11 @@ For every material statement in the draft card, keep a compact evidence record: 
 - **Editorial inference:** WAI's fit, tradeoff, comparison, or score judgment. State the underlying observations and comparison set.
 - **Unresolved:** missing, stale, contradictory, or untested. Qualify or omit the public claim; do not silently turn it into `false` or into a confirmed feature.
 
-When sources conflict, prefer a directly observed current path for that device/tier, then current store or policy language for platform/pricing/privacy statements. Do not generalize one owner's experience to all platforms, countries, or users. Ask the developer factual clarifications when useful; their answer can correct facts but cannot set a WAI score.
+When sources conflict, prefer a directly observed current path for that device/tier, then current store or policy language for platform/pricing/privacy statements. Do not generalize one owner's experience to all platforms, countries, or users. A focused factual clarification may be requested when useful, but developer participation is not required. If an answer does not arrive, qualify or omit the claim rather than delaying a bounded review. A developer answer can correct facts but cannot set a WAI score.
+
+### Developer interaction boundary
+
+Developer participation is not required before publication. WAI does not provide routine progress updates, advance score negotiation, or prepublication approval. Developers may submit documented factual corrections and material product updates through the site's correction channel. Editorial calls or email exchanges are not customer-support tests and do not earn Support/privacy points. If a developer changes the live product, score the verified product behavior in the relevant dimension; record the version/date and do not award a separate responsiveness bonus.
 
 ## 4. Translate to catalog fields consistently
 
@@ -58,7 +68,7 @@ Use the exact finder-sensitive labels in `lib/matching.ts` when supported; keep 
 
 ## 5. Score and hand off
 
-For each of the five Legit and five Originality dimensions, record the band chosen, the specific supporting and limiting evidence, comparison apps where relevant, and confidence. Apply the same rubric each time. Do not ask the owner to supply numbers. An unknown lowers confidence or narrows the claim; it is not an automatic numeric penalty. Equally, a marketing claim alone does not demonstrate excellent execution. Keep scoring independent of developer cooperation, paid audits, and publication decisions.
+For each of the five Legit and five Originality dimensions, record the band chosen, the specific supporting and limiting evidence, comparison apps where relevant, and confidence. Apply the same rubric each time. Do not ask the owner to supply numbers. An unknown lowers confidence or narrows the claim; it is not an automatic numeric penalty, but it cannot justify a band that requires demonstrated or repeated performance. Equally, a marketing claim alone does not demonstrate excellent execution. Use the Low/Moderate/High anchors in the scoring rubric. Keep scoring independent of developer cooperation, paid audits, and publication decisions.
 
 Keep an internal decision row for each dimension: `dimension | proposed score | decisive evidence IDs | counterevidence | why this band rather than the adjacent band | confidence`. If a later observation changes a number, append the new reason and date instead of silently rewriting the old judgment. Use relevant apps as behavioral comparators, but do not copy their unrevised public totals.
 
