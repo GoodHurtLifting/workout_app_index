@@ -283,7 +283,15 @@ export async function importPreliminaryCatalog(){
 }
 
 export async function updateCatalogApp(formData:FormData){
-  const user=await getCatalogAdminForAction(); const id=String(formData.get("id")??""); const existing=await getCatalogRecord(id); if(!existing) throw new Error("App not found");
+  const user=await getCatalogAdminForAction(); const id=String(formData.get("id")??"");
+  if (!/^[a-z0-9-]{1,80}$/.test(id)) throw new Error("Invalid catalog record");
+  const savedSnapshot=await getAdminFirestore().collection("catalogApps").doc(id).get();
+  const savedRow=savedSnapshot.data();
+  const currentFingerprint=savedSnapshot.exists
+    ? catalogRecordFingerprint({ ...(savedRow!.record as AppRecord), researchStatus: savedRow!.publication_status as ResearchStatus })
+    : "unsaved";
+  if (field(formData,"savedFingerprint") !== currentFingerprint) redirect(`/admin/apps/${id}?save=stale`);
+  const existing=await getCatalogRecord(id); if(!existing) throw new Error("App not found");
   const monthlyRaw=String(formData.get("monthlyPrice")??"").trim();
   const relationship:TrainingRelationship={
     ...getTrainingRelationship(existing),

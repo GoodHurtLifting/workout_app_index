@@ -22,6 +22,7 @@ export function CatalogReviewStatusForm({
     <input type="hidden" name="expectedUpdatedAt" value={savedAt ?? ""} />
     <h2>Review stage</h2>
     <p className="editor-help">Current stage: <strong>{currentStatus}</strong>. Save any card edits above before changing its stage.</p>
+    {currentStatus === "Reviewed" ? <p className="editor-help">Owner review is complete for the saved card. No further save or stage change is needed unless you want to reopen it for revisions. Publishing remains separate.</p> : null}
     {savedAt === null ? <p className="editor-help">Save this catalog record first. Stage changes use the saved version, not an unsaved research draft.</p> : null}
     <fieldset disabled={savedAt === null}>
       <label>Move to

@@ -16,11 +16,12 @@ function ScoreField({ label, name, value }: { label: string; name: string; value
   return <label>{label}<input name={name} type="number" min="0" max="100" step="1" defaultValue={value} required /></label>;
 }
 
-export function CatalogReviewForm({ app }: { app: AppRecord }) {
+export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; savedFingerprint: string }) {
   const relationship = getTrainingRelationship(app);
   const originality = getOriginalityProfile(app);
 
   return <form action={updateCatalogApp} className="record-form">
+    <input type="hidden" name="savedFingerprint" value={savedFingerprint} />
     <input type="hidden" name="id" value={app.id} />
     <p className="editor-help">Save your changes as a draft. They do not change the public profile until a reviewed catalog is published.</p>
     <section>

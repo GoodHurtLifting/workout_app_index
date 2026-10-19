@@ -111,6 +111,20 @@ test("local research changes require per-field acceptance and preserve saved own
   assert.throws(() => applyCatalogProposal(saved, draft, ["description", "description"]));
 });
 
+test("accepting a rationale saves it once and invalidates an older edit form", () => {
+  const draft = catalogResearchDrafts["gir-iron"];
+  const saved = structuredClone(draft);
+  saved.researchStatus = "Researching";
+  saved.legitAssessment.rationale = "Earlier owner-approved wording";
+  const oldFormFingerprint = catalogRecordFingerprint(saved);
+  const updated = applyCatalogProposal(saved, draft, ["legitAssessment.rationale"]);
+  assert.equal(updated.legitAssessment.rationale, draft.legitAssessment.rationale);
+  assert.ok(!catalogProposalChanges(updated, draft).some(change => change.path === "legitAssessment.rationale"));
+  assert.notEqual(catalogRecordFingerprint(updated), oldFormFingerprint);
+  updated.researchStatus = "Reviewed";
+  assert.ok(!catalogProposalChanges(updated, draft).some(change => change.path === "legitAssessment.rationale"));
+});
+
 test("accepting one score criterion recalculates the total without replacing other criteria", () => {
   const draft = catalogResearchDrafts["gir-iron"];
   const saved = structuredClone(draft);
