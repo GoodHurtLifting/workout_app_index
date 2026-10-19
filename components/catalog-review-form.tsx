@@ -110,10 +110,11 @@ export function CatalogReviewForm({ app }: { app: AppRecord }) {
       <h2>Review status</h2>
       <p className="editor-help">Save catalog record keeps the current research status. To change status, save other card edits first, then choose a status below.</p>
       <p className="editor-help">Current research status: <strong>{app.researchStatus}</strong></p>
-      <label className="review-confirmation"><input type="checkbox" name="confirmReview" /> I have reviewed this exact profile and approve marking it Reviewed. Required only when saving with Reviewed status.</label>
+      <label className="review-confirmation"><input type="checkbox" name="confirmReview" required={app.researchStatus === "Reviewed"} /> I have reviewed this exact profile and approve its saved details.</label>
+      <p className="editor-help">{app.researchStatus === "Reviewed" ? "This profile is already Reviewed. Check the box again before every Save catalog record, or the changes will not save. Moving it back to another status does not require confirmation." : "Check the box when marking this profile Reviewed. Ordinary draft saves do not require it."}</p>
       <div className="editorial-actions">
         {(["Candidate", "Researching", "Evaluation ready", "Reviewed"] as const).map(status =>
-          <button key={status} type="submit" name="targetStatus" value={status} formAction={updateCatalogResearchStatus} disabled={status === app.researchStatus}>Set {status}</button>
+          <button key={status} type="submit" name="targetStatus" value={status} formAction={updateCatalogResearchStatus} formNoValidate={status !== "Reviewed"} disabled={status === app.researchStatus}>Set {status}</button>
         )}
       </div>
       <p className="editor-help">Changing status does not save other edits or publish the app. Use the dashboard publication control only after checking the preview and evidence.</p>
