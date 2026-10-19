@@ -1093,12 +1093,7 @@ export default function Home({
           </div>
           <div className="verification-note">
             <strong>Research status: {profile.researchStatus}</strong>
-            <p>
-              {profile.verifiedSections} of {profile.totalSections} research
-              sections currently have evidence. A Reviewed status requires the
-              remaining claims and hands-on judgments to clear the publishing
-              gate.
-            </p>
+            <p>Research status reflects the editorial workflow, not a count of independently tested features.</p>
           </div>
         </section>
       )}

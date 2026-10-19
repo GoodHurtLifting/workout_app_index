@@ -4,6 +4,7 @@ import { apps, calculateLegitScore, calculateOriginalityScore } from "../lib/cat
 import { getLegacyPublicApps, isLegacyPublicApp, legacyPublicAppIds, mergePublishedCatalog } from "../lib/legacy-public-catalog.ts";
 import { legacyScoreDrafts, legacyOriginalityDrafts, withPrivateLegacyScoreDraft } from "../lib/legacy-score-drafts.ts";
 import { catalogResearchDrafts, getUnmodifiedCandidateResearchDraft } from "../lib/catalog-research-drafts.ts";
+import { catalogPreparedEvidence, preparedEvidenceForApp } from "../lib/catalog-prepared-evidence.ts";
 import { applyCatalogProposal, catalogProposalChanges, catalogRecordFingerprint } from "../lib/catalog-proposals.ts";
 
 test("the original 36 retain an explicit legacy-public marker", () => {
@@ -62,6 +63,28 @@ test("developer research drafts stay private and do not overwrite saved edits", 
   };
   assert.equal(getUnmodifiedCandidateResearchDraft(aegirPlaceholder, "bZbRXp2hmnLHuuzqWLNF")?.name, "Ægir Iron");
   assert.equal(getUnmodifiedCandidateResearchDraft(aegirPlaceholder, "another-submission"), null);
+});
+
+test("prepared sources are dated, claim-specific, and separate from submissions", () => {
+  const ids = new Set();
+  assert.deepEqual(Object.keys(catalogPreparedEvidence).sort(), ["aldo-coach", "gir-iron", "stark"]);
+  assert.deepEqual(preparedEvidenceForApp("unresearched-app"), []);
+  for (const [appId, sources] of Object.entries(catalogPreparedEvidence)) {
+    assert.ok(catalogResearchDrafts[appId]);
+    assert.ok(sources.length);
+    for (const source of sources) {
+      assert.ok(!ids.has(source.id), `duplicate prepared source ${source.id}`);
+      ids.add(source.id);
+      assert.match(source.id, /^research-[a-z0-9-]+-2026-\d\d-\d\d-[a-z0-9-]+$/);
+      assert.ok(Number.isFinite(source.checked_at));
+      assert.ok(source.checked_at <= Date.now());
+      assert.ok(source.claim_supported.length > 30);
+      assert.ok(source.internal_note);
+      assert.equal(source.public, 1);
+      assert.ok(source.url?.startsWith("https://"));
+      assert.ok(!/developer submission|submitted claim/i.test(source.claim_supported));
+    }
+  }
 });
 
 test("local research changes require per-field acceptance and preserve saved owner edits", () => {

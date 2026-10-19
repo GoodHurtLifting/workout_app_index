@@ -3,6 +3,7 @@ import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { apps, type AppRecord, type ResearchStatus } from "@/lib/catalog";
 import { catalogResearchDrafts, getUnmodifiedCandidateResearchDraft } from "@/lib/catalog-research-drafts";
+import { preparedEvidenceForApp } from "@/lib/catalog-prepared-evidence";
 import { withPrivateLegacyScoreDraft } from "@/lib/legacy-score-drafts";
 import { getLegacyPublicApps, mergePublishedCatalog } from "@/lib/legacy-public-catalog";
 import { getAdminFirestore } from "@/lib/firebase-admin";
@@ -77,6 +78,27 @@ export async function saveCatalogRecord(record:AppRecord,userId:string){
 export async function saveEvidence(source:Omit<EvidenceRow,"id"> & {id:string;app_id:string}){
   const {id,...data}=source;
   await getAdminFirestore().collection("evidenceSources").doc(id).set(data);
+}
+
+// Attach only explicitly prepared, dated research on a private editor write.
+// Existing source records are never overwritten, including owner corrections.
+export async function syncPreparedResearchEvidence(appId:string){
+  const prepared=preparedEvidenceForApp(appId);
+  if(!prepared.length) return;
+  const db=getAdminFirestore();
+  const refs=prepared.map(source=>db.collection("evidenceSources").doc(source.id));
+  await db.runTransaction(async transaction=>{
+    const snapshots=await Promise.all(refs.map(ref=>transaction.get(ref)));
+    snapshots.forEach((snapshot,index)=>{
+      if(snapshot.exists) return;
+      const source=prepared[index];
+      transaction.create(refs[index],{
+        app_id:appId,source_type:source.source_type,url:source.url,
+        claim_supported:source.claim_supported,checked_at:source.checked_at,
+        public:source.public,internal_note:source.internal_note,
+      });
+    });
+  });
 }
 
 export async function savePublication(publication:PublicationRow & {snapshot:AppRecord[];published_by:string}){

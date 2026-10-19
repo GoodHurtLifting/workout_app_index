@@ -109,10 +109,6 @@ export function CatalogReviewForm({ app }: { app: AppRecord }) {
     <section>
       <h2>Review status</h2>
       <p className="editor-help">Save catalog record keeps the current research status. To change status, save other card edits first, then choose a status below.</p>
-      <div className="form-grid">
-        <label>Research sections verified<input name="verifiedSections" type="number" min="0" step="1" defaultValue={app.verifiedSections} required /></label>
-        <label>Total research sections<input name="totalSections" type="number" min="0" step="1" defaultValue={app.totalSections} required /></label>
-      </div>
       <p className="editor-help">Current research status: <strong>{app.researchStatus}</strong></p>
       <label className="review-confirmation"><input type="checkbox" name="confirmReview" /> I have reviewed this exact profile and approve marking it Reviewed. Required only when saving with Reviewed status.</label>
       <div className="editorial-actions">

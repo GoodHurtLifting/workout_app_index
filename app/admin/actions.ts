@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { apps, calculateLegitScore, calculateOriginalityScore, catalogEvidenceSeeds, getOriginalityProfile, getTrainingRelationship, type AiStatus, type AppRecord, type LegitAssessment, type OriginalityProfile, type PersonAssociation, type PlanningStyle, type ResearchStatus, type TrainingRelationship } from "@/lib/catalog";
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
-import { getCatalogRecord, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveEvidence, savePublication } from "@/lib/catalog-repository";
+import { getCatalogRecord, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveEvidence, savePublication, syncPreparedResearchEvidence } from "@/lib/catalog-repository";
 import { canTransition, monthKey, normalizeAppSubmissionStatus } from "@/lib/submission-workflow";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
 import { applyCatalogProposal, catalogProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
@@ -18,13 +18,6 @@ function score(data:FormData,name:string):number {
   if(raw==="") throw new Error(`${name} is required`);
   const value=Number(raw);
   if(!Number.isInteger(value)||value<0||value>100) throw new Error(`${name} must be a whole number from 0 to 100`);
-  return value;
-}
-function count(data:FormData,name:string):number {
-  const raw=field(data,name);
-  if(raw==="") throw new Error(`${name} is required`);
-  const value=Number(raw);
-  if(!Number.isInteger(value)||value<0) throw new Error(`${name} must be a non-negative whole number`);
   return value;
 }
 async function assertReviewedCatalogRecord(record: AppRecord, confirmed: boolean) {
@@ -329,8 +322,6 @@ export async function updateCatalogApp(formData:FormData){
     rationale:field(formData,"legitRationale"),
   } : undefined;
   if(legitAssessment&&(!["Low","Moderate","High"].includes(legitAssessment.confidence)||!legitAssessment.rationale)) throw new Error("Complete the Legit Score assessment");
-  const verifiedSections=count(formData,"verifiedSections");
-  const totalSections=count(formData,"totalSections");
   // Content saves never change the separately managed research status.
   const researchStatus=existing.researchStatus;
   const record:AppRecord={
@@ -349,13 +340,12 @@ export async function updateCatalogApp(formData:FormData){
     level:splitList(formData.get("level")), authorship:field(formData,"authorship"),
     deliversCompleteProgram:checked(formData,"deliversCompleteProgram"),programLibrary:checked(formData,"programLibrary"),adaptiveProgramming:checked(formData,"adaptiveProgramming"),
     supportedTrainingEnvironments:splitList(formData.get("supportedTrainingEnvironments")),
-    researchStatus,verifiedSections,totalSections,people:parsePeople(formData.get("people")),
+    researchStatus,people:parsePeople(formData.get("people")),
     trainingRelationship:relationship,originalityProfile:originality,
   };
   if(!record.name||!record.description||!record.type) throw new Error("Name, description, and product type are required");
   if(!record.bestFor||!record.initials||!record.color||!/^#[0-9a-fA-F]{6}$/.test(record.color)) throw new Error("Best fit, initials, and a valid color are required");
   if(!Number.isFinite(record.monthlyPrice??0)||(record.monthlyPrice??0)<0) throw new Error("Monthly price must be zero or greater");
-  if(verifiedSections>totalSections) throw new Error("Verified sections cannot exceed total sections");
   if(!["Candidate","Researching","Evaluation ready","Reviewed"].includes(researchStatus)) throw new Error("Invalid research status");
   if(!["Not assessed","No AI identified","Optional AI","AI supporting features","AI central"].includes(record.ai)) throw new Error("Invalid AI status");
   const styles=["Not assessed","Follow a complete path","Choose a proven path","Let the app adapt","Build it yourself","Just log the work"];
@@ -363,9 +353,15 @@ export async function updateCatalogApp(formData:FormData){
   if(!["Not assessed","Low","Moderate","High"].includes(relationship.choiceLoad)||!["Not assessed","Single coherent system","Program-based","Session-adaptive","User-directed"].includes(relationship.continuity)||!["Not assessed","Follow as written","Guided flexibility","Full control"].includes(relationship.customization)) throw new Error("Invalid training relationship");
   if(!["Not assessed","Conventional","Clear identity","Distinctive","Category-defining"].includes(originality.level)||!originality.summary||!originality.evidenceNote) throw new Error("Complete the originality assessment");
   if(!relationship.idealUser||!relationship.notFor) throw new Error("Complete the fit assessment");
-  if(researchStatus==="Reviewed") await assertReviewedCatalogRecord(record, checked(formData,"confirmReview"));
   if (JSON.stringify(record).includes("\u2014")) throw new Error("Replace em dashes in public copy before saving");
+  if(researchStatus==="Reviewed") {
+    const confirmed=checked(formData,"confirmReview");
+    if(!confirmed) throw new Error("Confirm that you reviewed this exact profile before marking it Reviewed");
+    await syncPreparedResearchEvidence(id);
+    await assertReviewedCatalogRecord(record, confirmed);
+  }
   await saveCatalogRecord(record,user.userId);
+  await syncPreparedResearchEvidence(id);
   revalidatePath("/admin"); revalidatePath(`/admin/apps/${id}`);
 }
 
@@ -406,6 +402,7 @@ export async function applyCatalogProposalChanges(formData: FormData) {
     if (error instanceof CatalogProposalReviewError) redirect(`/admin/apps/${id}?proposal=${error.code}`);
     throw error;
   }
+  await syncPreparedResearchEvidence(id);
   revalidatePath("/admin");
   revalidatePath(`/admin/apps/${id}`);
   redirect(`/admin/apps/${id}?proposal=applied`);
@@ -419,8 +416,13 @@ export async function updateCatalogResearchStatus(formData: FormData) {
   if (!["Candidate", "Researching", "Evaluation ready", "Reviewed"].includes(researchStatus)) throw new Error("Invalid research status");
   const existing = await getCatalogRecord(id);
   if (!existing) throw new Error("App not found");
-  if (researchStatus === "Reviewed") await assertReviewedCatalogRecord(existing, checked(formData, "confirmReview"));
   if (JSON.stringify(existing).includes("\u2014")) throw new Error("Replace em dashes in public copy before saving");
+  if (researchStatus === "Reviewed") {
+    const confirmed=checked(formData,"confirmReview");
+    if(!confirmed) throw new Error("Confirm that you reviewed this exact profile before marking it Reviewed");
+    await syncPreparedResearchEvidence(id);
+    await assertReviewedCatalogRecord(existing, confirmed);
+  }
   const ref = getAdminFirestore().collection("catalogApps").doc(id);
   const stored = await ref.get();
   if (stored.exists) {
