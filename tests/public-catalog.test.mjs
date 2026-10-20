@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { apps, calculateLegitScore, calculateOriginalityScore } from "../lib/catalog.ts";
 import { getLegacyPublicApps, isLegacyPublicApp, legacyPublicAppIds, mergePublishedCatalog } from "../lib/legacy-public-catalog.ts";
 import { legacyScoreDrafts, legacyOriginalityDrafts, withPrivateLegacyScoreDraft } from "../lib/legacy-score-drafts.ts";
-import { catalogResearchDrafts, getUnmodifiedCandidateResearchDraft } from "../lib/catalog-research-drafts.ts";
+import { catalogResearchDrafts, getUnmodifiedPlaceholderResearchDraft } from "../lib/catalog-research-drafts.ts";
 import { catalogPreparedEvidence, preparedEvidenceForApp } from "../lib/catalog-prepared-evidence.ts";
 import { applyCatalogProposal, catalogProposalChanges, catalogRecordFingerprint } from "../lib/catalog-proposals.ts";
 
@@ -54,15 +54,18 @@ test("developer research drafts stay private and do not overwrite saved edits", 
     type: "Unclassified",
     description: "Developer-submitted candidate. Product claims have not been independently verified.",
   };
-  assert.equal(getUnmodifiedCandidateResearchDraft(placeholder)?.id, "aldo-coach");
-  assert.equal(getUnmodifiedCandidateResearchDraft({ ...placeholder, type: "Owner-edited type" }), null);
+  assert.equal(getUnmodifiedPlaceholderResearchDraft(placeholder)?.id, "aldo-coach");
+  assert.equal(getUnmodifiedPlaceholderResearchDraft({ ...placeholder, researchStatus: "Researching" })?.researchStatus, "Researching");
+  assert.equal(getUnmodifiedPlaceholderResearchDraft({ ...placeholder, researchStatus: "Evaluation ready" })?.researchStatus, "Evaluation ready");
+  assert.equal(getUnmodifiedPlaceholderResearchDraft({ ...placeholder, researchStatus: "Reviewed" }), null);
+  assert.equal(getUnmodifiedPlaceholderResearchDraft({ ...placeholder, type: "Owner-edited type" }), null);
   const aegirPlaceholder = {
     ...catalogResearchDrafts["gir-iron"],
     type: "Unclassified",
     description: "Developer-submitted candidate. Product claims have not been independently verified.",
   };
-  assert.equal(getUnmodifiedCandidateResearchDraft(aegirPlaceholder, "bZbRXp2hmnLHuuzqWLNF")?.name, "Ægir Iron");
-  assert.equal(getUnmodifiedCandidateResearchDraft(aegirPlaceholder, "another-submission"), null);
+  assert.equal(getUnmodifiedPlaceholderResearchDraft(aegirPlaceholder, "bZbRXp2hmnLHuuzqWLNF")?.name, "Ægir Iron");
+  assert.equal(getUnmodifiedPlaceholderResearchDraft(aegirPlaceholder, "another-submission"), null);
 });
 
 test("prepared sources are dated, claim-specific, and separate from submissions", () => {

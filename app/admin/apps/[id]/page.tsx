@@ -8,7 +8,7 @@ import { CatalogReviewStatusForm } from "@/components/catalog-review-status-form
 import { CatalogProposalReview } from "@/components/catalog-proposal-review";
 import { catalogRecordFingerprint } from "@/lib/catalog-proposals";
 import type { AppRecord, ResearchStatus } from "@/lib/catalog";
-import { catalogResearchDrafts, catalogResearchSources, getUnmodifiedCandidateResearchDraft } from "@/lib/catalog-research-drafts";
+import { catalogResearchDrafts, catalogResearchSources, getUnmodifiedPlaceholderResearchDraft } from "@/lib/catalog-research-drafts";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { isLegacyPublicApp } from "@/lib/legacy-public-catalog";
 import "../../admin.css";
@@ -25,7 +25,7 @@ const proposalNotices: Record<string, string> = {
 
 const stageNotices: Record<string, string> = {
   updated: "Review stage updated. This did not publish the app.",
-  "save-first": "Save the catalog record before changing its review stage.",
+  "save-first": "Save the catalog record before changing its review stage. The populated research draft is still available below; no saved fields were deleted.",
   stale: "The saved card changed since this page opened. Reload it and review the latest version before changing stage.",
   same: "The card is already at that review stage.",
   confirm: "Confirm that you reviewed the saved profile before marking it Reviewed.",
@@ -47,7 +47,7 @@ export default async function CatalogAppPage({params,searchParams}:{params:Promi
   const checklistRecord=savedRecord ?? app;
   const savedAt=stored.exists && typeof stored.data()?.updated_at === "number" ? stored.data()!.updated_at as number : null;
   const savedFingerprint=savedRecord ? catalogRecordFingerprint(savedRecord) : "unsaved";
-  const hasUnsavedResearchDraft=!stored.exists ? Boolean(catalogResearchDrafts[id]) : Boolean(getUnmodifiedCandidateResearchDraft(stored.data()?.record, stored.data()?.source_submission_id));
+  const hasUnsavedResearchDraft=!stored.exists ? Boolean(catalogResearchDrafts[id]) : Boolean(savedRecord && getUnmodifiedPlaceholderResearchDraft(savedRecord, stored.data()?.source_submission_id));
   const hasUnsavedLegacyScoreDraft=isLegacyPublicApp(id)&&Boolean(app.legitAssessment)&&!stored.data()?.record?.legitAssessment;
   const researchSources=catalogResearchSources[id] ?? [];
   const publicCatalog=await getPublicCatalog();
@@ -58,7 +58,7 @@ export default async function CatalogAppPage({params,searchParams}:{params:Promi
   return <main className="admin-page standalone-admin editor-page"><div className="admin-utility"><Link href="/admin">← Research dashboard</Link><span>{app.name}</span></div><div className="editor-heading"><div><p className="eyebrow">CATALOG RECORD</p><h1>{app.name}</h1><p>Review the proposed card and its source log. Research sources are prepared with the local draft; you do not need to enter them one by one.</p></div><span className={ready?"gate-ready":"gate-blocked"}>{ready?"Review checks complete":"Review checks incomplete"}</span></div>
   <div className="admin-review-tools"><p><strong>Public version:</strong> {publicApp ? draftMatchesPublic ? "Current editor values match what visitors see." : "The public profile differs from this editor draft." : "Not listed publicly."}</p><div><Link href={`/admin/apps/${id}/preview`}>Preview editor draft</Link>{publicApp?<Link href={`/apps/${id}`} target="_blank">Open public profile ↗</Link>:null}</div></div>
   {isLegacyPublicApp(id)?<p className="editor-help">Legacy public listing: this app was among the original 36 shown before owner review. It stays public when you publish newer approved entries. Its current research status is not an approval.</p>:null}
-  {hasUnsavedResearchDraft?<p className="editor-help">A research draft is prefilled below. It is not yet saved in Firebase or visible to visitors. Any initial scores are provisional editorial assessments, not approved judgments. Review and save the catalog record to keep your edits.</p>:null}
+  {hasUnsavedResearchDraft?<p className="editor-help">The populated fields below are an unsaved local research draft, not the saved Firebase card or a public listing. Changing the review stage will not change or save this draft. Review its freshness and select Save catalog record when you want to keep its content.</p>:null}
   {hasUnsavedLegacyScoreDraft?<p className="editor-help">A provisional legacy rescoring is prefilled below for private review. It is not saved in Firebase and does not change the public profile. Check the source and rationale before saving; saving as Researching still does not publish a revised score.</p>:null}
   {proposal&&proposalNotices[proposal]?<p className="catalog-proposal-notice" role="status">{proposalNotices[proposal]}</p>:null}
   {stage&&stageNotices[stage]?<p className="catalog-proposal-notice" role={stage==="updated"?"status":"alert"}>{stageNotices[stage]}</p>:null}

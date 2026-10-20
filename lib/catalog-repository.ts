@@ -2,7 +2,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import { apps, type AppRecord, type ResearchStatus } from "@/lib/catalog";
-import { catalogResearchDrafts, getUnmodifiedCandidateResearchDraft } from "@/lib/catalog-research-drafts";
+import { catalogResearchDrafts, getUnmodifiedPlaceholderResearchDraft } from "@/lib/catalog-research-drafts";
 import { preparedEvidenceForApp } from "@/lib/catalog-prepared-evidence";
 import { withPrivateLegacyScoreDraft } from "@/lib/legacy-score-drafts";
 import { getLegacyPublicApps, mergePublishedCatalog } from "@/lib/legacy-public-catalog";
@@ -23,7 +23,7 @@ export async function listCatalogRecords(): Promise<AppRecord[]> {
     const row = doc.data() as CatalogRow;
     const record = {...row.record, researchStatus: row.publication_status};
     const bundled = bundledById.get(doc.id);
-    records.set(doc.id, bundled ? withPrivateLegacyScoreDraft(record, bundled) : getUnmodifiedCandidateResearchDraft(record, row.source_submission_id) ?? record);
+    records.set(doc.id, bundled ? withPrivateLegacyScoreDraft(record, bundled) : getUnmodifiedPlaceholderResearchDraft(record, row.source_submission_id) ?? record);
   }
   return [...records.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -34,7 +34,7 @@ export async function getCatalogRecord(id:string): Promise<AppRecord|null> {
     const row = snapshot.data() as CatalogRow;
     const record = {...row.record, researchStatus:row.publication_status};
     const bundled = apps.find(app=>app.id===id);
-    return bundled ? withPrivateLegacyScoreDraft(record, bundled) : getUnmodifiedCandidateResearchDraft(record, row.source_submission_id) ?? record;
+    return bundled ? withPrivateLegacyScoreDraft(record, bundled) : getUnmodifiedPlaceholderResearchDraft(record, row.source_submission_id) ?? record;
   }
   const bundled = apps.find(app=>app.id===id);
   return bundled ? withPrivateLegacyScoreDraft(bundled, bundled) : catalogResearchDrafts[id] ?? null;

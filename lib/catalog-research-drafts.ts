@@ -354,12 +354,12 @@ export const catalogResearchSources: Record<string, ResearchSource[]> = {
   ],
 };
 
-export function getUnmodifiedCandidateResearchDraft(record: AppRecord, sourceSubmissionId?: string): AppRecord | null {
+export function getUnmodifiedPlaceholderResearchDraft(record: AppRecord, sourceSubmissionId?: string): AppRecord | null {
   const draft = catalogResearchDrafts[record.id];
   const expectedSubmissionId = catalogResearchSubmissionIds[record.id];
   if (!draft || (expectedSubmissionId && expectedSubmissionId !== sourceSubmissionId) ||
       draft.name.toLowerCase() !== record.name.toLowerCase() ||
-      record.researchStatus !== "Candidate" || record.type !== "Unclassified" ||
+      !["Candidate", "Researching", "Evaluation ready"].includes(record.researchStatus) || record.type !== "Unclassified" ||
       record.description !== "Developer-submitted candidate. Product claims have not been independently verified.") return null;
-  return { ...draft, name: record.name, initials: record.initials };
+  return { ...draft, name: record.name, initials: record.initials, researchStatus: record.researchStatus };
 }
