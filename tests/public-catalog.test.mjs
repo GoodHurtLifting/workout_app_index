@@ -128,7 +128,7 @@ test("accepting a rationale saves it once and invalidates an older edit form", (
 test("accepting one score criterion recalculates the total without replacing other criteria", () => {
   const draft = catalogResearchDrafts["gir-iron"];
   const saved = structuredClone(draft);
-  saved.legitAssessment.usability = 55;
+  saved.legitAssessment.usability = draft.legitAssessment.usability + 5;
   saved.legit = calculateLegitScore(saved.legitAssessment);
   saved.originalityProfile.visualIdentity = 70;
   saved.originalityProfile.score = calculateOriginalityScore(saved.originalityProfile);
