@@ -1,3 +1,47 @@
+# Aldo Coach: current proposal for owner admin review
+
+Updated October 21, 2026. This current assessment supersedes conflicting scope, score and unresolved-recovery wording in the historical research below. It is a local proposal, not the saved admin card, an owner-approved Reviewed record, or a public listing. The owner will push the files, review proposed changes, save the selected entry fields and separately confirm Reviewed. Publication remains separate.
+
+## Current scores and decision record
+
+Local Legit changes from 79 to **75/100**, Moderate confidence. Originality & Identity remains **78/100**, Distinctive. The owner authorized preparing these values for admin comparison after seeing the evidence and recommendation; acceptance of the exact saved card remains pending.
+
+| Criterion | Previous local | Current proposed | Evidence and band |
+| --- | ---: | ---: | --- |
+| Core execution | 85 | 80 | Useful generation, warm-ups and logging; explicit rebuilds ultimately produced a suitable session. Equipment constraints and repeated correction weaken the integrated coaching promise, but do not establish core task failure. |
+| Usability | 70 | 65 | Recurring setup/rebuild waits, navigation and completion friction, control coupling, ambiguous references and overlapping Sources text are material issues. Successful workout use prevents treating the whole workflow as blocked. |
+| Reliability | 75 | 65 | A reported 3 x 5 deadlift performance was recapped as 5 x 5, and a known equipment ceiling was not consistently honored. These are accuracy/consistency concerns; successful recovery and visible history qualify earlier lost-program suspicions. No confirmed corrupted log or backend data loss. |
+| Value | 90 | 90 | Useful no-card access and a reported no-cost Pro upgrade, without an observed charge. Standard limits and future terms remain unknown. No hypothetical paid correction penalty applied. |
+| Support/privacy | 75 | 75 | Existing public disclosures and contact route; no ordinary support-response test or backend audit. Sharing language is unclear, not proof of unauthorized sharing. Editorial outreach is excluded. |
+
+Total: (80 + 65 + 65 + 90 + 75) / 5 = 75. The five Originality dimensions remain 84, 80, 68, 86 and 72 (mean 78); no silent rounding or new comparative originality claim. Recurring implementation issues qualify usefulness and cohesion without automatic originality deductions. No dimension is reduced merely for untested optional features.
+
+## Position and evidence scope
+
+AI-guided program creation and live coaching inside a workout log. Best for lifters comfortable with conversational planning, build waits, checking AI summaries and constraints, and approving proposed changes. Poorer fit for immediate uninterrupted logging or programming with minimal oversight. Planning choice load is Moderate in the proposal to reflect observed clarification and oversight, rather than treating delegated programming as automatically low effort.
+
+Evidence covers five owner-reported workouts, return use, two explicit rebuilds, AI-off/on interactions, and four UI photos. It does not reconstruct every intervening session. iPhone/Apple Watch availability is documented; later iPad use is pictured. Other-platform behavior, complete account reset, remaining-block progression and backend processing are unverified. App-store claims were last read October 21; older site/privacy statements remain dated. This closeout does not imply new source checks beyond those recorded.
+
+## Sources-screen visual evidence
+
+Four owner-supplied UI photos reviewed October 21 show the rebuilt program at Week 2 of 9; a Sources diagram with memory 12 of 12 notes, training log 3 sessions, and 5 shared / 2 not shared; weekly working-set volume and body-part set charts; and menu routes for Profile, Aldo's memory, Coach & AI, Data & Backup, and Advanced. Plan/schedule labels visibly overlap and profile text truncates in the captured Sources view. The owner reports five workouts, so the three-session display needs scope explanation. The sharing label does not distinguish explicit permission from available or selected context.
+
+Visible UI evidence only: no verification of source retrieval, complete log count, chart calculations, edit controls, backend data flow, or unauthorized sharing. Menu routes exist; deeper options and behavior were not fully tested. Photos are private, include account details, and are not public profile images. Attachment filenames 1000012206.jpg through 1000012209.jpg identify the four supplied images.
+
+The defensible synthesis is that Aldo exposes memory and context sources, but does not consistently carry stated equipment constraints and agreed intentions through to the workout experience. We cannot infer an absent memory system or assign failures specifically to Claude. Three source sessions versus five reported workouts is an unexplained count, not established missing records. Analytics charts extend beyond a basic history list, but their calculations and coverage are unverified; no new finder-sensitive feature flag is added solely from these photos.
+
+## Proposed concise profile summary
+
+Aldo combines AI-generated programs with coaching inside the workout log. Across five owner-reported workouts, its plans, warm-up guidance and logging were useful, and explicit rebuilds recovered a suitable continuing session. Lengthy rebuilds, recurring navigation friction and inaccurate or unclear AI feedback added an oversight burden. A known dumbbell limit needed repeating, and one recap described 3 x 5 deadlifts as 5 x 5. The Sources view exposes memory and training context, but overlapping labels and an unexplained session count limit transparency. Best suited to lifters comfortable checking AI decisions; standard free/Pro limits and longer-term progression remain unverified.
+
+## Admin handoff
+
+Updated local proposal fields: Legit total and three criteria, rationale, caveat, fit, training-relationship wording and choice load, plus Originality narrative with its score unchanged. Added dated private photo evidence and current source notes. Existing saved fields and evidence are not overwritten by deployment. Compare Saved now versus Proposed and accept chosen fields; score totals are recalculated when criteria are accepted. Review the complete saved card before separately marking Reviewed. Neither file preparation nor field acceptance publishes the entry.
+
+## Historical research and superseded proposals
+
+The dated material below is retained as the evidence trail. Earlier statements about only two/three workouts, an uncompleted resumed session, missing-plan causes, unchanged local scores, and an unapplied 75 recommendation must be read with the current synthesis above. They are not current status.
+
 # Aldo Coach: private initial assessment
 
 Rechecked October 19, 2026. This is a research draft for owner review, not an approved or public WAI listing. Developer claims are not evidence by themselves. The initial notes below cover two workouts; the October 21 consolidated update supersedes that scope and records three workouts, not a long-term reliability test. More owner workouts or a developer reply are not required for a properly qualified catalog listing. Scoring follows [the shared rubric](CATALOG_SCORING_RUBRIC.md).

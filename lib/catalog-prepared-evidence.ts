@@ -15,6 +15,15 @@ const checked = (date: string) => Date.parse(`${date}T12:00:00Z`);
 export const catalogPreparedEvidence: Record<string, PreparedEvidence[]> = {
   "aldo-coach": [
     {
+      id: "research-aldo-coach-2026-10-21-ui-photos",
+      source_type: "Hands-on testing",
+      url: null,
+      claim_supported: "Four owner-supplied UI photos reviewed October 21 show the rebuilt program at Week 2 of 9; a Sources diagram with memory 12 of 12 notes, training log 3 sessions, and 5 shared / 2 not shared; weekly working-set volume and body-part set charts; and menu routes for Profile, Aldo's memory, Coach & AI, Data & Backup, and Advanced. Plan/schedule labels visibly overlap and profile text truncates in the captured Sources view. The owner reports five workouts, so the three-session display needs scope explanation. The sharing label does not distinguish explicit permission from available or selected context.",
+      checked_at: checked("2026-10-21"),
+      public: 0,
+      internal_note: "Visible UI evidence only: no verification of source retrieval, complete log count, chart calculations, edit controls, backend data flow, or unauthorized sharing. Menu routes exist; deeper options and behavior were not fully tested. Photos are private, include account details, and are not public profile images. Attachment filenames 1000012206.jpg through 1000012209.jpg identify the four supplied images.",
+    },
+    {
       id: "research-aldo-coach-2026-10-21-fifth-session",
       source_type: "Hands-on testing",
       url: null,
