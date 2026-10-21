@@ -15,6 +15,24 @@ const checked = (date: string) => Date.parse(`${date}T12:00:00Z`);
 export const catalogPreparedEvidence: Record<string, PreparedEvidence[]> = {
   "aldo-coach": [
     {
+      id: "research-aldo-coach-2026-10-21-owner-followup",
+      source_type: "Hands-on testing",
+      url: null,
+      claim_supported: "Evidence updated October 21 from three completed owner workouts and return use. Program generation, warm-ups, logging, and performance-based suggestions were useful. Setup, repeated AI waits, post-completion navigation, a timer reset after an edit, and one ambiguous set reference added friction. Aldo prescribed 40-pound dumbbells despite a stated 25-pound-per-dumbbell limit; after a reminder, its higher-rep adjustment was acceptable to the owner. The owner agreed in chat to an eight-week continuation, completed the third workout, and then saw a red program-ended warning. Stated equipment constraints and agreed program changes did not consistently carry through to the workout experience. The saved program state and cause are unresolved; this does not establish absent persistent memory, context loss, or data loss. Existing scores are retained pending explicit owner review of a separate reassessment proposal; the earlier neutral reliability rationale is superseded. Free access was useful in owner testing. Store disclosures are first-party claims, not a backend audit, and editorial correspondence is excluded from customer-support evidence.",
+      checked_at: checked("2026-10-21"),
+      public: 0,
+      internal_note: "Owner-dictated observations from three completed workouts and follow-up. No measured latency, confirmed data loss, diagnosed root cause, or score approval.",
+    },
+    {
+      id: "research-aldo-coach-2026-10-21-memory-claims",
+      source_type: "Apple App Store",
+      url: "https://apps.apple.com/us/app/aldo-coach-ai-workout-plan/id6802822375",
+      claim_supported: "The developer describes editable memory holding equipment, working loads and preferences, plus exercise history consulted before writing sessions.",
+      checked_at: checked("2026-10-21"),
+      public: 1,
+      internal_note: "First-party claims, not verified architecture or evidence that every recommendation applies stored constraints. Website and privacy page were inaccessible through the research tool October 21.",
+    },
+    {
       id: "research-aldo-coach-2026-10-19-apple-store",
       source_type: "Apple App Store",
       url: "https://apps.apple.com/us/app/aldo-coach-ai-workout-plan/id6802822375",

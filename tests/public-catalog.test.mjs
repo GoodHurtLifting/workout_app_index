@@ -83,8 +83,13 @@ test("prepared sources are dated, claim-specific, and separate from submissions"
       assert.ok(source.checked_at <= Date.now());
       assert.ok(source.claim_supported.length > 30);
       assert.ok(source.internal_note);
-      assert.equal(source.public, 1);
-      assert.ok(source.url?.startsWith("https://"));
+      if (source.source_type === "Hands-on testing") {
+        assert.equal(source.public, 0);
+        assert.equal(source.url, null);
+      } else {
+        assert.equal(source.public, 1);
+        assert.ok(source.url?.startsWith("https://"));
+      }
       assert.ok(!/developer submission|submitted claim/i.test(source.claim_supported));
     }
   }

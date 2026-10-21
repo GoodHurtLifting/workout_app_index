@@ -13,7 +13,7 @@ export const catalogResearchDrafts: Record<string, AppRecord> = {
     initials: "AC",
     color: "#496f5d",
     type: "AI-guided training program and workout coach",
-    bestFor: "Lifters who want an adaptive program and set-by-set coaching in the same logbook",
+    bestFor: "Lifters who want conversational programming and live coaching, and are comfortable checking AI decisions",
     description: "Aldo builds a training program around goals, equipment, schedule, and training history, then coaches within the workout log. After a set, it can explain performance and propose changes to upcoming loads or sessions, which the user can accept or decline.",
     price: "Free in the current US App Store listing; the owner accessed the tested features without a card or trial clock. The developer previously said paid tiers may come later, with no confirmed price or launch date.",
     monthlyPrice: 0,
@@ -34,8 +34,8 @@ export const catalogResearchDrafts: Record<string, AppRecord> = {
       value: 90,
       supportPrivacy: 75,
       confidence: "Moderate",
-      rationale: "Based on two owner workouts and a later return-use check. The generated plan, warm-ups, set logging, and responsive load suggestions worked in the tested paths. Lengthy setup, unclear post-workout navigation, a timer reset after an edit, and ambiguous set numbering in one AI response limit usability; the numbering observation does not prove an incorrect load change. After time off, the existing plan remained accessible under Program > Plan, but Workout did not surface a next session and Progress was empty. Asked through chat, the AI recognized the missed days and proposed a lighter return session; the owner reviewed and approved the change and returned to the program. This confirms an AI-assisted resume path but poor discoverability of it from the workout screen. The resumed workout has not been reported complete. The finding reinforces the existing usability score and does not establish that the plan was lost or the schedule changed. Reliability is neutral for the functioning paths observed, rather than reduced because longer-term sync was not tested. Free access is strong current value. The App Store provides privacy disclosures and a support contact; WAI's editorial correspondence is not treated as customer-support evidence. WAI has not audited backend data handling.",
-      checkedAt: "2026-10-19",
+      rationale: "Evidence updated October 21 from three completed owner workouts and return use. Program generation, warm-ups, logging, and performance-based suggestions were useful. Setup, repeated AI waits, post-completion navigation, a timer reset after an edit, and one ambiguous set reference added friction. Aldo prescribed 40-pound dumbbells despite a stated 25-pound-per-dumbbell limit; after a reminder, its higher-rep adjustment was acceptable to the owner. The owner agreed in chat to an eight-week continuation, completed the third workout, and then saw a red program-ended warning. Stated equipment constraints and agreed program changes did not consistently carry through to the workout experience. The saved program state and cause are unresolved; this does not establish absent persistent memory, context loss, or data loss. Existing scores are retained pending explicit owner review of a separate reassessment proposal; the earlier neutral reliability rationale is superseded. Free access was useful in owner testing. Store disclosures are first-party claims, not a backend audit, and editorial correspondence is excluded from customer-support evidence.",
+      checkedAt: "2026-10-21",
       sourceUrls: ["https://apps.apple.com/us/app/aldo-coach-ai-workout-plan/id6802822375"],
     },
     goals: ["Build muscle", "Get stronger", "Track workouts", "General fitness"],
@@ -51,7 +51,7 @@ export const catalogResearchDrafts: Record<string, AppRecord> = {
     ],
     level: ["Intermediate", "Advanced"],
     authorship: "AI-generated",
-    caveat: "The initial interview and program build took significant time in one hands-on test, and training terms may challenge beginners. In two owner workouts, post-workout navigation and proposed changes were sometimes unclear; one AI response used a set number that was ambiguous alongside warm-up sets, without proof it changed the wrong load. On returning after time off, the owner found the plan under Program > Plan, but Workout did not surface a next session. The AI offered a lighter return when asked; the owner approved the proposal and got back into the program, but had to discover this path through chat. The resumed workout has not been reported complete. This does not establish that the plan was lost or rigid. Current App Store release notes describe navigation and in-set coaching changes that WAI has not separately verified. The developer's privacy policy previously described sending relevant training context to Anthropic for coaching; WAI could not retrieve the policy for a fresh check on October 19. AI is not a substitute for a coach who can observe technique.",
+    caveat: "In three owner workouts, setup, repeated AI response waits, and navigation added friction. Marking a workout complete left no clear route to an overview or other planning tasks. Initial equipment choices did not make a weight ceiling apparent to enter; after the owner supplied a 25-pound-per-dumbbell limit, Aldo still prescribed 40-pound dumbbells. Its subsequent increase in reps was acceptable. After an agreed eight-week continuation and a completed workout, the workout screen reported that the program had ended. The cause remains unresolved. One earlier AI set reference was ambiguous, without proof of a wrong applied load. The developer describes editable memory and history-informed coaching, but WAI has not verified the implementation or established that conversation length caused these inconsistencies. Public release-note improvements were not separately verified. AI cannot replace a coach observing technique.",
     deliversCompleteProgram: true,
     programLibrary: false,
     adaptiveProgramming: true,
@@ -66,10 +66,10 @@ export const catalogResearchDrafts: Record<string, AppRecord> = {
       continuity: "Session-adaptive",
       customization: "Guided flexibility",
       decisionsRemoved: "The coach proposes the program, writes sessions and warm-ups, suggests next loads, and adjusts future work in response to logged performance or schedule changes.",
-      decisionsRemaining: "You describe goals and constraints, judge whether its suggestions feel appropriate, accept or decline changes, and remain responsible for technique and safety.",
-      tradeoff: "It can take on more programming decisions than a conventional logger, including a proposed lighter return after missed days, but setup is lengthy, resuming the plan required asking the AI rather than a clear workout shortcut, and its recommendations still require the user's judgment.",
+      decisionsRemaining: "You describe goals and equipment limits, log accurately, accept or decline changes, and check that constraints and program changes have carried through. You remain responsible for technique and safety.",
+      tradeoff: "Aldo takes on substantial programming work, but setup, response waits, unclear post-workout navigation, and inconsistent handling of equipment limits and program continuation create an oversight burden.",
       idealUser: "You are comfortable discussing training in detail and want an AI coach to write the plan, react to each set, and keep your workout log in the same place.",
-      notFor: "You want to start lifting immediately, avoid AI, need a native Android app, or rely on an in-person coach to observe your form.",
+      notFor: "You want uninterrupted logging or programming with minimal oversight, avoid AI, need a native Android app, or need a coach who can observe technique.",
     },
     originalityProfile: {
       score: 78,
@@ -80,7 +80,7 @@ export const catalogResearchDrafts: Record<string, AppRecord> = {
       meaningfulDifferentiation: 86,
       defensibility: 72,
       summary: "Its distinctive idea is to make coaching part of the live workout log: set results can produce a proposed change to the session or later plan. The split onboarding and workout presentation is less cohesive than the coaching concept.",
-      evidenceNote: "Provisional editorial assessment based on two owner workouts, the current App Store description, and comparison with the catalog. The live set-to-plan coaching integration is distinctive, but the underlying AI models are not proprietary and a comparable workflow could be built by another developer. WAI has not established exclusive mechanics or completed a direct competitor test. Limited follow-up lowers confidence, not the score by itself.",
+      evidenceNote: "Provisional editorial assessment informed by three owner workouts and the App Store description, read October 21. Live set-to-plan coaching is distinctive, but WAI has not established exclusive mechanics or completed a direct competitor test. New continuity and constraint-handling observations qualify execution rather than automatically changing originality. Existing numbers remain pending owner review.",
     },
   },
   stark: {
@@ -241,6 +241,17 @@ export type ResearchSource = { label: string; url?: string; supports: string; fo
 
 export const catalogResearchSources: Record<string, ResearchSource[]> = {
   "aldo-coach": [
+    {
+      label: "Consolidated owner follow-up, October 19-21, 2026",
+      supports: "Evidence updated October 21 from three completed owner workouts and return use. Program generation, warm-ups, logging, and performance-based suggestions were useful. Setup, repeated AI waits, post-completion navigation, a timer reset after an edit, and one ambiguous set reference added friction. Aldo prescribed 40-pound dumbbells despite a stated 25-pound-per-dumbbell limit; after a reminder, its higher-rep adjustment was acceptable to the owner. The owner agreed in chat to an eight-week continuation, completed the third workout, and then saw a red program-ended warning. Stated equipment constraints and agreed program changes did not consistently carry through to the workout experience. The saved program state and cause are unresolved; this does not establish absent persistent memory, context loss, or data loss. Existing scores are retained pending explicit owner review of a separate reassessment proposal; the earlier neutral reliability rationale is superseded. Free access was useful in owner testing. Store disclosures are first-party claims, not a backend audit, and editorial correspondence is excluded from customer-support evidence.",
+      followUp: "Supersedes earlier statements that only two workouts were complete, the resumed workout was uncompleted, or reliability remained neutral. Older source entries below retain their dated observation scope. No further workout or developer reply is required. Scores await owner review; do not infer missing memory architecture or context loss.",
+    },
+    {
+      label: "US App Store memory description, read October 21, 2026",
+      url: "https://apps.apple.com/us/app/aldo-coach-ai-workout-plan/id6802822375",
+      supports: "The developer describes editable memory holding equipment, working loads and preferences, plus exercise history consulted before writing sessions.",
+      followUp: "First-party claims, not verified architecture or evidence that every recommendation applies stored constraints. Website and privacy page were inaccessible through the research tool October 21.",
+    },
     {
       label: "US App Store listing, rechecked October 19, 2026",
       url: "https://apps.apple.com/us/app/aldo-coach-ai-workout-plan/id6802822375",
