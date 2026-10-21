@@ -67,7 +67,9 @@ export default function EditorialStandardsPage() {
         <p>
           App Fit is personal to a visitor&apos;s finder answers. It is not a
           universal quality ranking. Legit Score and Originality &amp; Identity
-          are separate editorial assessments on a 100-point scale.
+          are separate editorial assessments on a 100-point scale. The full
+          dimensions, weighting, evidence rules, and legacy-profile limits are
+          explained on our <Link href="/how-we-score">How we score</Link> page.
         </p>
         <ul>
           <li>
@@ -127,9 +129,9 @@ export default function EditorialStandardsPage() {
           Ads help keep Workout App Index free. Advertisers cannot buy a
           listing, a higher score, or placement in finder results. Ads are
           labeled and kept separate from app recommendations. Workout App Index
-          and The Lift League are both owned by Turf King LLC. The Lift League
-          is evaluated under the same criteria as other apps, and shared
-          ownership is disclosed in its profile.
+          and The Lift League are both owned by Turf King LLC; Caliper Cal is
+          another Turf King product. Any WAI-owned app is evaluated under the
+          same criteria, and shared ownership is disclosed in its profile.
         </p>
       </section>
       <section>

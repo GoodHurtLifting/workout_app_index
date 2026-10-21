@@ -5,7 +5,7 @@ import { apps, type AppRecord, type ResearchStatus } from "@/lib/catalog";
 import { catalogResearchDrafts, getUnmodifiedPlaceholderResearchDraft } from "@/lib/catalog-research-drafts";
 import { preparedEvidenceForApp } from "@/lib/catalog-prepared-evidence";
 import { withPrivateLegacyScoreDraft } from "@/lib/legacy-score-drafts";
-import { getLegacyPublicApps, mergePublishedCatalog } from "@/lib/legacy-public-catalog";
+import { filterWithdrawnCatalog, getLegacyPublicApps, mergePublishedCatalog } from "@/lib/legacy-public-catalog";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 
 type CatalogRow = { id:string; record:AppRecord; publication_status:ResearchStatus; updated_at:number; source_submission_id?:string };
@@ -14,6 +14,21 @@ export function isRecheckedEvidence(source: EvidenceRow): boolean {
   return !source.internal_note?.startsWith("Seeded from the source catalog");
 }
 export type PublicationRow = { id:string; catalog_version:string; fit_methodology_version:string; legit_methodology_version:string; published_at:number };
+export type CatalogWithdrawalRow = { active:boolean; reason:string; updated_at:number; updated_by:string };
+
+export async function getCatalogWithdrawal(id:string):Promise<CatalogWithdrawalRow|null>{
+  const snapshot=await getAdminFirestore().collection("catalogWithdrawals").doc(id).get();
+  return snapshot.exists ? snapshot.data() as CatalogWithdrawalRow : null;
+}
+
+export async function saveCatalogWithdrawal(id:string, row:CatalogWithdrawalRow){
+  await getAdminFirestore().collection("catalogWithdrawals").doc(id).set(row);
+}
+
+const getWithdrawnCatalogIds=unstable_cache(async ():Promise<string[]>=>{
+  const snapshot=await getAdminFirestore().collection("catalogWithdrawals").where("active","==",true).get();
+  return snapshot.docs.map(doc=>doc.id);
+},["withdrawn-catalog-ids"],{revalidate:60,tags:["public-catalog-visibility"]});
 
 export async function listCatalogRecords(): Promise<AppRecord[]> {
   const snapshot = await getAdminFirestore().collection("catalogApps").orderBy("name").get();
@@ -58,15 +73,21 @@ export const getLatestPublishedCatalog = unstable_cache(async ():Promise<AppReco
 
 export const getPublicCatalog = cache(async (): Promise<{ apps: AppRecord[]; source: "published" | "preliminary" }> => {
   const legacyApps = getLegacyPublicApps(apps);
+  let catalog:AppRecord[]=legacyApps;
+  let source:"published"|"preliminary"="preliminary";
   try {
     const published = await getLatestPublishedCatalog();
     if (published?.length) {
-      return { apps: mergePublishedCatalog(legacyApps, published), source: "published" };
+      catalog=mergePublishedCatalog(legacyApps,published);
+      source="published";
     }
   } catch (error) {
     console.error("Could not load the published catalog", error);
   }
-  return { apps: legacyApps, source: "preliminary" };
+  // Visibility must fail closed. If the withdrawal state cannot be read, do not
+  // silently fall back to a catalog that could expose a withdrawn listing.
+  const withdrawnIds=new Set(await getWithdrawnCatalogIds());
+  return {apps:filterWithdrawnCatalog(catalog,withdrawnIds),source};
 });
 
 export async function saveCatalogRecord(record:AppRecord,userId:string){

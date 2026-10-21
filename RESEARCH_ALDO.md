@@ -108,3 +108,43 @@ Existing Legit 79. Proposed Legit 75 = (80 + 65 + 65 + 90 + 75) / 5. Moderate co
 | Support/privacy | 75 | 75 | No new eligible customer-support or privacy evidence warrants a change. Editorial correspondence remains excluded. |
 
 Evidence mapping: core E3-E5; usability E1-E2, E6-E8; reliability E3/E5; value existing owner access and dated store record; support/privacy existing disclosure record. E identifiers refer to the consolidated card above. The same incident may bear on distinct dimensions, but no per-incident deductions are used. The program mismatch affects both the usefulness of programming and consistency of state; neither is treated as confirmed data loss. Originality remains 78 because these findings concern execution and no new comparative originality evidence supports a change. No score has been changed in the TypeScript proposal or saved admin card.
+
+## October 21 follow-up: no visible scheduled workout or plan
+
+On reopening Aldo October 21 before the planned reset, the owner found no scheduled workout and nothing under Program > Plan, despite the earlier agreement to an eight-week continuation. This extends the earlier program-ended warning to a later visit with no visible plan. Whether the continuation was saved, removed, filtered, or failed to load remains unresolved; backend data loss is not established.
+
+This is the existing setup before reset, not a fresh-setup result or a fourth completed workout. It strengthens the continuity concern and supersedes any implication that the plan remains currently accessible under Program > Plan. Scores remain unchanged; reassess the proposed dimensions at final review rather than applying a separate deduction per observation.
+
+
+## October 21 final recovery and usage-tier update
+
+October 21 recovery follow-up supersedes the earlier unresolved missing-plan outcome: the owner explicitly selected eight weeks and rebuilt through Program. Monday's chat agreement may not have completed that process. After an app-estimated seven-minute build, approval led to another finalization phase estimated at one minute; elapsed time was not measured. The resulting block showed week 2 of 9 and retained visible prior training dates. The owner liked that continuity, but questioned repeated main-lift prescriptions alongside changed accessories. Repetition alone was not established as a programming error. Visible October 12 and 19 entries suggested seven days between sessions, conflicting with the AI's earlier ten-day account; its calculation is unknown. After another AI conversation and full rebuild, the owner considered the session appropriate: recovery squats, primary overhead press and deadlift, close-grip bench, planks, and EZ-bar French press. The deadlift appeared light to the owner but was acceptable. No completed October 21 workout has been reported. This recovery demonstrates available history and a workable rebuilt session, not a verified remaining eight-week progression.
+
+Two lengthy block builds and intervening clarification delayed readiness to train. The owner judged that this could outlast a planned ten-minute treadmill warm-up; that is an anticipated gym scenario, not a measured delay. The AI's reflexively agreeable apology frustrated the owner and is not independent proof of a programming defect. The owner was unsure how to correct one session without disturbing the remaining block. The observed burden is repeated waiting, interpretation, and correction before the plan feels ready to use.
+
+During this sequence, Aldo said the owner had hit a usage limit and was automatically switched to Pro at no cost. Continued no-cost access was reported; standard allowances, reset periods, Pro entitlements, and future paid terms are unverified. The message alone does not prove each rebuild consumed a quota. Concern that future paid users could bear the cost of correcting app-generated plans is a conditional value concern, not an observed charge or established billing policy.
+
+Scoring qualification: successful recovery and retained visible history must inform the final core/reliability assessment. Repeated rebuilds strengthen usability concerns. The earlier proposed Legit 75 remains an unapplied recommendation, not a finalized score. No automatic additional deduction or hypothetical pricing penalty is applied.
+
+
+## Fifth-workout observations, recorded October 21, 2026
+
+**Scope:** The owner identifies this as the fifth Aldo workout. Earlier three-workout summaries are historical scope, not the current total. This report includes finish-workout behavior but does not independently document every intervening session or establish that the planned account reset occurred.
+
+**Previous-load reference:** On a lighter recovery day in an alternating program, the previous-weight display used the most recent heavy-day weight rather than the previous light-day weight. This is an observed reference-context limitation; it does not establish an incorrect stored log or prove the label promises a like-for-like light-day comparison.
+
+**Coupled controls:** Turning off per-set AI feedback also removed the prompt to repopulate sets after editing a recommended weight. The owner considered this a minor loss but expected the controls to be independent. Functional assistance versus coaching commentary is a proposed design distinction, not a confirmed existing setting or required implementation.
+
+**Feedback on re-enable:** After returning from Program and re-enabling set feedback, conversation resumed with earlier context. Feedback appeared for already-completed squats that had been performed with AI off, but not for the overhead-press working set just completed before enabling it. Later, re-enabling AI for accessories produced a recap of deadlifts performed with AI off. This demonstrates some retrospective access to workout context, while timing and coverage were unclear; it does not prove when feedback was generated or what background model processing occurred.
+
+**Warm-up numbering:** Per-set feedback described set 4 complete after two warm-up sets and two working sets, while the visible working-set column showed set 2. This reinforces the earlier numbering mismatch. Four total sets is arithmetically consistent; the issue is differing numbering conventions without clear labels, not proof of a wrong applied set.
+
+**Incorrect deadlift recap:** The owner reports completing 3 x 5 deadlifts, but the AI recap said a full 5 x 5 at the working weight. This is a concrete owner-reported false workout summary, stronger evidence than the ambiguous set numbering. It does not establish that the underlying workout log was changed or identify whether the fault lay in model output, supplied context, retrieval, or Aldo integration.
+
+**Progression question:** The AI described 185-pound deadlifts as tying the previous heaviest pull, while the current prescription had been 170. The owner expected only squats to be lighter on this recovery day, with other lifts progressing from prior work. Record the unexplained prescription versus the owner's intended program; the exact chosen program rules and Aldo's rationale have not been checked, so this is not independently verified as incorrect loading or a required increase.
+
+**Fit and diminishing feedback value:** By the fifth workout the owner no longer found per-set commentary necessary and questioned whether program-building benefits outweighed ambiguity and build waits. The suggestion that beginners might retain it longer is a hypothesis, not tested beginner evidence. Keeping accurate logs while commentary is disabled is a user expectation; it does not require continuous AI calls.
+
+**Finish-workout handoff:** Finish workout generated a brief beneath the log on the same screen with a share button, but the owner still lacked a clear next action and felt stuck. The owner did not see a useful purpose for sharing the long AI brief. This reinforces recurring completion-navigation friction; it does not establish human trainers' preferences or that no other navigation route exists.
+
+Scoring: the false deadlift recap is new evidence for core execution and reliability; recurring controls and completion issues reinforce usability concerns. The prior proposed Legit 75 is still unapplied and needs review against this expanded evidence rather than an automatic per-incident deduction. Stored scores and review status remain unchanged.

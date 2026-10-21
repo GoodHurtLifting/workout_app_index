@@ -26,6 +26,7 @@ export function PublicInformationLayout({
         </header>
         <div className="public-information-content">{children}</div>
         <nav className="public-information-links" aria-label="More information">
+          <Link href="/how-we-score">How we score</Link>
           <Link href="/editorial-standards">Editorial standards</Link>
           <Link href="/corrections">Corrections</Link>
           <Link href="/submit-app">Submit an app</Link>

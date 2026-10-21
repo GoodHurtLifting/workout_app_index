@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { apps, calculateLegitScore, calculateOriginalityScore, catalogEvidenceSeeds, getOriginalityProfile, getTrainingRelationship, type AiStatus, type AppRecord, type LegitAssessment, type OriginalityProfile, type PersonAssociation, type PlanningStyle, type ResearchStatus, type TrainingRelationship } from "@/lib/catalog";
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
-import { getCatalogRecord, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveEvidence, savePublication, syncPreparedResearchEvidence } from "@/lib/catalog-repository";
+import { getCatalogRecord, getCatalogWithdrawal, getLatestPublishedCatalog, getPublicCatalog, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveCatalogWithdrawal, saveEvidence, savePublication, syncPreparedResearchEvidence } from "@/lib/catalog-repository";
 import { canTransition, monthKey, normalizeAppSubmissionStatus } from "@/lib/submission-workflow";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
 import { applyCatalogProposal, catalogProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
@@ -496,4 +496,34 @@ export async function publishApprovedCatalog(){
   await savePublication({id:crypto.randomUUID(),catalog_version:version,fit_methodology_version:"fit-1",legit_methodology_version:"legit-1",snapshot,published_by:user.userId,published_at:now});
   updateTag("public-catalog");
   revalidatePath("/admin");
+}
+
+export async function withdrawCatalogListing(formData:FormData){
+  const user=await getCatalogAdminForAction();
+  const id=field(formData,"id");
+  const reason=field(formData,"reason");
+  if(!/^[a-z0-9-]{1,80}$/.test(id)||reason.length<20||reason.length>500||!checked(formData,"confirmWithdrawal")) throw new Error("Confirm the listing and provide a specific editorial reason");
+  const existing=await getCatalogWithdrawal(id);
+  if(existing?.active) redirect(`/admin/apps/${id}?visibility=withdrawn`);
+  const {apps:publicApps}=await getPublicCatalog();
+  if(!publicApps.some(app=>app.id===id)) throw new Error("This app is not currently public");
+  await saveCatalogWithdrawal(id,{active:true,reason,updated_at:Date.now(),updated_by:user.userId});
+  updateTag("public-catalog-visibility");
+  revalidatePath("/");revalidatePath(`/apps/${id}`);revalidatePath("/sitemap.xml");revalidatePath("/admin");
+  redirect(`/admin/apps/${id}?visibility=withdrawn`);
+}
+
+export async function restoreCatalogListing(formData:FormData){
+  const user=await getCatalogAdminForAction();
+  const id=field(formData,"id");
+  if(!/^[a-z0-9-]{1,80}$/.test(id)||!checked(formData,"confirmRestore")) throw new Error("Confirm the listing to restore");
+  const withdrawal=await getCatalogWithdrawal(id);
+  if(!withdrawal?.active) redirect(`/admin/apps/${id}?visibility=visible`);
+  const published=(await getLatestPublishedCatalog())?.find(app=>app.id===id&&app.researchStatus==="Reviewed");
+  const saved=await getAdminFirestore().collection("catalogApps").doc(id).get();
+  if(!published||!saved.exists||saved.data()?.publication_status!=="Reviewed"||JSON.stringify(saved.data()?.record)!==JSON.stringify(published)) throw new Error("Review and publish the current card before restoring this listing");
+  await saveCatalogWithdrawal(id,{active:false,reason:withdrawal.reason,updated_at:Date.now(),updated_by:user.userId});
+  updateTag("public-catalog-visibility");
+  revalidatePath("/");revalidatePath(`/apps/${id}`);revalidatePath("/sitemap.xml");revalidatePath("/admin");
+  redirect(`/admin/apps/${id}?visibility=visible`);
 }

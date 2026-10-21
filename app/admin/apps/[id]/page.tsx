@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireCatalogAdmin } from "@/lib/admin-auth";
-import { getCatalogRecord, getPublicCatalog, isRecheckedEvidence, listEvidence } from "@/lib/catalog-repository";
-import { addEvidence } from "../../actions";
+import { getCatalogRecord, getCatalogWithdrawal, getLatestPublishedCatalog, getPublicCatalog, isRecheckedEvidence, listEvidence } from "@/lib/catalog-repository";
+import { addEvidence, restoreCatalogListing, withdrawCatalogListing } from "../../actions";
 import { CatalogReviewForm } from "@/components/catalog-review-form";
 import { CatalogReviewStatusForm } from "@/components/catalog-review-status-form";
 import { CatalogProposalReview } from "@/components/catalog-proposal-review";
@@ -40,8 +40,8 @@ const saveNotices: Record<string, string> = {
   stale: "The saved card changed since this edit form loaded. Your older form was not saved over it. Review the latest saved version before editing again.",
 };
 
-export default async function CatalogAppPage({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{proposal?:string;stage?:string;save?:string}>}){
-  const {id}=await params; const {proposal,stage,save}=await searchParams; await requireCatalogAdmin(`/admin/apps/${id}`); const app=await getCatalogRecord(id); if(!app) notFound(); const evidence=await listEvidence(id);
+export default async function CatalogAppPage({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{proposal?:string;stage?:string;save?:string;visibility?:string}>}){
+  const {id}=await params; const {proposal,stage,save,visibility}=await searchParams; await requireCatalogAdmin(`/admin/apps/${id}`); const app=await getCatalogRecord(id); if(!app) notFound(); const evidence=await listEvidence(id);
   const stored=await getAdminFirestore().collection("catalogApps").doc(id).get();
   const savedRecord=stored.exists ? { ...(stored.data()!.record as AppRecord), researchStatus:stored.data()!.publication_status as ResearchStatus } : null;
   const checklistRecord=savedRecord ?? app;
@@ -52,11 +52,17 @@ export default async function CatalogAppPage({params,searchParams}:{params:Promi
   const researchSources=catalogResearchSources[id] ?? [];
   const publicCatalog=await getPublicCatalog();
   const publicApp=publicCatalog.apps.find(item=>item.id===id);
+  const withdrawal=await getCatalogWithdrawal(id);
+  const publishedRecord=withdrawal?.active ? (await getLatestPublishedCatalog())?.find(item=>item.id===id&&item.researchStatus==="Reviewed") : null;
+  const canRestore=Boolean(publishedRecord&&savedRecord?.researchStatus==="Reviewed"&&JSON.stringify(savedRecord)===JSON.stringify(publishedRecord));
   const draftMatchesPublic=publicApp ? JSON.stringify(publicApp)===JSON.stringify(app) : false;
   const checks=[{label:"Identity and description",pass:Boolean(checklistRecord.name&&checklistRecord.description&&checklistRecord.type&&checklistRecord.type!=="Unclassified"&&!checklistRecord.description.startsWith("Developer-submitted candidate."))},{label:"Platforms recorded",pass:checklistRecord.platforms.length>0},{label:"Pricing recorded",pass:Boolean(checklistRecord.price&&checklistRecord.price!=="Not verified")},{label:"AI status classified",pass:Boolean(checklistRecord.ai&&checklistRecord.ai!=="Not assessed")},{label:"Feature inventory",pass:checklistRecord.features.length>0},{label:"Dated research source attached",pass:evidence.some(isRecheckedEvidence)},{label:"Owner review confirmed",pass:checklistRecord.researchStatus==="Reviewed"}];
   const ready=checks.every(check=>check.pass);
   return <main className="admin-page standalone-admin editor-page"><div className="admin-utility"><Link href="/admin">← Research dashboard</Link><span>{app.name}</span></div><div className="editor-heading"><div><p className="eyebrow">CATALOG RECORD</p><h1>{app.name}</h1><p>Review the proposed card and its source log. Research sources are prepared with the local draft; you do not need to enter them one by one.</p></div><span className={ready?"gate-ready":"gate-blocked"}>{ready?"Review checks complete":"Review checks incomplete"}</span></div>
   <div className="admin-review-tools"><p><strong>Public version:</strong> {publicApp ? draftMatchesPublic ? "Current editor values match what visitors see." : "The public profile differs from this editor draft." : "Not listed publicly."}</p><div><Link href={`/admin/apps/${id}/preview`}>Preview editor draft</Link>{publicApp?<Link href={`/apps/${id}`} target="_blank">Open public profile ↗</Link>:null}</div></div>
+  {visibility==="withdrawn"?<p className="catalog-proposal-notice" role="status">This listing is withdrawn from the public catalog. Its private research record remains intact.</p>:null}
+  {visibility==="visible"?<p className="catalog-proposal-notice" role="status">The reviewed, published listing is visible again.</p>:null}
+  {withdrawal?.active?<section className="catalog-visibility-control"><h2>Public listing withdrawn</h2><p>Reason recorded internally: {withdrawal.reason}</p><p>The private research card is unchanged. This app is omitted from the finder, public profile, API, and sitemap.</p>{canRestore?<form action={restoreCatalogListing}><input type="hidden" name="id" value={id}/><label><input type="checkbox" name="confirmRestore" required/> I rechecked the current reviewed and published card and want to restore it publicly.</label><button type="submit">Restore public listing</button></form>:<p>To restore, first review and publish a current version of this card. A preliminary legacy profile cannot be restored unchanged.</p>}</section>:publicApp?<details className="catalog-visibility-control"><summary>Withdraw this public listing</summary><p>Use this only when WAI cannot responsibly represent the current user experience. This hides the app from public discovery without deleting its research or changing its scores.</p><form action={withdrawCatalogListing}><input type="hidden" name="id" value={id}/><label>Internal editorial reason<textarea name="reason" required minLength={20} maxLength={500} rows={3}/></label><label><input type="checkbox" name="confirmWithdrawal" required/> Withdraw {app.name} from the public catalog.</label><button type="submit">Withdraw public listing</button></form></details>:null}
   {isLegacyPublicApp(id)?<p className="editor-help">Legacy public listing: this app was among the original 36 shown before owner review. It stays public when you publish newer approved entries. Its current research status is not an approval.</p>:null}
   {hasUnsavedResearchDraft?<p className="editor-help">The populated fields below are an unsaved local research draft, not the saved Firebase card or a public listing. Changing the review stage will not change or save this draft. Review its freshness and select Save catalog record when you want to keep its content.</p>:null}
   {hasUnsavedLegacyScoreDraft?<p className="editor-help">A provisional legacy rescoring is prefilled below for private review. It is not saved in Firebase and does not change the public profile. Check the source and rationale before saving; saving as Researching still does not publish a revised score.</p>:null}

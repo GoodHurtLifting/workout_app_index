@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { apps, calculateLegitScore, calculateOriginalityScore } from "../lib/catalog.ts";
-import { getLegacyPublicApps, isLegacyPublicApp, legacyPublicAppIds, mergePublishedCatalog } from "../lib/legacy-public-catalog.ts";
+import { filterWithdrawnCatalog, getLegacyPublicApps, isLegacyPublicApp, legacyPublicAppIds, mergePublishedCatalog } from "../lib/legacy-public-catalog.ts";
 import { legacyScoreDrafts, legacyOriginalityDrafts, withPrivateLegacyScoreDraft } from "../lib/legacy-score-drafts.ts";
 import { catalogResearchDrafts, getUnmodifiedPlaceholderResearchDraft } from "../lib/catalog-research-drafts.ts";
 import { catalogPreparedEvidence, preparedEvidenceForApp } from "../lib/catalog-prepared-evidence.ts";
@@ -14,6 +14,15 @@ test("the original 36 retain an explicit legacy-public marker", () => {
   assert.equal(legacy.length, 36);
   assert.deepEqual(new Set(legacy.map((app) => app.id)), new Set(legacyPublicAppIds));
   assert.ok(legacy.some((app) => app.researchStatus !== "Reviewed"));
+});
+
+test("withdrawal hides a public listing without deleting its saved record or changing scores", () => {
+  const legacy=getLegacyPublicApps(apps);
+  const filtered=filterWithdrawnCatalog(legacy,new Set(["lift-league"]));
+  assert.equal(filtered.length,35);
+  assert.equal(filtered.some(app=>app.id==="lift-league"),false);
+  assert.equal(legacy.find(app=>app.id==="lift-league")?.legit,apps.find(app=>app.id==="lift-league")?.legit);
+  assert.equal(filterWithdrawnCatalog(legacy,new Set()).length,36);
 });
 
 test("all 36 legacy apps have private, criteria-based score drafts", () => {

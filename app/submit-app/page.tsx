@@ -40,8 +40,8 @@ export default function SubmitAppPage() {
             health information the app collects and shares.
           </li>
           <li>
-            If core features require payment or an account, be prepared to
-            arrange review access. Do not send passwords through this form.
+            If core features require payment or an account, describe the
+            ordinary access path. Do not send passwords through this form.
           </li>
         </ol>
         <p>

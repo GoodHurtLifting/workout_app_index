@@ -290,13 +290,13 @@ function AppCard({
       <div className="card-rule" />
       <div className="legit-row">
         <span>
-          <ShieldCheck size={16} /> Legit Score
+          <ShieldCheck size={16} /> Legit Score{app.legitAssessment ? "" : " (preliminary)"}
         </span>
         <strong>{app.legit}/100</strong>
       </div>
       <div className="legit-row">
         <span>
-          <Sparkles size={16} /> Originality &amp; Identity
+          <Sparkles size={16} /> Originality &amp; Identity{app.legitAssessment ? "" : " (preliminary)"}
         </span>
         <strong>{getOriginalityProfile(app).score}/100</strong>
       </div>
@@ -347,7 +347,6 @@ export default function Home({
     | "home"
     | "finder"
     | "browse"
-    | "method"
     | "profile"
     | "compare"
     | "privacy"
@@ -520,7 +519,7 @@ export default function Home({
         <nav aria-label="Primary navigation">
           <button onClick={() => navigate("finder")}>Find My App</button>
           <button onClick={() => navigate("browse")}>Browse Apps</button>
-          <button onClick={() => navigate("method")}>How We Score</button>
+          <Link href="/how-we-score">How We Score</Link>
         </nav>
         <Button className="header-cta" onClick={() => navigate("finder")}>
           Find My App <ArrowRight />
@@ -600,7 +599,7 @@ export default function Home({
                 </div>
                 <div className="hero-score">
                   <strong>{getOriginalityProfile(heroFeatured).score}</strong>
-                  <span>ORIGINALITY</span>
+                  <span>ORIGINALITY{heroFeatured.legitAssessment ? "" : " · PRELIMINARY"}</span>
                 </div>
               </div>
               <div className="match-reasons">
@@ -621,7 +620,7 @@ export default function Home({
               </div>
               <div className="panel-foot">
                 <span>
-                  <ShieldCheck /> Legit Score{" "}
+                  <ShieldCheck /> Legit Score{heroFeatured.legitAssessment ? "" : " (preliminary)"}{" "}
                   <strong>{heroFeatured.legit}</strong>
                 </span>
                 <span>AI: {heroFeatured.ai}</span>
@@ -927,7 +926,7 @@ export default function Home({
                 <ShieldCheck /> LEGIT SCORE
               </span>
               <strong>{profile.legit}</strong>
-              <small>{profile.researchStatus}</small>
+              <small>{profile.researchStatus}{profile.legitAssessment ? "" : " · Preliminary total"}</small>
             </div>
           </div>
           <div className="profile-verdict">
@@ -1038,20 +1037,14 @@ export default function Home({
             </article>
             <article className="quality-card">
               <p className="eyebrow">LEGIT SCORE BREAKDOWN</p>
-              {profile.legitAssessment ? <p>{profile.researchStatus === "Reviewed" ? "Scored with five equally weighted criteria." : `Provisional assessment · ${profile.legitAssessment.confidence.toLowerCase()} confidence`}</p> : null}
-              {(profile.legitAssessment ? [
+              {profile.legitAssessment ? <p>{profile.researchStatus === "Reviewed" ? "Scored with five equally weighted criteria." : `Provisional assessment · ${profile.legitAssessment.confidence.toLowerCase()} confidence`}</p> : <p>This earlier preliminary total has not yet been reassessed under the five-dimension rubric. <Link href="/how-we-score">How scoring works</Link></p>}
+              {profile.legitAssessment ? ([
                 ["Core execution", profile.legitAssessment.coreExecution],
                 ["Usability", profile.legitAssessment.usability],
                 ["Reliability", profile.legitAssessment.reliability],
                 ["Value", profile.legitAssessment.value],
                 ["Support & privacy", profile.legitAssessment.supportPrivacy],
-              ] : [
-                ["Core execution", Math.min(96, profile.legit + 3)],
-                ["Usability", profile.legit],
-                ["Reliability", Math.max(70, profile.legit - 2)],
-                ["Value", Math.min(94, profile.legit + 1)],
-                ["Support & privacy", Math.max(72, profile.legit - 4)],
-              ]).map(([label, value]) => (
+              ] as const).map(([label, value]) => (
                 <div className="quality-row" key={label}>
                   <span>{label}</span>
                   <i>
@@ -1059,7 +1052,7 @@ export default function Home({
                   </i>
                   <strong>{value}</strong>
                 </div>
-              ))}
+              )) : null}
               {profile.legitAssessment ? <small>{profile.legitAssessment.rationale}</small> : null}
             </article>
             <article className="quality-card">
@@ -1068,7 +1061,7 @@ export default function Home({
                 {profileOriginality.score}/100 · {profileOriginality.level}
               </h2>
               <p>{profileOriginality.summary}</p>
-              {[
+              {profile.legitAssessment ? [
                 ["Original mechanics", profileOriginality.originalMechanics],
                 ["Product point of view", profileOriginality.productPointOfView],
                 ["Visual identity", profileOriginality.visualIdentity],
@@ -1085,7 +1078,7 @@ export default function Home({
                   </i>
                   <strong>{value}</strong>
                 </div>
-              ))}
+              )) : <p>This earlier preliminary total has not yet been reconciled with the five-dimension rubric. <Link href="/how-we-score">How scoring works</Link></p>}
               <small className="evidence-note">
                 {profileOriginality.evidenceNote}
               </small>
@@ -1093,7 +1086,8 @@ export default function Home({
           </div>
           <div className="verification-note">
             <strong>Research status: {profile.researchStatus}</strong>
-            <p>Research status reflects the editorial workflow, not a count of independently tested features.</p>
+            <p>Research status reflects the editorial workflow, not a count of independently tested features. {profile.legitAssessment?.checkedAt ? `Assessment checked ${profile.legitAssessment.checkedAt}. ` : ""}Tested platform, tier, or version is not claimed unless stated in the assessment or source notes. <Link href="/how-we-score">How we score</Link></p>
+            {profile.id === "lift-league" ? <p>The Lift League and Workout App Index share an owner, Turf King LLC. This preliminary score is not an independent third-party certification. Ownership does not add finder points or guarantee favorable coverage.</p> : null}
           </div>
         </section>
       )}
@@ -1165,12 +1159,12 @@ export default function Home({
                       "Ideal user",
                       (a: AppRecord) => getTrainingRelationship(a).idealUser,
                     ],
-                    ["Legit Score", (a: AppRecord) => `${a.legit}/100`],
+                    ["Legit Score", (a: AppRecord) => `${a.legit}/100${a.legitAssessment ? "" : " (preliminary)"}`],
                     [
                       "Originality & identity",
                       (a: AppRecord) => {
                         const originality = getOriginalityProfile(a);
-                        return `${originality.score}/100 · ${originality.level}`;
+                        return `${originality.score}/100 · ${originality.level}${a.legitAssessment ? "" : " (preliminary)"}`;
                       },
                     ],
                     ["Price", (a: AppRecord) => a.price],
@@ -1206,75 +1200,6 @@ export default function Home({
               <Button onClick={() => navigate("browse")}>Browse apps</Button>
             </div>
           )}
-        </section>
-      )}
-      {view === "method" && (
-        <section className="method-page">
-          <p className="eyebrow">TRANSPARENT BY DESIGN</p>
-          <h1>Three scores. Three different questions.</h1>
-          <div className="score-explain">
-            <article>
-              <span className="score-icon">%</span>
-              <h2>App Fit Score</h2>
-              <p>
-                How closely an app matches one person’s goals, preferences,
-                equipment, budget, experience, AI comfort, and preferred
-                relationship with their training.
-              </p>
-              <ul>
-                <li>Personalized to finder answers</li>
-                <li>Rewards the right planning style, not the most features</li>
-                <li>Hard requirements can exclude an app</li>
-                <li>Unknown facts never count as a match</li>
-              </ul>
-            </article>
-            <article>
-              <span className="score-icon">
-                <ShieldCheck />
-              </span>
-              <h2>Legit Score</h2>
-              <p>
-                Our assessment of five equally weighted dimensions: core
-                execution, usability, reliability, value, and support/privacy.
-              </p>
-              <ul>
-                <li>Uses public documentation and testing when practical</li>
-                <li>Unknowns are disclosed, not assumed to be failures</li>
-                <li>Not influenced by advertising</li>
-                <li>Store ratings remain separate</li>
-              </ul>
-            </article>
-            <article>
-              <span className="score-icon">
-                <Sparkles />
-              </span>
-              <h2>Originality &amp; Identity</h2>
-              <p>
-                Whether an app contributes a meaningful mechanic, training
-                point of view, or recognizable experience instead of simply
-                reproducing the category standard.
-              </p>
-              <ul>
-                <li>Original mechanics and product point of view</li>
-                <li>Coherent, recognizable visual identity</li>
-                <li>Differences must improve the user experience</li>
-                <li>Only affects Fit Score when distinctiveness matters to you</li>
-              </ul>
-            </article>
-          </div>
-          <p className="method-detail-link">
-            <Link href="/editorial-standards">Read our full review process</Link>,
-            including testing limits, confidence, and publication rules.
-          </p>
-          <div className="disclosure">
-            <h2>Ownership disclosure</h2>
-            <p>
-              Workout App Index and The Lift League are both owned by Turf King
-              LLC. The Lift League is evaluated using the same published
-              criteria as every other app. Shared ownership does not guarantee
-              placement, ranking, or a favorable score.
-            </p>
-          </div>
         </section>
       )}
       {view === "privacy" && (
@@ -1421,7 +1346,7 @@ export default function Home({
         </div>
         <p>Compare the apps. Find your fit.</p>
         <div>
-          <button onClick={() => navigate("method")}>How we score</button>
+          <Link href="/how-we-score">How we score</Link>
           <Link href="/editorial-standards">Editorial standards</Link>
           <Link href="/corrections">Corrections</Link>
           <Link href="/submit-app">Submit an app</Link>

@@ -64,6 +64,10 @@ export function mergePublishedCatalog(legacyApps: AppRecord[], published: AppRec
   ];
 }
 
+export function filterWithdrawnCatalog(catalog: AppRecord[], withdrawnIds: ReadonlySet<string>): AppRecord[] {
+  return catalog.filter((app) => !withdrawnIds.has(app.id));
+}
+
 function assertLegacyPublicCatalogIsComplete(bundledApps: AppRecord[]): void {
   const bundledIds = new Set(bundledApps.map((app) => app.id));
   const missing = legacyPublicAppIds.filter((id) => !bundledIds.has(id));
