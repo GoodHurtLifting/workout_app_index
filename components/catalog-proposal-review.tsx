@@ -23,7 +23,7 @@ export function CatalogProposalReview({ saved, proposed }: { saved: AppRecord; p
   return <section className="catalog-proposals" aria-labelledby="catalog-proposals-heading">
     <p className="eyebrow">LOCAL RESEARCH UPDATE</p>
     <h2 id="catalog-proposals-heading">Review proposed changes</h2>
-    <p className="editor-help">Compare the saved admin value with the local research draft. Check only the fields you accept. Applying them saves your private card immediately; do not click Save catalog record afterward unless you make further edits. Unchecked fields and your review stage stay as they are.</p>
+    <p className="editor-help">Compare the saved admin value with the local research draft. Check only the fields you accept, or explicitly accept the entire proposed draft after reviewing every difference. Applying changes saves your private card immediately; do not click Save catalog record afterward unless you make further edits. Your review stage stays as it is.</p>
     <form action={applyCatalogProposalChanges}>
       <input type="hidden" name="id" value={saved.id} />
       <input type="hidden" name="savedFingerprint" value={catalogRecordFingerprint(saved)} />
@@ -36,6 +36,8 @@ export function CatalogProposalReview({ saved, proposed }: { saved: AppRecord; p
         </label>)}
       </div>
       <button className="admin-primary" type="submit">Apply selected changes to private record</button>
+      <label className="review-confirmation"><input type="checkbox" name="confirmAll" /> I reviewed every proposed field above and accept replacing the displayed saved values with all proposed values.</label>
+      <button className="admin-primary" type="submit" name="applyAll" value="yes">Apply complete research draft to private record</button>
       <p className="editor-help">If the saved card changed since you opened this page, the update stops. Refresh to compare the latest values before accepting anything.</p>
     </form>
   </section>;

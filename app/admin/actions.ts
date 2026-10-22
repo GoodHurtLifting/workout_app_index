@@ -10,6 +10,7 @@ import { canTransition, monthKey, normalizeAppSubmissionStatus } from "@/lib/sub
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
 import { applyCatalogProposal, catalogProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
 import { reviewStageProblem } from "@/lib/catalog-review-stage";
+import { missingReviewProfileDetails } from "@/lib/catalog-review-readiness";
 
 const splitList=(value:FormDataEntryValue|null)=>String(value??"").split(",").map(item=>item.trim()).filter(Boolean);
 const field=(data:FormData,name:string)=>String(data.get(name)??"").trim();
@@ -22,22 +23,7 @@ function score(data:FormData,name:string):number {
   return value;
 }
 async function assertReviewedCatalogRecord(record: AppRecord, confirmed: boolean) {
-  const originality = getOriginalityProfile(record);
-  const relationship = getTrainingRelationship(record);
-  if (
-    record.type === "Unclassified" || record.bestFor === "Not yet assessed" ||
-    record.description === "Developer-submitted candidate. Product claims have not been independently verified." ||
-    record.authorship === "Not assessed" || record.caveat === "Not yet assessed" ||
-    record.price === "Not verified" || record.ai === "Not assessed" || record.legit === 0 ||
-    !record.platforms.length || !record.features.length || originality.score === 0 ||
-    originality.level === "Not assessed" || originality.summary === "Not yet assessed." ||
-    originality.evidenceNote === "Developer claims have not been independently verified." ||
-    relationship.planningStyle === "Not assessed" || relationship.choiceLoad === "Not assessed" ||
-    relationship.continuity === "Not assessed" || relationship.customization === "Not assessed" ||
-    relationship.decisionsRemoved === "Not yet assessed" ||
-    relationship.decisionsRemaining === "Not yet assessed" || relationship.tradeoff === "Not yet assessed" ||
-    relationship.idealUser === "Not yet assessed" || relationship.notFor === "Not yet assessed"
-  ) throw new Error("Replace candidate placeholders with verified profile details before marking Reviewed");
+  if (missingReviewProfileDetails(record).length) throw new Error("Replace candidate placeholders with verified profile details before marking Reviewed");
   if (!confirmed) throw new Error("Confirm that you reviewed this exact profile before marking it Reviewed");
   if (!(await listEvidence(record.id)).some(isRecheckedEvidence)) throw new Error("Recheck and attach at least one current source before marking this profile Reviewed");
 }
@@ -388,6 +374,8 @@ export async function applyCatalogProposalChanges(formData: FormData) {
       throw new CatalogProposalReviewError("stale");
     }
     const selected = formData.getAll("fields").map(value => String(value));
+    const applyAll = field(formData, "applyAll") === "yes";
+    if (applyAll && !checked(formData, "confirmAll")) throw new CatalogProposalReviewError("select");
     const savedFingerprint = field(formData, "savedFingerprint");
     const ref = getAdminFirestore().collection("catalogApps").doc(id);
     await getAdminFirestore().runTransaction(async transaction => {
@@ -398,9 +386,10 @@ export async function applyCatalogProposalChanges(formData: FormData) {
       if (catalogRecordFingerprint(saved) !== savedFingerprint) throw new CatalogProposalReviewError("stale");
       if (saved.researchStatus === "Reviewed") throw new CatalogProposalReviewError("reviewed");
       const changes = catalogProposalChanges(saved, draft);
-      if (!selected.length || selected.some(path => !changes.some(change => change.path === path)) ||
-          new Set(selected).size !== selected.length) throw new CatalogProposalReviewError("select");
-      const updated = applyCatalogProposal(saved, draft, selected);
+      const acceptedPaths = applyAll ? changes.map(change => change.path) : selected;
+      if (!acceptedPaths.length || acceptedPaths.some(path => !changes.some(change => change.path === path)) ||
+          new Set(acceptedPaths).size !== acceptedPaths.length) throw new CatalogProposalReviewError("select");
+      const updated = applyCatalogProposal(saved, draft, acceptedPaths);
       if (!updated.name || !updated.type || !updated.description || !updated.bestFor ||
           !/^#[0-9a-fA-F]{6}$/.test(updated.color) ||
           !Number.isFinite(updated.monthlyPrice ?? 0) || (updated.monthlyPrice ?? 0) < 0 ||
