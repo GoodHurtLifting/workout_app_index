@@ -15,6 +15,24 @@ const checked = (date: string) => Date.parse(`${date}T12:00:00Z`);
 export const catalogPreparedEvidence: Record<string, PreparedEvidence[]> = {
   "aldo-coach": [
     {
+      id: "research-aldo-coach-2026-10-22-fresh-account",
+      source_type: "Hands-on testing",
+      url: null,
+      claim_supported: "October 22 fresh-account check: the owner reports deleting the prior account and starting over, choosing mobility and cycling goals, naming Muscle Monsters when asked about a preferred trainer as a deliberately mismatched reference, and declaring only bands as available equipment. On inspecting the prescribed movements, the owner considered the generated workouts good within that unusual combination. No workout from this fresh plan is reported performed. Account deletion was experienced through the user flow, not audited for backend erasure. Build time remained substantial without a measured duration. The owner reported previously observed issues remained; this is an overall assessment, not an independent retest of every earlier defect. The owner also saw an option for AI to build each day instead of a full block, but did not test it; no claim that this route is faster or more reliable is supported. The owner would consider Aldo for a few equipment-constrained travel workouts, but not ongoing personal use.",
+      checked_at: Date.parse("2026-10-22T12:08:14Z"),
+      public: 0,
+      internal_note: "Final fit judgment: broaden the level field to Beginner, Intermediate and Advanced as an editorial assessment of guided generation, warm-up detail and adjustable prescriptions, supported by repeat owner use and the fresh constrained-plan inspection. No novice participant was tested, and terminology, oversight and navigation may still challenge beginners. Equipment flexibility is supported by the tested dumbbell/home setup and bands-only plan inspection, not every possible restriction or reliable retention in all later sessions. Mobility/cycling were requested goals, not independently validated cycling programming or completed mobility training. The named creator was a preference input, not evidence of authorship, endorsement, partnership or copied programming. Travel use is an owner-stated possible fit, not a completed travel/offline test. The observed daily-build option is untested and does not remove the measured-scope full-block wait concern. Final local scores remain Legit 75 (core 80, usability 65, reliability 65, value 90, support/privacy 75), Originality 78, Moderate confidence. The fresh generated plan reinforces core versatility within the existing strong band, while no completed fresh-plan workout or corrected prior behavior warrants an increase. Prior record-edit and recap concerns remain material. No automatic deduction is applied for another wait, and no bonus for a successful account-deletion flow is treated as a backend privacy audit. This is the final bounded editorial proposal for owner admin acceptance; further testing is not required. No saved admin record, review stage or publication is changed.",
+    },
+    {
+      id: "research-aldo-coach-2026-10-22-logged-weight-correction",
+      source_type: "Hands-on testing",
+      url: null,
+      claim_supported: "Reported October 22 about the recent deadlift workout: two of three deadlift sets showed the prescribed weight rather than the weight the owner actually used. Attempts to correct those two entries did not change the displayed numbers, and the owner could not find how to edit the program after it had been marked finished. This is a reported record-versus-performance discrepancy and unsuccessful correction attempt. It does not establish whether the original cause was an unchanged prefilled value, an input interaction, a failed save, later overwrite, or a completed-state restriction. Exact affected weights, edit route, and persisted backend values were not supplied or independently inspected. The owner referred to the finished program; whether the lock applied to the session, block, or another object is unresolved. This is separate from the earlier incorrect AI recap, not proof that the AI changed the stored sets or that Claude caused the discrepancy. No sixth workout is inferred.",
+      checked_at: Date.parse("2026-10-22T11:49:39Z"),
+      public: 0,
+      internal_note: "Scores remain Legit 75 (80/65/65/90/75), Originality 78, Moderate confidence. The record/edit observation strengthens existing reliability and usability limitations and adds a qualification to logging execution; it does not trigger an automatic per-incident deduction. Before accepting the saved admin card, review this added limitation. No saved record, stage, or publication is changed by the local update.",
+    },
+    {
       id: "research-aldo-coach-2026-10-21-ui-photos",
       source_type: "Hands-on testing",
       url: null,
