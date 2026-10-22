@@ -62,7 +62,16 @@ export async function listEvidence(appId:string): Promise<EvidenceRow[]> {
 
 export async function listPublications(): Promise<PublicationRow[]> {
   const snapshot=await getAdminFirestore().collection("catalogPublications").orderBy("published_at", "desc").limit(8).get();
-  return snapshot.docs.map(doc => ({id:doc.id, ...doc.data()} as PublicationRow));
+  return snapshot.docs.map(doc => {
+    const data=doc.data();
+    return {
+      id:doc.id,
+      catalog_version:String(data.catalog_version ?? ""),
+      fit_methodology_version:String(data.fit_methodology_version ?? ""),
+      legit_methodology_version:String(data.legit_methodology_version ?? ""),
+      published_at:Number(data.published_at ?? 0),
+    };
+  });
 }
 
 export const getLatestPublishedCatalog = unstable_cache(async ():Promise<AppRecord[]|null> => {
