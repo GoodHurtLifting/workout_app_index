@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { ResearchStatus } from "@/lib/catalog";
 import { updateCatalogResearchStatus } from "@/app/admin/actions";
+import { AdminSubmitButton } from "@/components/admin-submit-button";
 
 const stages: ResearchStatus[] = ["Candidate", "Researching", "Evaluation ready", "Reviewed"];
 
@@ -38,7 +39,7 @@ export function CatalogReviewStatusForm({
         <input type="checkbox" name="confirmReview" required />
         I reviewed the saved profile and its sources and approve this exact version.
       </label> : null}
-      <button className="admin-primary" type="submit" disabled={!targetStatus}>Update review stage</button>
+      <AdminSubmitButton label="Update review stage" pendingLabel="Updating stage…" disabled={!targetStatus} />
     </fieldset>
     <p className="editor-help">Changing stage does not save card edits or publish a listing. Publication remains a separate dashboard action.</p>
   </form>;

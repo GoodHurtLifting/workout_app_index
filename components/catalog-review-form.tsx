@@ -2,6 +2,7 @@ import type { AppRecord } from "@/lib/catalog";
 import { calculateLegitScore, calculateOriginalityScore, getOriginalityProfile, getTrainingRelationship } from "@/lib/catalog";
 import { updateCatalogApp } from "@/app/admin/actions";
 import { PersonAssociationEditor } from "@/components/person-association-editor";
+import { AdminSubmitButton } from "@/components/admin-submit-button";
 
 const planningStyles = [
   "Not assessed",
@@ -108,6 +109,6 @@ export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; s
     </section>
     <PersonAssociationEditor initialPeople={app.people ?? []} />
     {app.researchStatus === "Reviewed" ? <label className="review-confirmation"><input type="checkbox" name="confirmReview" required /> I have reviewed these edits and approve the updated profile.</label> : null}
-    <button className="admin-primary" type="submit">Save catalog record</button>
+    <AdminSubmitButton label="Save catalog record" pendingLabel="Saving record…" />
   </form>;
 }

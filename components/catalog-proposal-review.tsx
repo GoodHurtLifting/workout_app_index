@@ -1,6 +1,7 @@
 import type { AppRecord } from "@/lib/catalog";
 import { applyCatalogProposalChanges } from "@/app/admin/actions";
 import { catalogProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
+import { AdminSubmitButton } from "@/components/admin-submit-button";
 
 function show(value: unknown): string {
   if (value === undefined || value === null) return "Not set";
@@ -35,9 +36,9 @@ export function CatalogProposalReview({ saved, proposed }: { saved: AppRecord; p
           <span><b>Proposed</b><span>{show(change.after)}</span></span>
         </label>)}
       </div>
-      <button className="admin-primary" type="submit">Apply selected changes to private record</button>
+      <AdminSubmitButton label="Apply selected changes to private record" pendingLabel="Applying changes…" />
       <label className="review-confirmation"><input type="checkbox" name="confirmAll" /> I reviewed every proposed field above and accept replacing the displayed saved values with all proposed values.</label>
-      <button className="admin-primary" type="submit" name="applyAll" value="yes">Apply complete research draft to private record</button>
+      <AdminSubmitButton label="Apply complete research draft to private record" pendingLabel="Applying draft…" name="applyAll" value="yes" />
       <p className="editor-help">If the saved card changed since you opened this page, the update stops. Refresh to compare the latest values before accepting anything.</p>
     </form>
   </section>;

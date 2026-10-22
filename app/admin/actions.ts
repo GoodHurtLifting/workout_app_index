@@ -358,6 +358,7 @@ export async function updateCatalogApp(formData:FormData){
   await saveCatalogRecord(record,user.userId);
   await syncPreparedResearchEvidence(id);
   revalidatePath("/admin"); revalidatePath(`/admin/apps/${id}`);
+  redirect(`/admin/apps/${id}?save=updated`);
 }
 
 class CatalogProposalReviewError extends Error {
@@ -460,31 +461,45 @@ export async function addEvidence(formData:FormData){
   revalidatePath(`/admin/apps/${appId}`);
 }
 
-export async function publishApprovedCatalog(){
+export type PublishCatalogResult = { status:"idle"|"success"|"error"; message:string; version?:string; appCount?:number; publishedAt?:number };
+
+export async function publishApprovedCatalog(_previous:PublishCatalogResult, _formData:FormData):Promise<PublishCatalogResult>{
+  void _previous;
+  void _formData;
   const user=await getCatalogAdminForAction();
-  const rows=await listReviewedCatalogRecords();
-  if(!rows.length) throw new Error("At least one reviewed app is required");
-  const evidence=await listAllEvidence();
-  const coverage=new Map<string,Set<string>>();
-  for(const source of evidence){
-    if(!isRecheckedEvidence(source)) continue;
-    const categories=coverage.get(source.app_id)??new Set<string>();
-    const claim=source.claim_supported.toLowerCase();
-    if(source.source_type==="Google Play"||source.source_type==="Apple App Store"||/android|ios|platform|availability/.test(claim)) categories.add("platforms");
-    if(/price|pricing|purchase|subscription|free|trial/.test(claim)) categories.add("pricing");
-    if(/\bai\b|artificial intelligence|hevy-gpt|hevygpt/.test(claim)) categories.add("ai");
-    if(/feature|program|logging|tracker|progress|community|offline|wearable/.test(claim)) categories.add("features");
-    coverage.set(source.app_id,categories);
+  let saved=false;
+  try {
+    const rows=await listReviewedCatalogRecords();
+    if(!rows.length) throw new Error("At least one reviewed app is required");
+    const evidence=await listAllEvidence();
+    const coverage=new Map<string,Set<string>>();
+    for(const source of evidence){
+      if(!isRecheckedEvidence(source)) continue;
+      const categories=coverage.get(source.app_id)??new Set<string>();
+      const claim=source.claim_supported.toLowerCase();
+      if(source.source_type==="Google Play"||source.source_type==="Apple App Store"||/android|ios|platform|availability/.test(claim)) categories.add("platforms");
+      if(/price|pricing|purchase|subscription|free|trial/.test(claim)) categories.add("pricing");
+      if(/\bai\b|artificial intelligence|hevy-gpt|hevygpt/.test(claim)) categories.add("ai");
+      if(/feature|program|logging|tracker|progress|community|offline|wearable/.test(claim)) categories.add("features");
+      coverage.set(source.app_id,categories);
+    }
+    const required=["platforms","pricing","ai","features"];
+    const missing=rows.flatMap(row=>required.filter(category=>!coverage.get(row.id)?.has(category)).map(category=>`${row.id}: ${category}`));
+    if(missing.length) throw new Error(`Reviewed apps need evidence for platforms, pricing, AI, and features. Missing ${missing.join(", ")}`);
+    const now=Date.now(); const version=`catalog-${new Date(now).toISOString().replace(/[-:.]/g,"")}`;
+    const snapshot=rows.map(row=>row.record);
+    if (JSON.stringify(snapshot).includes("\u2014")) throw new Error("Replace em dashes in reviewed app copy before publishing");
+    await savePublication({id:crypto.randomUUID(),catalog_version:version,fit_methodology_version:"fit-1",legit_methodology_version:"legit-1",snapshot,published_by:user.userId,published_at:now});
+    saved=true;
+    updateTag("public-catalog");
+    revalidatePath("/admin");
+    return {status:"success",message:`Published ${snapshot.length} reviewed ${snapshot.length===1?"app":"apps"} in catalog snapshot ${version}. Public pages may take a moment to refresh.`,version,appCount:snapshot.length,publishedAt:now};
+  } catch(error) {
+    const message=error instanceof Error ? error.message : "";
+    if(message==="At least one reviewed app is required"||message.startsWith("Reviewed apps need evidence")||message.startsWith("Replace em dashes")) return {status:"error",message};
+    console.error("Could not confirm catalog publication",error);
+    return {status:"error",message:saved?"A snapshot was saved, but the refresh could not be confirmed. Check Publication history before trying again.":"Publication could not be confirmed. Check Publication history before retrying, or check the server logs."};
   }
-  const required=["platforms","pricing","ai","features"];
-  const missing=rows.flatMap(row=>required.filter(category=>!coverage.get(row.id)?.has(category)).map(category=>`${row.id}: ${category}`));
-  if(missing.length) throw new Error(`Reviewed apps need evidence for platforms, pricing, AI, and features. Missing ${missing.join(", ")}`);
-  const now=Date.now(); const version=`catalog-${new Date(now).toISOString().replace(/[-:]/g,"").slice(0,13)}Z`;
-  const snapshot=rows.map(row=>row.record);
-  if (JSON.stringify(snapshot).includes("\u2014")) throw new Error("Replace em dashes in reviewed app copy before publishing");
-  await savePublication({id:crypto.randomUUID(),catalog_version:version,fit_methodology_version:"fit-1",legit_methodology_version:"legit-1",snapshot,published_by:user.userId,published_at:now});
-  updateTag("public-catalog");
-  revalidatePath("/admin");
 }
 
 export async function withdrawCatalogListing(formData:FormData){

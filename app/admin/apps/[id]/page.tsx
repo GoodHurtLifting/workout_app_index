@@ -38,6 +38,7 @@ const stageNotices: Record<string, string> = {
 };
 
 const saveNotices: Record<string, string> = {
+  updated: "Catalog record saved to your private review card. This did not publish the app.",
   stale: "The saved card changed since this edit form loaded. Your older form was not saved over it. Review the latest saved version before editing again.",
 };
 
@@ -78,7 +79,7 @@ export default async function CatalogAppPage({params,searchParams}:{params:Promi
   {hasUnsavedLegacyScoreDraft?<p className="editor-help">A provisional legacy rescoring is prefilled below for private review. It is not saved in Firebase and does not change the public profile. Check the source and rationale before saving; saving as Researching still does not publish a revised score.</p>:null}
   {proposal&&proposalNotices[proposal]?<p className="catalog-proposal-notice" role="status">{proposalNotices[proposal]}</p>:null}
   {stage&&stageNotices[stage]?<p className="catalog-proposal-notice" role={stage==="updated"?"status":"alert"}>{stageNotices[stage]}</p>:null}
-  {save&&saveNotices[save]?<p className="catalog-proposal-notice" role="alert">{saveNotices[save]}</p>:null}
+  {save&&saveNotices[save]?<p className="catalog-proposal-notice" role={save==="updated"?"status":"alert"}>{saveNotices[save]}</p>:null}
   {stored.exists&&catalogResearchDrafts[id]?<CatalogProposalReview saved={{ ...(stored.data()!.record as typeof app), researchStatus: stored.data()!.publication_status }} proposed={catalogResearchDrafts[id]}/>:null}
   <div className="editor-layout"><div className="editor-main"><CatalogReviewForm key={savedFingerprint} app={app} savedFingerprint={savedFingerprint} /><CatalogReviewStatusForm id={id} currentStatus={savedRecord?.researchStatus ?? app.researchStatus} savedAt={savedAt} canMarkReviewed={checks.slice(0,6).every(check=>check.pass)} /></div>
   <aside className="editor-sidebar">
