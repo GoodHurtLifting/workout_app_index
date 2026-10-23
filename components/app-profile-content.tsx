@@ -14,7 +14,13 @@ export function AppProfileContent({ app, apps, publicEvidence = [], destinations
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
     <section className="profile-page">
       <nav className="public-profile-nav" aria-label="Profile navigation"><Link href="/">Workout App Index</Link><Link href="/">Browse all apps</Link></nav>
-      <div className="profile-hero"><div className="profile-title"><span className="app-logo profile-logo" style={{ background: app.color }}>{app.initials}</span><div><p className="eyebrow">{app.type}</p><h1>{app.name}</h1><p>{app.description}</p></div></div><div className="profile-score"><span>LEGIT SCORE</span><strong>{app.legit}</strong><small>{app.researchStatus}{app.legitAssessment ? "" : " · Preliminary total"}</small></div></div>
+      <div className="profile-hero">
+        <div className="profile-title"><span className="app-logo profile-logo" style={{ background: app.color }}>{app.initials}</span><div><p className="eyebrow">{app.type}</p><h1>{app.name}</h1><p>{app.description}</p></div></div>
+        <div className="profile-scores" role="group" aria-label="App review scores">
+          <div className="profile-score"><span>LEGIT SCORE</span><strong>{app.legit}</strong><small>{app.researchStatus}{app.legitAssessment ? "" : " · Preliminary total"}</small></div>
+          <div className="profile-score"><span>ORIGINALITY &amp; IDENTITY</span><strong>{originality.score}</strong><small>{originality.level}{app.legitAssessment ? "" : " · Preliminary"}</small></div>
+        </div>
+      </div>
       <div className="profile-verdict"><div><p className="eyebrow">QUICK VERDICT</p><h2>Best for {app.bestFor.toLowerCase()}.</h2><p>{app.caveat}</p><div className="profile-outbound-actions">{destinations.official_site ? <OutboundAppButton destinationType="official_site" appSlug={app.id} url={destinations.official_site}/> : null}{destinations.store ? <OutboundAppButton destinationType="store" appSlug={app.id} url={destinations.store}/> : null}</div></div><Link className="profile-finder-link" href="/">Find my app</Link></div>
       <div className="profile-grid">
         <article><p className="eyebrow">AT A GLANCE</p><dl><div><dt>Price</dt><dd>{app.price}</dd></div><div><dt>Platforms</dt><dd>{app.platforms.join(", ")}</dd></div><div><dt>Programming</dt><dd>{app.authorship}</dd></div><div><dt>AI status</dt><dd>{app.ai}</dd></div><div><dt>Experience</dt><dd>{app.level.join(", ")}</dd></div></dl></article>
