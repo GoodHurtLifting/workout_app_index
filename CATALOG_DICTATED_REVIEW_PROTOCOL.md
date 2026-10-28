@@ -44,7 +44,7 @@ When sources conflict, prefer a directly observed current path for that device/t
 
 ### Developer interaction boundary
 
-Developer participation is not required before publication. WAI does not provide routine progress updates, advance score negotiation, or prepublication approval. Developers may submit documented factual corrections and material product updates through the site's correction channel. Editorial calls or email exchanges are not customer-support tests and do not earn Support/privacy points. If a developer changes the live product, score the verified product behavior in the relevant dimension; record the version/date and do not award a separate responsiveness bonus.
+Developer participation is not required before publication. WAI does not provide routine progress updates, advance score negotiation, or prepublication approval. Developers may submit documented factual corrections and material product updates through the site's correction channel. Editorial calls or email exchanges are not customer-support tests and do not earn Support/privacy points. If a developer changes the live product, score the verified product behavior in the relevant dimension; record the version/date and do not award a separate responsiveness bonus. When a bounded evaluation ends without a scored public entry, record the owner outcome in admin and draft the personal developer message using Outcome B in `CATALOG_DECISION_TEMPLATES.md`. Keep the message tied to the tested release and at most three grouped material findings; do not send it automatically or treat developer contact as a retest.
 
 ## 4. Translate to catalog fields consistently
 

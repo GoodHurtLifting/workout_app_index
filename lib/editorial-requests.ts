@@ -5,7 +5,7 @@ import { Timestamp } from "firebase-admin/firestore";
 import type { DocumentReference } from "firebase-admin/firestore";
 import { z } from "zod";
 import { getAdminFirestore } from "@/lib/firebase-admin";
-import type { SubmissionStatus } from "@/lib/submission-workflow";
+import type { ReviewOutcome, ServiceStage, SubmissionStatus } from "@/lib/submission-workflow";
 import { monthKey } from "@/lib/submission-workflow";
 
 const text = (max: number) => z.string().trim().min(1).max(max);
@@ -65,6 +65,21 @@ export type EditorialRequest = z.infer<typeof requestSchema> & {
   activeReviewStartedAt?: number;
   researchReadyAt?: number;
   statusNote?: string;
+  reviewRound?: number;
+  reviewRounds?: Array<{
+    number: number;
+    basis: "initial" | "free_reassessment" | "paid_followup";
+    startedAt?: number;
+    startNote?: string;
+    outcome?: ReviewOutcome;
+    decidedAt?: number;
+    decisionNote?: string;
+    testedScope?: string;
+  }>;
+  serviceStage?: ServiceStage;
+  serviceStageAt?: number;
+  serviceStageNote?: string;
+  serviceHistory?: Array<{ stage: ServiceStage; at: number; note: string }>;
 };
 
 export class EditorialRateLimitError extends Error {}

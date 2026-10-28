@@ -6,7 +6,7 @@ import { apps, calculateLegitScore, calculateOriginalityScore, catalogEvidenceSe
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { getCatalogRecord, getCatalogWithdrawal, getLatestPublishedCatalog, getPublicCatalog, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveCatalogWithdrawal, saveEvidence, savePublication, syncPreparedResearchEvidence } from "@/lib/catalog-repository";
-import { canTransition, monthKey, normalizeAppSubmissionStatus } from "@/lib/submission-workflow";
+import { canStartAnotherReview, canTransition, monthKey, normalizeAppSubmissionStatus, publicationDecision, reviewOutcomes, serviceStages, type ReviewOutcome, type ServiceStage } from "@/lib/submission-workflow";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
 import { applyCatalogProposal, catalogProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
 import { reviewStageProblem } from "@/lib/catalog-review-stage";
@@ -15,6 +15,12 @@ import { missingReviewProfileDetails } from "@/lib/catalog-review-readiness";
 const splitList=(value:FormDataEntryValue|null)=>String(value??"").split(",").map(item=>item.trim()).filter(Boolean);
 const field=(data:FormData,name:string)=>String(data.get(name)??"").trim();
 const checked=(data:FormData,name:string)=>data.get(name)==="on";
+function returnToSubmission(formData: FormData, id: string, workflow: "decision" | "round" | "service"): never {
+  const params = new URLSearchParams({ workflow });
+  const cursor = field(formData, "cursor");
+  if (/^[A-Za-z0-9]{20}$/.test(cursor)) params.set("cursor", cursor);
+  redirect(`/admin?${params.toString()}#submission-${id}`);
+}
 function score(data:FormData,name:string):number {
   const raw=field(data,name);
   if(raw==="") throw new Error(`${name} is required`);
@@ -201,6 +207,8 @@ export async function acceptAppSubmissionForResearch(formData: FormData) {
       status: "accepted_for_research", candidateAppId: appId, acceptedAt: now, acceptedMonth: month, acceptedBy: user.userId,
       seenAt: data.seenAt ?? data.reviewedAt ?? now,
       seenBy: data.seenBy ?? data.reviewedBy ?? user.userId,
+      reviewRound: data.reviewRound ?? 1,
+      reviewRounds: data.reviewRounds ?? [{ number: 1, basis: "initial" }],
     });
     if (!data.acceptedAt || !capacity.data()?.acceptancesInitialized) transaction.set(capacityRef, {
       acceptances: acceptedCount + (data.acceptedAt ? 0 : 1), acceptancesInitialized: true,
@@ -225,12 +233,116 @@ export async function changeSubmissionReviewStage(formData: FormData) {
     const status = normalizeAppSubmissionStatus(data.status);
     if (!canTransition(status, target as typeof status)) throw new Error("That stage change is not allowed");
     if (target === "active_review" && !data.candidateAppId) throw new Error("Link a catalog Candidate before starting deep review");
-    transaction.update(ref, { status: target, statusChangedAt: Date.now(), statusBy: user.userId,
+    const now = Date.now();
+    const round = Number.isInteger(data.reviewRound) && data.reviewRound > 0 ? data.reviewRound : 1;
+    const history = Array.isArray(data.reviewRounds) ? data.reviewRounds : [];
+    const rounds = target === "active_review"
+      ? history.some((item: { number?: number }) => item.number === round)
+        ? history.map((item: { number?: number }) => item.number === round ? { ...item, startedAt: now } : item)
+        : [...history, { number: round, basis: "initial", startedAt: now }]
+      : history;
+    transaction.update(ref, { status: target, statusChangedAt: now, statusBy: user.userId,
       ...(note ? { statusNote: note } : {}),
-      ...(target === "active_review" ? { activeReviewStartedAt: Date.now() } : {}),
-      ...(target === "research_ready" ? { researchReadyAt: Date.now() } : {}) });
+      ...(target === "active_review" ? { activeReviewStartedAt: now, reviewRound: round, reviewRounds: rounds } : {}),
+      ...(target === "research_ready" ? { researchReadyAt: now } : {}) });
   });
   revalidatePath("/admin");
+}
+
+// These records are private workflow history. Future automation can consume newly
+// enabled events without treating a label change as permission to contact anyone.
+function workflowEvent(db: ReturnType<typeof getAdminFirestore>, requestId: string, appId: string, round: number, type: string, from: string, to: string, by: string, at: number) {
+  const ref = db.collection("editorialWorkflowEvents").doc();
+  return { ref, data: { requestId, appId, round, type, from, to, by, at, automationState: "disabled" } };
+}
+
+export async function recordSubmissionDecision(formData: FormData) {
+  const user = await getCatalogAdminForAction();
+  const id = field(formData, "id");
+  const outcome = field(formData, "outcome") as ReviewOutcome;
+  const testedScope = field(formData, "testedScope");
+  const note = field(formData, "note");
+  if (!/^[A-Za-z0-9]{20}$/.test(id) || !reviewOutcomes.includes(outcome)) throw new Error("Choose a valid editorial decision");
+  if (!testedScope || testedScope.length > 500 || !note || note.length > 1000) throw new Error("Record the tested scope and a brief private reason");
+  const db = getAdminFirestore();
+  const ref = db.collection("editorialRequests").doc(id);
+  const now = Date.now();
+  const latest = await getLatestPublishedCatalog();
+  await db.runTransaction(async transaction => {
+    const request = await transaction.get(ref);
+    const data = request.data();
+    if (!request.exists || data?.kind !== "app" || !canTransition(normalizeAppSubmissionStatus(data.status), outcome)) throw new Error("Finish research before recording an outcome");
+    if (!data.candidateAppId) throw new Error("Link a catalog evaluation first");
+    const app = await transaction.get(db.collection("catalogApps").doc(data.candidateAppId));
+    if (outcome === "selected_for_listing" && app.data()?.publication_status !== "Reviewed") throw new Error("Approve the exact saved catalog card before selecting it for listing");
+    if (outcome !== "selected_for_listing" && latest?.some((entry: AppRecord) => entry.id === data.candidateAppId)) {
+      throw new Error("This app is already public. Use the catalog withdrawal control to change its visibility");
+    }
+    const round = Number.isInteger(data.reviewRound) && data.reviewRound > 0 ? data.reviewRound : 1;
+    const history = Array.isArray(data.reviewRounds) ? data.reviewRounds : [];
+    if (history.some((item: { number?: number; outcome?: string }) => item.number === round && item.outcome)) throw new Error("This review round already has an outcome");
+    const rounds = history.some((item: { number?: number }) => item.number === round)
+      ? history.map((item: { number?: number }) => item.number === round ? { ...item, outcome, decidedAt: now, decisionNote: note, testedScope } : item)
+      : [...history, { number: round, basis: "initial", startedAt: data.activeReviewStartedAt ?? data.acceptedAt ?? now, outcome, decidedAt: now, decisionNote: note, testedScope }];
+    const event = workflowEvent(db, id, data.candidateAppId, round, "review_outcome_recorded", "research_ready", outcome, user.userId, now);
+    transaction.update(ref, { status: outcome, statusChangedAt: now, statusBy: user.userId, reviewRound: round, reviewRounds: rounds });
+    transaction.create(event.ref, event.data);
+  });
+  revalidatePath("/admin");
+  returnToSubmission(formData, id, "decision");
+}
+
+export async function startAnotherReviewRound(formData: FormData) {
+  const user = await getCatalogAdminForAction();
+  const id = field(formData, "id");
+  const basis = field(formData, "basis");
+  const note = field(formData, "note");
+  if (!/^[A-Za-z0-9]{20}$/.test(id) || !["free_reassessment", "paid_followup"].includes(basis)) throw new Error("Choose a valid review basis");
+  if (!note || note.length > 500) throw new Error("Record what changed and why another review is starting");
+  const db = getAdminFirestore();
+  const ref = db.collection("editorialRequests").doc(id);
+  const now = Date.now();
+  await db.runTransaction(async transaction => {
+    const request = await transaction.get(ref);
+    const data = request.data();
+    if (!request.exists || data?.kind !== "app" || !canStartAnotherReview(normalizeAppSubmissionStatus(data.status))) throw new Error("Record the current review outcome first");
+    if (!data.candidateAppId) throw new Error("A linked catalog evaluation is required");
+    if (basis === "paid_followup" && data.serviceStage !== "followup_agreed") throw new Error("Record a separately agreed focused follow-up before using the paid review basis");
+    const round = (Number.isInteger(data.reviewRound) && data.reviewRound > 0 ? data.reviewRound : 1) + 1;
+    const history = Array.isArray(data.reviewRounds) ? data.reviewRounds : [];
+    const event = workflowEvent(db, id, data.candidateAppId, round, "review_round_started", data.status, "active_review", user.userId, now);
+    transaction.update(ref, { status: "active_review", statusChangedAt: now, statusBy: user.userId, activeReviewStartedAt: now,
+      reviewRound: round, reviewRounds: [...history, { number: round, basis, startedAt: now, startNote: note }] });
+    transaction.create(event.ref, event.data);
+  });
+  revalidatePath("/admin");
+  returnToSubmission(formData, id, "round");
+}
+
+export async function recordDeveloperServiceStage(formData: FormData) {
+  const user = await getCatalogAdminForAction();
+  const id = field(formData, "id");
+  const stage = field(formData, "stage") as ServiceStage;
+  const note = field(formData, "note");
+  if (!/^[A-Za-z0-9]{20}$/.test(id) || !serviceStages.includes(stage)) throw new Error("Choose a valid private-work stage");
+  if (!note || note.length > 500) throw new Error("Record the developer's request or separate agreement");
+  const db = getAdminFirestore();
+  const ref = db.collection("editorialRequests").doc(id);
+  const now = Date.now();
+  await db.runTransaction(async transaction => {
+    const request = await transaction.get(ref);
+    const data = request.data();
+    if (!request.exists || data?.kind !== "app" || !data.candidateAppId) throw new Error("A linked app submission is required");
+    const previous = serviceStages.includes(data.serviceStage) ? data.serviceStage : "none";
+    if (previous === stage) throw new Error("This private-work stage is already recorded");
+    const event = workflowEvent(db, id, data.candidateAppId, Number(data.reviewRound ?? 1), "service_stage_recorded", previous, stage, user.userId, now);
+    const history = Array.isArray(data.serviceHistory) ? data.serviceHistory : [];
+    transaction.update(ref, { serviceStage: stage, serviceStageAt: now, serviceStageNote: note,
+      serviceHistory: [...history, { stage, at: now, note }] });
+    transaction.create(event.ref, event.data);
+  });
+  revalidatePath("/admin");
+  returnToSubmission(formData, id, "service");
 }
 
 export async function deleteAppSubmission(formData: FormData) {
@@ -469,7 +581,18 @@ export async function publishApprovedCatalog(_previous:PublishCatalogResult, _fo
   const user=await getCatalogAdminForAction();
   let saved=false;
   try {
-    const rows=await listReviewedCatalogRecords();
+    const reviewedRows=await listReviewedCatalogRecords();
+    const previouslyPublished=new Set((await getLatestPublishedCatalog())?.map(app=>app.id)??[]);
+    const submissionDocs=await Promise.all(reviewedRows.map(row=>row.source_submission_id
+      ? getAdminFirestore().collection("editorialRequests").doc(row.source_submission_id).get() : null));
+    const rows=reviewedRows.filter((row,index)=>{
+      if(!row.source_submission_id) return true;
+      const submission=submissionDocs[index];
+      const status=submission?.exists ? normalizeAppSubmissionStatus(submission.data()?.status) : null;
+      const decision=status ? publicationDecision(status,previouslyPublished.has(row.id)) : previouslyPublished.has(row.id)?"include":"hold";
+      if(decision==="conflict") throw new Error(`${row.id}: the submission is already public. Use the catalog withdrawal control before recording a nonlisting outcome`);
+      return decision==="include";
+    });
     if(!rows.length) throw new Error("At least one reviewed app is required");
     const evidence=await listAllEvidence();
     const coverage=new Map<string,Set<string>>();
