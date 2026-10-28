@@ -55,6 +55,8 @@ The private Firebase catalog manager is the owner's approval and publication sur
 
 Developer participation is not required before publication. WAI does not send routine research-stage updates, negotiate scores in advance, or offer prepublication approval. Developers can submit documented factual corrections and material product updates through the site's correction channel. A factual clarification can be requested when necessary, but no response is not itself a support failure or a publication veto. Normal customer-facing support may be evaluated if encountered; editorial correspondence with WAI does not earn Support/privacy points. Verified product changes may affect the applicable product criterion after WAI checks the updated behavior.
 
+For a personal message announcing a final listing or a decision not to list, use `CATALOG_DECISION_TEMPLATES.md`. These outcome messages are separate from submission acknowledgement and research-stage status.
+
 Keep routine catalog research and observations in the local project. A separate Google Doc may be used for a paid private audit deliverable, but catalog updates do not require maintaining a parallel document. Do not copy raw test notes wholesale into a public listing, and do not turn an observation into a confirmed defect without verification.
 
 ## Developer submission intake

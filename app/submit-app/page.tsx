@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { EditorialRequestForm } from "@/components/editorial-request-form";
 import { PublicInformationLayout } from "@/components/public-information-layout";
 
 export const metadata: Metadata = {
   title: "Submit a Fitness App | Workout App Index",
   description:
-    "Submit a publicly available fitness app for independent evaluation by Workout App Index.",
+    "Submit a publicly available fitness app for editorial consideration by Workout App Index.",
   alternates: { canonical: "/submit-app" },
 };
 
@@ -45,10 +46,15 @@ export default function SubmitAppPage() {
           </li>
         </ol>
         <p>
-          Submission is free. We may screen or waitlist an app according to
-          editorial capacity. Submission does not guarantee testing, review,
-          listing, publication, or a timeline. Advertising and private paid
-          services have no effect on editorial decisions or scores.
+          Submission is free. We may screen, waitlist, or decline an app
+          according to fit, evidence, access, and editorial capacity. Submission
+          does not guarantee testing, scoring, listing, publication, a timeline,
+          or a favorable conclusion. Factual corrections are free. Optional
+          paid follow-up testing, if separately agreed, pays for testing time
+          and private findings, not a public score, ranking, recommendation,
+          finder placement, or publication. See our
+          <Link href="/editorial-standards"> editorial standards</Link> for how we
+          handle later product changes.
         </p>
       </section>
       <EditorialRequestForm kind="app" />

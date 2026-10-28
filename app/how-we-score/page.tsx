@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 export default function HowWeScorePage() {
   return <PublicInformationLayout eyebrow="OUR METHODOLOGY" title="How we score" introduction="The best fitness app is not the one with the most features or the highest number. It is the one that does the job you need, in a way you will want to keep using.">
     <section>
-      <p><strong>Methodology versions:</strong> Finder matching <code>fit-1</code>; editorial scoring rubric <code>initial-v1</code>. The current review protocol applies to new evaluations and substantive reassessments from October 19, 2026. This explanation was approved October 21, 2026. Earlier public profiles are addressed below.</p>
-      <p>We use three separate measures: App Fit, Legit Score, and Originality &amp; Identity. Confidence describes how much evidence supports an evaluation. It is not another quality score.</p>
+      <p><strong>Methodology versions:</strong> Finder matching <code>fit-1</code>; editorial scoring rubric <code>initial-v1</code>. This evaluation policy was revised October 28, 2026. Earlier public profiles are addressed below; existing scores are not changed retroactively.</p>
+      <p>Published profiles use three separate measures: App Fit, Legit Score, and Originality &amp; Identity. Confidence describes how much evidence supports an evaluation. It is not another quality score. An app we decide not to list receives no public score.</p>
     </section>
     <section>
       <h2>App Fit: right for you, not best overall</h2>
@@ -76,23 +76,22 @@ export default function HowWeScorePage() {
       <p>When sources conflict, we identify the context. A current observed workflow is useful for what happened in that workflow; a current store or policy page may be a better source for stated availability, price, or privacy terms. Neither can be generalized beyond what was checked. We revisit a score when new evidence materially changes a dimension.</p>
     </section>
     <section>
-      <h2>Research, testing, and publication are different</h2>
-      <p>A <strong>researched profile</strong> draws on dated public sources and may not include personal use. A <strong>personally tested evaluation</strong> adds identified observations from using the product, not a test of every feature. A <strong>developer claim</strong> is a statement to investigate, not a completed evaluation.</p>
-      <p>Routine hands-on catalog work is bounded. We usually allow about <strong>60 to 90 minutes</strong> for one representative journey, one reasonable retry after a barrier, and one obvious alternative route if available. We may stop sooner when the main experience and tradeoff are clear. This is not exhaustive quality assurance, a load test, security audit, legal review, or scientific validation of every calculation and training outcome.</p>
-      <p>We record the review date, tested platform and access tier, region, and app version when available. If access is blocked or the version is unknown, we say so. An observation from one context does not establish behavior everywhere. Material product changes can make an older evaluation stale; a developer&apos;s report of a fix is not the same as WAI confirming it.</p>
-      <p><strong>Reviewed</strong> means Ryan approved the exact editorial profile and its evidence for publication. It does not mean every feature was personally tested. Approval and publication are separate actions.</p>
+      <h2>How we check an app</h2>
+      <p>We check current product information, then, when access is practical, try the main jobs the app promises. For a workout app, that means getting into a workout, recording and finishing it, and finding the result. If nutrition, recovery, or another function is central to the offer, we try a representative path there too.</p>
+      <p>We may stop when a material problem blocks a main job or makes its result unreliable after a reasonable retry. A confusing control or minor visual issue alone does not mean the app fails. Our basic evaluation has a limited testing window, not a promise to test every feature, device, or future release.</p>
+      <p>Each evaluated profile identifies what we tested, when, and on which platform and access tier. We say when important behavior remains unverified. We may leave an app unlisted when we cannot confidently describe its current experience. A developer&apos;s report of a fix is useful information, but we call it tested only after checking the released product ourselves.</p>
       <h3>Earlier profiles</h3>
-      <p>The original public catalog remains available while its entries are reassessed. Some carry earlier preliminary scores and a status such as &ldquo;Researching.&rdquo; Their older totals should not be compared as though each had already been calculated and approved under the <code>initial-v1</code> five-dimension rubric. A revised score becomes public only after its evidence-backed profile is approved and published.</p>
+      <p>Some original catalog entries remain visible with preliminary scores while we reassess them. Read their dates and evidence scope before comparing them with newer reviewed profiles.</p>
     </section>
     <section>
       <h2>Submissions, corrections, and editorial decisions</h2>
-      <p><Link href="/submit-app">Submitting an app</Link> is free. A submission is an unverified research lead, not a verified profile. It guarantees neither screening, testing, scoring, listing, publication, a timetable, nor a favorable conclusion. An app may remain unscheduled or unpublished.</p>
-      <p>Developers and readers may send <Link href="/corrections">evidence-backed factual corrections</Link>. We check the particular claim and may update a fact without changing a score. A material product change can justify reevaluation, but a request does not guarantee a rescore or an immediate update. Developers do not approve conclusions or negotiate scores before publication. Their participation is not required for a responsibly qualified profile.</p>
+      <p><Link href="/submit-app">Submitting an app</Link> is free. It gives us a starting point, not a verified profile or a promise of testing, scoring, listing, publication, or timing. An app may remain unscheduled or unpublished.</p>
+      <p>Developers and readers may send <Link href="/corrections">evidence-backed factual corrections</Link> for free at any time. We check the particular claim and may update a fact without changing a score. Another full evaluation is separate from correcting a fact. Developers do not approve conclusions or negotiate scores before publication.</p>
       <p>WAI may decline a new listing or withdraw an existing one when current evidence and practical access do not let us represent the user experience responsibly, especially when a material core claim cannot be verified or qualified fairly. Nonpublication is not itself a finding that an app is fraudulent or unsafe.</p>
     </section>
     <section>
       <h2>Money, access, and ownership</h2>
-      <p>Advertising helps keep WAI free. Sponsorships, any affiliate relationships, private developer audits, and review access cannot buy a score, ranking, recommendation, finder placement, favorable conclusion, or publication. Ads and any commercial links are identified separately from editorial recommendations. Paid private work is not a route to a public score.</p>
+      <p>WAI is free for visitors. If we display ads or commercial links, we identify them separately from recommendations. We may separately agree to scoped paid follow-up testing or a broader private audit, subject to availability and agreed terms. A fee pays for defined work and private findings, not a score, ranking, recommendation, finder placement, favorable conclusion, or publication. Verified findings may inform a later editorial decision; when paid work materially informs a public profile, we disclose that relationship.</p>
       <p>Workout App Index and <strong>The Lift League</strong> share an owner, Turf King LLC. <strong>Caliper Cal</strong> is also a Turf King product. Readers should know this conflict of interest. Ownership is disclosed on any profile of a WAI-owned product; those products receive no finder bonus or guaranteed coverage. We treat our own product claims as first-party claims and state where independent evidence or testing is absent. We do not present an owner&apos;s self-evaluation as an independent third-party certification.</p>
     </section>
     <section>
@@ -103,11 +102,11 @@ export default function HowWeScorePage() {
       <h2>Common questions</h2>
       <h3>Why didn&apos;t a new feature increase the score?</h3><p>The score reflects what the feature demonstrably changes within a scored dimension. Mere presence, complexity, or development effort does not earn points. It may still deserve an accurate feature listing.</p>
       <h3>Why wasn&apos;t a developer&apos;s statement treated as verified?</h3><p>A submission or email tells us what to check. We distinguish that report from a current official source and from behavior WAI directly observed.</p>
-      <h3>Can a developer request a rescore?</h3><p>A developer can send a documented correction or material update. WAI decides whether new evidence warrants reassessment. We do not negotiate a target number or promise a schedule.</p>
-      <h3>Does paying WAI affect coverage?</h3><p>No. Paid audits, ads, sponsorships, and any affiliate relationship are separate from editorial selection, scores, ranking, finder placement, conclusions, and publication.</p>
+      <h3>Can a developer request a rescore?</h3><p>A developer can send a documented correction or material update. A factual correction is free and does not automatically reopen the full evaluation. We generally consider a new free full-review request after six months, subject to capacity. We do not negotiate a target number or promise a listing.</p>
+      <h3>Does paying WAI affect coverage?</h3><p>When available, a separately agreed fee may fund an earlier, scoped testing round. It cannot buy a favorable conclusion, score, ranking, finder placement, or publication. We disclose a paid relationship if that work materially informs a public profile.</p>
       <h3>Does a high score mean WAI endorses every feature?</h3><p>No. Read the dimension rationale, confidence, tested context, and unresolved limits. A high total is not an exhaustive certification.</p>
       <h3>Can an app be left unpublished?</h3><p>Yes. A submission can remain in research, be declined, or be left unpublished if we cannot support a fair current profile. An existing listing may also need to be withdrawn when its material claims can no longer be responsibly represented.</p>
-      <h3>How often are profiles updated?</h3><p>There is no fixed schedule. We consider documented corrections and material changes as capacity allows. Price, features, policies, and availability may change between checks, so the dates and scope shown with a profile matter.</p>
+      <h3>How often are profiles updated?</h3><p>There is no automatic update for each app release. We consider factual corrections at any time and fuller reevaluations as capacity allows. Price, features, policies, and availability may change between checks, so the dates and scope shown with a profile matter.</p>
     </section>
   </PublicInformationLayout>;
 }

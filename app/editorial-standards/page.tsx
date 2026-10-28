@@ -39,15 +39,20 @@ export default function EditorialStandardsPage() {
       <section>
         <h2>What hands-on testing covers</h2>
         <p>
-          When hands-on access is practical, a normal catalog review allows
-          about 60 to 90 minutes of use: one representative path through the
-          product, one reasonable retry if blocked, and one obvious alternative
-          route if available. We may stop sooner when the main experience and
-          its tradeoff are clear.
-          We do not require repeated workouts, special test access, or an
-          unreleased build to write a qualified profile. If an important
-          feature cannot be reached, we disclose that limit instead of calling
-          it broken or verified.
+          When access is practical, an initial evaluation usually allows about
+          60 to 90 minutes. We try the app&apos;s main workout task and a
+          representative path through other functions central to its offer,
+          such as nutrition or recovery. If a material problem blocks a main
+          task or makes its result unreliable, we try one reasonable retry and
+          an obvious alternative route when available. We may stop there. A
+          minor visual flaw alone does not end an evaluation.
+        </p>
+        <p>
+          This is bounded product use, not exhaustive quality assurance. We
+          do not require special test access or an unreleased build. We describe
+          the tested version, date, device, and access tier when known, and say
+          what important behavior remains untested. An inaccessible feature is
+          a testing limit, not proof that it fails.
         </p>
       </section>
       <section>
@@ -121,34 +126,45 @@ export default function EditorialStandardsPage() {
           not improve the support score. If a product changes, we consider the
           verified change in the relevant product dimension. The editor
           approves a reviewed profile, and publication is a separate decision.
+          We may decline or withdraw a listing when the current experience
+          cannot be represented fairly from the evidence available.
         </p>
       </section>
       <section>
         <h2>Advertising and ownership</h2>
         <p>
-          Ads help keep Workout App Index free. Advertisers cannot buy a
-          listing, a higher score, or placement in finder results. Ads are
-          labeled and kept separate from app recommendations. Workout App Index
+          Workout App Index is free for visitors. If we display ads or
+          commercial links, we identify them and keep them separate from app
+          recommendations. Advertisers cannot buy a listing, higher score, or
+          finder placement. Workout App Index
           and The Lift League are both owned by Turf King LLC; Caliper Cal is
           another Turf King product. Any WAI-owned app is evaluated under the
           same criteria, and shared ownership is disclosed in its profile.
         </p>
       </section>
       <section>
-        <h2>Private developer audits</h2>
+        <h2>Paid work and editorial independence</h2>
         <p>
-          A developer may separately purchase a private positioning audit.
-          Payment never affects whether WAI selects or publishes an app, its
-          scores or ranking, or our editorial conclusions. Submitting an app
-          remains free and does not require an audit.
+          Initial submission and factual corrections are free. We may separately
+          agree to focused follow-up testing of a changed app or a broader
+          private audit. A fee buys defined work and private findings. It does
+          not guarantee a listing, publication, a favorable conclusion, score,
+          ranking, recommendation, or finder placement. We record all material
+          findings from a test, including problems found before a stopping point.
+          If paid work materially informs a public profile, we disclose the
+          relationship there. Our disclosure approach is informed by the
+          <a href="https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking"> FTC&apos;s Endorsement Guides</a>.
         </p>
       </section>
       <section>
         <h2>Updates and corrections</h2>
         <p>
-          Apps change. We review documented corrections and update profiles
-          when the evidence supports a change. A new fact does not
-          automatically change a score. If you find an error, please use our
+          Apps change. We consider documented factual corrections for free at
+          any time, and update profiles when the evidence supports a change. A
+          new fact does not automatically change a score or reopen the full
+          evaluation. We generally consider a new free full-review request
+          after six months, subject to capacity; paid follow-up testing may be
+          arranged sooner. If you find an error, use our
           <Link href="/corrections"> corrections form</Link> and include a
           source we can check.
         </p>

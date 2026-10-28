@@ -24,8 +24,11 @@ export default function CorrectionsPage() {
           <li>The correct information and a public source that supports it.</li>
         </ul>
         <p>
-          We review submissions before changing a profile. A correction can
-          update facts without changing an app&apos;s score or ranking.
+          Factual corrections are free and may be sent at any time. We check
+          the evidence before changing a profile. Correcting a fact does not
+          automatically change a score or reopen the full evaluation. If a
+          product has changed materially, tell us what changed and when; a
+          request does not guarantee immediate retesting or publication.
         </p>
       </section>
       <EditorialRequestForm kind="correction" />
