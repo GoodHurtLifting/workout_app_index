@@ -54,7 +54,7 @@ test("a bundled research Candidate does not become public by default", () => {
 
 test("developer research drafts stay private and do not overwrite saved edits", () => {
   const legacy = getLegacyPublicApps(apps);
-  for (const id of ["aldo-coach", "stark", "gir-iron"]) {
+  for (const id of ["aldo-coach", "stark", "gir-iron", "swithai"]) {
     assert.ok(catalogResearchDrafts[id]);
     assert.equal(legacy.some((app) => app.id === id), false);
   }
@@ -79,7 +79,7 @@ test("developer research drafts stay private and do not overwrite saved edits", 
 
 test("prepared sources are dated, claim-specific, and separate from submissions", () => {
   const ids = new Set();
-  assert.deepEqual(Object.keys(catalogPreparedEvidence).sort(), ["aldo-coach", "gir-iron", "stark"]);
+  assert.deepEqual(Object.keys(catalogPreparedEvidence).sort(), ["aldo-coach", "gir-iron", "stark", "swithai"]);
   assert.deepEqual(preparedEvidenceForApp("unresearched-app"), []);
   for (const [appId, sources] of Object.entries(catalogPreparedEvidence)) {
     assert.ok(catalogResearchDrafts[appId]);
@@ -180,7 +180,7 @@ test("creator associations remain owner-controlled when accepting local research
 });
 
 test("initial candidate scores are calculated from documented dimensions", () => {
-  for (const id of ["aldo-coach", "stark", "gir-iron"]) {
+  for (const id of ["aldo-coach", "stark", "gir-iron", "swithai"]) {
     const draft = catalogResearchDrafts[id];
     assert.equal(draft.researchStatus, "Candidate");
     assert.ok(draft.legitAssessment);
@@ -207,4 +207,21 @@ test("a published revision replaces only its matching legacy profile", () => {
   assert.equal(merged.length, 36);
   assert.equal(merged.find((app) => app.id === revised.id), revised);
   assert.ok(legacy.slice(1).every((app) => merged.find((item) => item.id === app.id) === app));
+});
+
+test("swithAI draft remains private and does not replace owner edits or review status", () => {
+  const draft = catalogResearchDrafts.swithai;
+  assert.equal(draft.researchStatus, "Candidate");
+  assert.equal(draft.legit, calculateLegitScore(draft.legitAssessment));
+  assert.equal(draft.originalityProfile.score, calculateOriginalityScore(draft.originalityProfile));
+  assert.equal(draft.legitAssessment.confidence, "Low");
+  assert.ok(!apps.some(app => app.id === draft.id));
+  assert.ok(!isLegacyPublicApp(draft.id));
+  const saved = {...draft, type: "Unclassified", description: "Developer-submitted candidate. Product claims have not been independently verified."};
+  assert.equal(getUnmodifiedPlaceholderResearchDraft(saved, "AOYBDZAvtNwvaD6u9S8c")?.id, "swithai");
+  assert.equal(getUnmodifiedPlaceholderResearchDraft(saved, "unrelated-submission"), null);
+  assert.equal(getUnmodifiedPlaceholderResearchDraft({...saved, description: "Owner edited description"}, "AOYBDZAvtNwvaD6u9S8c"), null);
+  assert.equal(getUnmodifiedPlaceholderResearchDraft({...saved, researchStatus: "Reviewed"}, "AOYBDZAvtNwvaD6u9S8c"), null);
+  for (const flag of ["deliversCompleteProgram", "programLibrary", "adaptiveProgramming", "hasUsableFreeTier"]) assert.equal(draft[flag], false);
+  assert.ok(preparedEvidenceForApp("swithai").some(source => source.id.endsWith("owner-history")));
 });

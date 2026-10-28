@@ -13,6 +13,108 @@ export type PreparedEvidence = {
 const checked = (date: string) => Date.parse(`${date}T12:00:00Z`);
 
 export const catalogPreparedEvidence: Record<string, PreparedEvidence[]> = {
+  "swithai": [
+    {
+      "id": "research-swithai-2026-10-23-site",
+      "source_type": "Official website",
+      "url": "https://getswith.com/",
+      "claim_supported": "Four-area product and USD monthly offers: basic $2.99 and Plus $4.99 after seven-day trials. Basic logging versus Plus generated plans/recommender and longer planning horizons. Health integration and GPS logging advertised.",
+      "checked_at": 1792756800000,
+      "public": 1,
+      "internal_note": "Retrieved October 23; publisher claims, not performance verification. Annual in-app offers absent from retrieved page. Bodyweight/home and dumbbell equipment examples are documented, not a test of constraint handling."
+    },
+    {
+      "id": "research-swithai-2026-10-23-privacy",
+      "source_type": "Privacy policy",
+      "url": "https://getswith.com/privacy",
+      "claim_supported": "Policy discloses OpenAI processing, usage-analytics opt-out, wellness/profile storage and deletion limitations, while denying height/weight/heart-rate, HealthKit and location collection. Those denials conflict with current features and observed setup inputs.",
+      "checked_at": 1792756800000,
+      "public": 1,
+      "internal_note": "Policy dated August 11, 2026; retrieved October 23. No backend collection, security, legal compliance or deletion audit. Supplying fields does not independently prove server transmission."
+    },
+    {
+      "id": "research-swithai-2026-10-23-support",
+      "source_type": "Official documentation",
+      "url": "https://getswith.com/support.html",
+      "claim_supported": "Public email contact, stated response window and data/deletion request routes are available.",
+      "checked_at": 1792756800000,
+      "public": 1,
+      "internal_note": "Retrieved October 23. No ordinary customer-support response or effectiveness test; editorial correspondence excluded from scoring."
+    },
+    {
+      "id": "research-swithai-2026-10-23-apple",
+      "source_type": "Apple App Store",
+      "url": "https://apps.apple.com/us/app/swithai-workout-meal-log/id6783848103",
+      "claim_supported": "US listing identifies Jason Abbamonte LLC, iPhone/iPad availability and $2.99/$4.99 in-app purchase entries. Publisher describes history-based adjustments.",
+      "checked_at": 1792756800000,
+      "public": 1,
+      "internal_note": "US region; retrieved October 23. No iOS hands-on testing; download price does not establish a usable free tier and advertised adaptation is not verified."
+    },
+    {
+      "id": "research-swithai-2026-10-23-play",
+      "source_type": "Google Play",
+      "url": "https://play.google.com/store/apps/details?id=com.wellnesschampion.app",
+      "claim_supported": "Live Android listing describes Health Connect read-only access and on-device muscle-group suggestions; release text includes demo mode and Data Safety lists location.",
+      "checked_at": 1792756800000,
+      "public": 1,
+      "internal_note": "Retrieved October 23; displayed update October 17, not verified installed version. Unparameterized fallback region not confirmed. Data Safety is publisher disclosure, not audited behavior."
+    },
+    {
+      "id": "research-swithai-2026-10-23-terms",
+      "source_type": "Official documentation",
+      "url": "https://getswith.com/terms.html",
+      "claim_supported": "Terms describe AI/nutrition estimates and formulas using user-supplied body measurements; outputs are estimates, not measured individual outcomes.",
+      "checked_at": 1792756800000,
+      "public": 1,
+      "internal_note": "Retrieved October 23; terms dated October 2. No independent validation of calorie targets or clinical fitness advice."
+    },
+    {
+      "id": "research-swithai-2026-10-22-owner-entry-nutrition",
+      "source_type": "Hands-on testing",
+      "url": null,
+      "claim_supported": "October 22: Explore opened demo and basic monthly trial entry opened fuller goal setup. Two selected branded foods showed problematic serving controls with no visible scaling of displayed nutrients; repeated photo consent attempts never reached capture/selection. Hydration entries appeared and manual test cardio was acknowledged.",
+      "checked_at": 1792670400000,
+      "public": 0,
+      "internal_note": "Samsung Galaxy A54; version not found in-app, region and normal-versus-license-test billing unknown. Food save totals, photo root cause, telemetry suppression and backend handling unverified. Screenshot 1000012234.jpg shows explicit photo-to-OpenAI disclosure. Demo is not an ongoing free tier."
+    },
+    {
+      "id": "research-swithai-2026-10-23-owner-training-recovery",
+      "source_type": "Hands-on testing",
+      "url": null,
+      "claim_supported": "October 23: next-day Upper Body Strength opened checked row, squat, RDL and overhead press entries. Workout finish produced PRs/log acknowledgement and correct Goal credit. Recovery reached 11-stretch endpoint; visual guidance and timer transitions uneven. Activity categories remained confusing.",
+      "checked_at": 1792756800000,
+      "public": 0,
+      "internal_note": "Samsung Galaxy A54/basic selected trial. Origin of checked selection unresolved; no claim of failed generated algorithm. No individual-set editing/rest timer found in tested log; no full physical-workout or stored-value audit. Stretch image mismatch minor; no unauthorized-video or unsafe-movement finding."
+    },
+    {
+      "id": "research-swithai-2026-10-23-owner-history",
+      "source_type": "Hands-on testing",
+      "url": null,
+      "claim_supported": "October 23 History follow-up: individual sets are shown, although individual-set editing was not available to the owner during entry. One workout-level RPE is repeated on each lift. Workout details remain accessible after completion.",
+      "checked_at": 1792756800000,
+      "public": 0,
+      "internal_note": "History inspected, not a full value-by-value check: all exact weights/reps/notes and long-term retention remain unconfirmed. No claim of per-set RPE collection, fabricated sets or misuse by an algorithm. Scores remain provisional Legit 61, Originality 63, Low confidence."
+    },
+    {
+      "id": "research-swithai-2026-10-23-hevy-comparator",
+      "source_type": "Official website",
+      "url": "https://www.hevyapp.com/",
+      "claim_supported": "Hevy documents set types, automatic rest timers, routines, history and PRs; provides a concrete specialist logging benchmark.",
+      "checked_at": 1792756800000,
+      "public": 1,
+      "internal_note": "Retrieved October 23. Documentation-only comparator; not matched hands-on testing, a price comparison or a copied public score."
+    },
+    {
+      "id": "research-swithai-2026-10-23-centr-comparator",
+      "source_type": "Official website",
+      "url": "https://centr.com/pages/centr-coach",
+      "claim_supported": "Centr Coach bundles workouts, nutrition, recovery and planning, so cross-domain breadth alone does not establish swithAI uniqueness.",
+      "checked_at": 1792756800000,
+      "public": 1,
+      "internal_note": "Retrieved October 23. Documentation-only comparator; no comparative outcome or price judgment."
+    }
+  ],
+
   "aldo-coach": [
     {
       id: "research-aldo-coach-2026-10-22-fresh-account",

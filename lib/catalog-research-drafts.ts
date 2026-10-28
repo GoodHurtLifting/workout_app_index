@@ -2,11 +2,113 @@ import type { AppRecord } from "@/lib/catalog";
 
 // Admin-only research drafts. Never add these to the bundled public `apps` list.
 export const catalogResearchSubmissionIds: Record<string, string> = {
+  "swithai": "AOYBDZAvtNwvaD6u9S8c",
+
   stark: "0Rbzea15uA9TZdX2rwZh",
   "gir-iron": "bZbRXp2hmnLHuuzqWLNF",
 };
 
 export const catalogResearchDrafts: Record<string, AppRecord> = {
+  "swithai": {
+    "id": "swithai",
+    "name": "swithAI",
+    "initials": "SW",
+    "color": "#2e9d69",
+    "type": "Goal-led wellness planner and tracker",
+    "bestFor": "People who prefer one daily goal checklist across training, nutrition, activity and recovery, with basic workout logging",
+    "description": "swithAI coordinates training, nutrition, activity and recovery in a goal-led daily plan. Android testing found polished themed presentation, useful next-day scheduling and workout completion tracking, but a limited strength-entry flow and repeated problems with branded-food portions and photo entry.",
+    "price": "Basic $2.99/month or Plus $4.99/month in USD after an advertised seven-day trial. The owner also saw Plus at $34.99/year and a basic annual option whose price was not captured; retrieved public pages listed monthly offers only. Explore provided a demo preview, not a verified ongoing free tier. Normal billing versus developer test access remains unconfirmed.",
+    "monthlyPrice": 2.99,
+    "hasUsableFreeTier": false,
+    "freeTierCapabilities": {
+      "completeProgram": false,
+      "adaptiveProgramming": false,
+      "programLibrary": false
+    },
+    "platforms": [
+      "Android",
+      "iOS"
+    ],
+    "ai": "AI supporting features",
+    "legit": 61,
+    "legitAssessment": {
+      "rubricVersion": "initial-v1",
+      "coreExecution": 60,
+      "usability": 60,
+      "reliability": 60,
+      "value": 70,
+      "supportPrivacy": 55,
+      "confidence": "Low",
+      "rationale": "Provisional Android/basic-trial assessment on Samsung Galaxy A54, October 22–23, 2026; installed version unavailable in-app. Core execution (60): goal setup, workout completion and Goal credit worked, and recovery reached its endpoint, but two branded-food attempts did not visibly scale nutrients and photo entry repeatedly stalled. Usability (60): polished presentation and useful task links coexist with clipped portion controls, nested Activity navigation, unclear dumbbell load convention and abrupt stretch transitions. Reliability (60): return use and History show retained workout detail, balanced against repeated nutrition-path problems; exact load/rep/note fidelity and long-term persistence remain unverified. Value (70): low advertised basic price and a useful preview, constrained by uneven delivered utility and unresolved billing/tier boundaries. Support/privacy (55): published routes, opt-out confirmation and explicit photo-to-OpenAI disclosure are positive, but health/location disclosures conflict with current advertised features and observed measurement inputs. No data-flow audit or ordinary support-response test was performed; editorial developer contact earns no points. One completed workout-log journey does not establish that every set was physically performed. History displays individual sets, although individual-set editing was not found during logging, and repeats the workout-level RPE on each lift. Full evidence, counterevidence and adjacent-band reasons are retained in RESEARCH_SWITHAI.md. Unknown capabilities are not scored as failures.",
+      "checkedAt": "2026-10-23",
+      "sourceUrls": [
+        "https://getswith.com/",
+        "https://getswith.com/privacy",
+        "https://getswith.com/support.html",
+        "https://apps.apple.com/us/app/swithai-workout-meal-log/id6783848103",
+        "https://play.google.com/store/apps/details?id=com.wellnesschampion.app"
+      ]
+    },
+    "goals": [
+      "Build muscle",
+      "Body recomposition",
+      "General fitness",
+      "Track workouts",
+      "Lose weight"
+    ],
+    "features": [
+      "Goal calendar and daily tasks",
+      "Workout logging",
+      "Workout history",
+      "Personal records",
+      "Nutrition tracking",
+      "Hydration tracking",
+      "Timed recovery routines",
+      "AI supporting tools"
+    ],
+    "level": [
+      "Intermediate",
+      "Advanced"
+    ],
+    "authorship": "Publisher-developed; expert program authorship unverified",
+    "caveat": "On the tested Android/basic path, Upper Body Strength opened checked exercises including goblet squats and Romanian deadlifts; whether these were generated, default or retained selections is unresolved. Individual-set editing and a rest timer were not found while logging; History shows individual sets and repeats one workout-level RPE on each lift. Dumbbell weight convention was unclear. Two branded-food selections had problematic serving controls with no visible nutrient scaling, and repeated photo attempts never reached image input. Final saved food totals were not checked. Recovery guidance and transition timing were uneven. Public health/location privacy disclosures conflict with current features. The 14-week goal schedule does not establish Plus access or a complete exercise-prescribed program. False capability flags mean not established for this draft, not proven absent.",
+    "deliversCompleteProgram": false,
+    "programLibrary": false,
+    "adaptiveProgramming": false,
+    "supportedTrainingEnvironments": [
+      "Dumbbells only",
+      "Bodyweight"
+    ],
+    "researchStatus": "Candidate",
+    "verifiedSections": 0,
+    "totalSections": 7,
+    "trainingRelationship": {
+      "planningStyle": "Build it yourself",
+      "secondaryStyles": [
+        "Just log the work"
+      ],
+      "choiceLoad": "High",
+      "continuity": "User-directed",
+      "customization": "Guided flexibility",
+      "decisionsRemoved": "Goal setup supplies a cross-pillar schedule, targets and required/optional daily tasks. Workout completion was credited to the Goal checklist. This is high-level coordination, not verified ongoing exercise prescription or adaptation.",
+      "decisionsRemaining": "You check exercise suitability, interpret activity targets, supply workout loads and manage food entries. The current test did not establish a complete multi-session strength prescription or automatic progression.",
+      "tradeoff": "One place for daily wellness targets and basic logs reduces switching among areas, but nested choices and uneven training/nutrition execution require more interpretation than the polished presentation suggests.",
+      "idealUser": "You value a shared daily checklist and broad wellness coverage, and can interpret basic training and nutrition controls for yourself.",
+      "notFor": "You need detailed per-set editing during training, unambiguous load guidance, dependable low-friction food logging, or a verified adaptive strength program."
+    },
+    "originalityProfile": {
+      "score": 63,
+      "level": "Clear identity",
+      "originalMechanics": 60,
+      "productPointOfView": 70,
+      "visualIdentity": 75,
+      "meaningfulDifferentiation": 60,
+      "defensibility": 50,
+      "summary": "The goal-to-daily-task workflow and themed presentation give the broad wellness bundle a recognizable identity. Its observed mechanics remain familiar, and weak food entry and limited strength controls reduce the practical distinction.",
+      "evidenceNote": "Low-confidence provisional judgment from Android/basic entry, return use, workout/history and recovery flows. Mechanisms 60: concrete task coordination but familiar components; point of view 70: coherent daily goal with overlapping navigation; visuals 75: repeated owner praise for themed imagery, limited by clipped fields and faint markers; differentiation 60: a plausible breadth-first fit rather than demonstrated specialist advantage; defensibility 50: integration effort but no demonstrated hard-to-copy mechanism, live community or data advantage. Hevy documents specialist set/rest utilities and Centr Coach already bundles workouts, nutrition and recovery; those are dated documented behavioral comparators, not copied public scores or matched hands-on tests. See RESEARCH_SWITHAI.md for decisive evidence, counterevidence and adjacent-band reasons. No claim of unique AI, AI code authorship or validated proprietary swith score."
+    }
+  },
+
   "aldo-coach": {
     id: "aldo-coach",
     name: "Aldo Coach",
@@ -240,6 +342,72 @@ export const catalogResearchDrafts: Record<string, AppRecord> = {
 export type ResearchSource = { label: string; url?: string; supports: string; followUp?: string };
 
 export const catalogResearchSources: Record<string, ResearchSource[]> = {
+  "swithai": [
+    {
+      "label": "Official website: site; checked 2026-10-23",
+      "supports": "Four-area product and USD monthly offers: basic $2.99 and Plus $4.99 after seven-day trials. Basic logging versus Plus generated plans/recommender and longer planning horizons. Health integration and GPS logging advertised.",
+      "followUp": "Retrieved October 23; publisher claims, not performance verification. Annual in-app offers absent from retrieved page. Bodyweight/home and dumbbell equipment examples are documented, not a test of constraint handling.",
+      "url": "https://getswith.com/"
+    },
+    {
+      "label": "Privacy policy: privacy; checked 2026-10-23",
+      "supports": "Policy discloses OpenAI processing, usage-analytics opt-out, wellness/profile storage and deletion limitations, while denying height/weight/heart-rate, HealthKit and location collection. Those denials conflict with current features and observed setup inputs.",
+      "followUp": "Policy dated August 11, 2026; retrieved October 23. No backend collection, security, legal compliance or deletion audit. Supplying fields does not independently prove server transmission.",
+      "url": "https://getswith.com/privacy"
+    },
+    {
+      "label": "Official documentation: support; checked 2026-10-23",
+      "supports": "Public email contact, stated response window and data/deletion request routes are available.",
+      "followUp": "Retrieved October 23. No ordinary customer-support response or effectiveness test; editorial correspondence excluded from scoring.",
+      "url": "https://getswith.com/support.html"
+    },
+    {
+      "label": "Apple App Store: apple; checked 2026-10-23",
+      "supports": "US listing identifies Jason Abbamonte LLC, iPhone/iPad availability and $2.99/$4.99 in-app purchase entries. Publisher describes history-based adjustments.",
+      "followUp": "US region; retrieved October 23. No iOS hands-on testing; download price does not establish a usable free tier and advertised adaptation is not verified.",
+      "url": "https://apps.apple.com/us/app/swithai-workout-meal-log/id6783848103"
+    },
+    {
+      "label": "Google Play: play; checked 2026-10-23",
+      "supports": "Live Android listing describes Health Connect read-only access and on-device muscle-group suggestions; release text includes demo mode and Data Safety lists location.",
+      "followUp": "Retrieved October 23; displayed update October 17, not verified installed version. Unparameterized fallback region not confirmed. Data Safety is publisher disclosure, not audited behavior.",
+      "url": "https://play.google.com/store/apps/details?id=com.wellnesschampion.app"
+    },
+    {
+      "label": "Official documentation: terms; checked 2026-10-23",
+      "supports": "Terms describe AI/nutrition estimates and formulas using user-supplied body measurements; outputs are estimates, not measured individual outcomes.",
+      "followUp": "Retrieved October 23; terms dated October 2. No independent validation of calorie targets or clinical fitness advice.",
+      "url": "https://getswith.com/terms.html"
+    },
+    {
+      "label": "Hands-on testing: owner-entry-nutrition; checked 2026-10-22",
+      "supports": "October 22: Explore opened demo and basic monthly trial entry opened fuller goal setup. Two selected branded foods showed problematic serving controls with no visible scaling of displayed nutrients; repeated photo consent attempts never reached capture/selection. Hydration entries appeared and manual test cardio was acknowledged.",
+      "followUp": "Samsung Galaxy A54; version not found in-app, region and normal-versus-license-test billing unknown. Food save totals, photo root cause, telemetry suppression and backend handling unverified. Screenshot 1000012234.jpg shows explicit photo-to-OpenAI disclosure. Demo is not an ongoing free tier."
+    },
+    {
+      "label": "Hands-on testing: owner-training-recovery; checked 2026-10-23",
+      "supports": "October 23: next-day Upper Body Strength opened checked row, squat, RDL and overhead press entries. Workout finish produced PRs/log acknowledgement and correct Goal credit. Recovery reached 11-stretch endpoint; visual guidance and timer transitions uneven. Activity categories remained confusing.",
+      "followUp": "Samsung Galaxy A54/basic selected trial. Origin of checked selection unresolved; no claim of failed generated algorithm. No individual-set editing/rest timer found in tested log; no full physical-workout or stored-value audit. Stretch image mismatch minor; no unauthorized-video or unsafe-movement finding."
+    },
+    {
+      "label": "Hands-on testing: owner-history; checked 2026-10-23",
+      "supports": "October 23 History follow-up: individual sets are shown, although individual-set editing was not available to the owner during entry. One workout-level RPE is repeated on each lift. Workout details remain accessible after completion.",
+      "followUp": "History inspected, not a full value-by-value check: all exact weights/reps/notes and long-term retention remain unconfirmed. No claim of per-set RPE collection, fabricated sets or misuse by an algorithm. Scores remain provisional Legit 61, Originality 63, Low confidence."
+    },
+    {
+      "label": "Official website: hevy-comparator; checked 2026-10-23",
+      "supports": "Hevy documents set types, automatic rest timers, routines, history and PRs; provides a concrete specialist logging benchmark.",
+      "followUp": "Retrieved October 23. Documentation-only comparator; not matched hands-on testing, a price comparison or a copied public score.",
+      "url": "https://www.hevyapp.com/"
+    },
+    {
+      "label": "Official website: centr-comparator; checked 2026-10-23",
+      "supports": "Centr Coach bundles workouts, nutrition, recovery and planning, so cross-domain breadth alone does not establish swithAI uniqueness.",
+      "followUp": "Retrieved October 23. Documentation-only comparator; no comparative outcome or price judgment.",
+      "url": "https://centr.com/pages/centr-coach"
+    }
+  ],
+
   "aldo-coach": [
     {"label":"Final owner fresh-account test and closeout, October 22, 2026","supports":"October 22 fresh-account check: the owner reports deleting the prior account and starting over, choosing mobility and cycling goals, naming Muscle Monsters when asked about a preferred trainer as a deliberately mismatched reference, and declaring only bands as available equipment. On inspecting the prescribed movements, the owner considered the generated workouts good within that unusual combination. No workout from this fresh plan is reported performed. Account deletion was experienced through the user flow, not audited for backend erasure. Build time remained substantial without a measured duration. The owner reported previously observed issues remained; this is an overall assessment, not an independent retest of every earlier defect. The owner also saw an option for AI to build each day instead of a full block, but did not test it; no claim that this route is faster or more reliable is supported. The owner would consider Aldo for a few equipment-constrained travel workouts, but not ongoing personal use.","followUp":"Final fit judgment: broaden the level field to Beginner, Intermediate and Advanced as an editorial assessment of guided generation, warm-up detail and adjustable prescriptions, supported by repeat owner use and the fresh constrained-plan inspection. No novice participant was tested, and terminology, oversight and navigation may still challenge beginners. Equipment flexibility is supported by the tested dumbbell/home setup and bands-only plan inspection, not every possible restriction or reliable retention in all later sessions. Mobility/cycling were requested goals, not independently validated cycling programming or completed mobility training. The named creator was a preference input, not evidence of authorship, endorsement, partnership or copied programming. Travel use is an owner-stated possible fit, not a completed travel/offline test. The observed daily-build option is untested and does not remove the measured-scope full-block wait concern. Final local scores remain Legit 75 (core 80, usability 65, reliability 65, value 90, support/privacy 75), Originality 78, Moderate confidence. The fresh generated plan reinforces core versatility within the existing strong band, while no completed fresh-plan workout or corrected prior behavior warrants an increase. Prior record-edit and recap concerns remain material. No automatic deduction is applied for another wait, and no bonus for a successful account-deletion flow is treated as a backend privacy audit. This is the final bounded editorial proposal for owner admin acceptance; further testing is not required. No saved admin record, review stage or publication is changed."},
     {"label":"Owner logged-weight and correction follow-up, October 22, 2026","supports":"Reported October 22 about the recent deadlift workout: two of three deadlift sets showed the prescribed weight rather than the weight the owner actually used. Attempts to correct those two entries did not change the displayed numbers, and the owner could not find how to edit the program after it had been marked finished. This is a reported record-versus-performance discrepancy and unsuccessful correction attempt. It does not establish whether the original cause was an unchanged prefilled value, an input interaction, a failed save, later overwrite, or a completed-state restriction. Exact affected weights, edit route, and persisted backend values were not supplied or independently inspected. The owner referred to the finished program; whether the lock applied to the session, block, or another object is unresolved. This is separate from the earlier incorrect AI recap, not proof that the AI changed the stored sets or that Claude caused the discrepancy. No sixth workout is inferred.","followUp":"Scores remain Legit 75 (80/65/65/90/75), Originality 78, Moderate confidence. The record/edit observation strengthens existing reliability and usability limitations and adds a qualification to logging execution; it does not trigger an automatic per-incident deduction. Before accepting the saved admin card, review this added limitation. No saved record, stage, or publication is changed by the local update. Earlier statements that the recap alone did not prove changed logs remain valid for that incident; this is new, separate evidence concerning displayed set records. No new public-source check is claimed."},

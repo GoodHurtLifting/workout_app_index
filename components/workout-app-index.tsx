@@ -425,21 +425,27 @@ export default function Home({
   );
   const filtered = useMemo(
     () =>
-      apps.filter(
-        (app) =>
-          (!query ||
-            `${app.name} ${app.type} ${app.features.join(" ")}`
-              .toLowerCase()
-              .includes(query.toLowerCase().trim()) ||
-            matchingPeople(app, query).length > 0) &&
-          (!aiOnly || app.ai === "No AI identified") &&
-          (typeFilter === "All" ||
-            app.type.toLowerCase().includes(typeFilter.toLowerCase())) &&
-          (platformFilter === "All" ||
-            app.platforms.includes(platformFilter)) &&
-          (authorshipFilter === "All" || app.authorship === authorshipFilter) &&
-          (featureFilter === "All" || app.features.includes(featureFilter)),
-      ),
+      apps
+        .filter(
+          (app) =>
+            (!query ||
+              `${app.name} ${app.type} ${app.features.join(" ")}`
+                .toLowerCase()
+                .includes(query.toLowerCase().trim()) ||
+              matchingPeople(app, query).length > 0) &&
+            (!aiOnly || app.ai === "No AI identified") &&
+            (typeFilter === "All" ||
+              app.type.toLowerCase().includes(typeFilter.toLowerCase())) &&
+            (platformFilter === "All" ||
+              app.platforms.includes(platformFilter)) &&
+            (authorshipFilter === "All" || app.authorship === authorshipFilter) &&
+            (featureFilter === "All" || app.features.includes(featureFilter)),
+        )
+        .sort(
+          (a, b) =>
+            a.name.localeCompare(b.name, "en", { sensitivity: "base" }) ||
+            a.id.localeCompare(b.id),
+        ),
     [
       apps,
       query,
