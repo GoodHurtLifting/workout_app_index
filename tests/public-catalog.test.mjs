@@ -92,7 +92,7 @@ test("prepared sources are dated, claim-specific, and separate from submissions"
       assert.ok(source.checked_at <= Date.now());
       assert.ok(source.claim_supported.length > 30);
       assert.ok(source.internal_note);
-      if (source.source_type === "Hands-on testing") {
+      if (["Hands-on testing", "Developer correspondence"].includes(source.source_type)) {
         assert.equal(source.public, 0);
         assert.equal(source.url, null);
       } else {

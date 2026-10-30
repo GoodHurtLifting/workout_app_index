@@ -1,5 +1,75 @@
 # Aldo Coach: current proposal for owner admin review
 
+## Current local handoff | October 30, 2026
+
+The owner authorized preparing the revised local proposal for the site. Legit is now **77/100** (80/65/75/90/75), Originality remains **78/100**, and confidence remains **Moderate**. Reliability changes from 65 to 75 because the definitive false-recap/save-failure rationale is not established after clarification and owner-confirmed editing routes. Historical equipment enforcement and workflow limitations remain. This is a local proposal only; the public profile last verified October 30 still showed 75/78, and the saved admin card, review status and publication have not been changed. Earlier pending-77 language below is superseded for local preparation, not for saved/public approval.
+
+### Reconciled event sequence
+
+October 30 owner clarification, using contemporaneous session notes: on October 21 all three deadlift working sets were performed at 185 pounds, against a 170-pound prescription. The owner cannot determine whether a prompt to update remaining targets was missed or absent. After Finish workout, a recap revealed recorded values 185/170/170. Attempts to change the other two weight fields to 185 reverted to 170 on blur before the owner found how to reopen the finished session. The owner now confirms the Session Complete link says Tap to reopen and edit, and History editing is straightforward. This supports edit discoverability/completed-state friction, not unavailable editing or a confirmed save failure. An earlier 180 reference was corrected as a chat typo. Separately, the contemporaneous notes locate the reported 5 x 5 statement in per-set feedback when AI was re-enabled for accessories after AI-off deadlifts; do not relocate it to the end-of-workout summary. No screenshot or verbatim message is available, and Jack did not find that statement in the two recaps he inspected. Its cause remains unresolved.
+
+Jack reports that disabling per-set feedback stops the immediate Claude call when logging, but a later coach request reads that day's saved sets, including those logged with feedback off. He confirms that the saved 25-pound dumbbell note was ignored by the October 19 rebuild, and reports equipment-profile integration since October 26. That change has not been retested for effective constraint enforcement. He reports 185/170/170 deadlift records and normal completed-session locking with reopening/History edit routes. He says the two recaps he inspected described three working sets, and suggests warm-up counting as a hypothesis. These are attributed developer explanations, not an independent backend or data-flow audit, and the inspected recaps need not be the per-set feedback message described in the notes. His editorial response earns no support-response points.
+
+The contemporaneous notes give the relevant location: per-set feedback when re-enabled for accessories after deadlifts. A later speculative recollection about an end-of-workout summary does not override those notes. Lack of the exact stored message is a separate verification limit, not a reason to make the observed sequence vague. Jack's differing inspected recaps do not resolve whether the same message was inspected; warm-up counting remains a hypothesis.
+
+### Site-facing proposal
+
+During October testing, full-block builds involved substantial waits, and next-workout and completion navigation were unclear. A saved equipment limit was ignored; a later developer-reported profile change has not been retested. Two sets retained prescribed rather than performed weights, without an established save failure. Reopening and History editing are available, but the tester did not discover them during the original attempt. A discrepancy reported in per-set feedback remains unresolved; the developer could not locate it in inspected recaps. A bands-only plan was inspected, not performed; longer-term progression and normal free/Pro limits remain unverified.
+
+Legit 77 reflects useful programming with material workflow friction in October testing. Core execution (80): completed strength workouts, helpful warm-ups and integrated logging, plus successful rebuild recovery. Usability (65): lengthy full-block builds and difficulty locating next actions and completed-session editing. Reliability (75): a saved equipment limit was ignored, but history remained available and workout paths functioned. An owner-reported per-set feedback discrepancy remains unresolved; the weight mismatch does not establish a save failure. Reopening and History editing are now owner-confirmed. A later equipment-profile change is developer-reported and not retested by WAI. Value (90): useful no-card test access; normal free/Pro limits and future prices remain unverified. Support/privacy (75): published disclosures and a contact route, not an audit or credit for editorial correspondence. Five owner-reported workouts and a separate unperformed bands-only plan inform this assessment. Long-term progression, daily generation and other platforms remain unverified.
+
+All other score dimensions, originality, matching/pricing flags and approval/publication state are preserved. Prepared evidence now records owner confirmation and developer explanation as separate private source classes. No email draft is stored in the repository.
+
+
+
+## October 30 reconciliation: owner clarification and developer response
+
+This section controls interpretation of conflicting earlier findings. It records evidence and proposed corrections only; it does not change the saved admin card, scores, review stage or public content. On October 30 the public Aldo profile was fetched successfully (HTTP 200) and showed Reviewed, Legit 75 and Originality 78. Its assessment was dated October 22. A public-page read is not inspection of the private Firestore record.
+
+### Owner-confirmed performed and recorded weights
+
+All three October 21 working deadlift sets were performed at 185 pounds. The recommendation was 170. The owner is unsure whether a prompt to apply the new first-set weight to remaining sets was missed or not shown. Jack reports log values 185/170/170, consistent with the values the owner noticed. It is therefore not established that Aldo changed correctly entered weights or failed to save an attempted in-workout update.
+
+After pressing Finish workout, the owner saw the discrepancy in a recap, returned to the lift and tried entering 185 for the other two sets. On moving focus away from the field, 170 reappeared. The owner has explicitly corrected an earlier mention of 180 as a chat typo: performed and attempted correction weights were 185. Do not use 180 as an alternate performed or attempted load. The owner did not discover reopening at that time, but now confirms the Session Complete text link says “Tap to reopen and edit” and that editing through History is easy. The app locks a completed workout, according to Jack. The observed post-finish reversion is consistent with an attempted edit in a locked state; that is an explanation, not an independently traced save diagnosis. Revise the finding toward completion-state communication and edit discoverability, not unavailable correction or a confirmed persistence failure. No further logging-error test or new workout is inferred.
+
+### Exact recap location and dispute
+
+The contemporaneous dictated notes place the claimed 5 x 5 statement in the conversation after the owner turned per-set AI back on when starting accessories, following AI-off 3 x 5 deadlifts. They locate the report in the per-set feedback conversation on re-enabling AI for accessories; retained verbatim text and a screenshot are unavailable. The later speculative end-of-workout recollection is not used to override that contemporaneous sequence. Jack says the two recaps he inspected both said three working sets, and suggests warm-up-inclusive numbering as a hypothesis. Neither his inspected records nor the owner's recollection establishes a resolved cause. Keep this as a disputed owner-reported recap, not a confirmed false summary or verified model error. Earlier set-4 versus working-set-2 labels remain a distinct reference-convention issue.
+
+### Developer-reported technical clarifications
+
+Jack explains that switching off per-set feedback suppresses the immediate Claude request on logging, while preserving sets in the log. The next coach request includes that day's log, including those sets. This matches the later commentary observed by the owner, but is developer-described processing behavior rather than an independently audited data flow. Do not infer immediate transmission of every set, or no later model access when commentary is off.
+
+Jack confirms the 25-pound-per-dumbbell ceiling was saved in a note and ignored by the October 19 rebuild. He reports that since October 26 equipment lives in the profile and each build reads it. The historical failure is corroborated; effectiveness of the reported change is unverified. Reading a profile does not itself prove correct enforcement. Jack also reports reading shared testing-account logs without changing them; access permissions and backend actions were not audited. Developer cooperation is not scored as ordinary customer-support responsiveness.
+
+### Public wording requiring correction
+
+The live caveat and scoring rationale say that Aldo produced an inaccurate recap and that two recorded sets could not be corrected through the tested route. The recap needs the dispute qualification; the correction route needs the now-confirmed reopening/History path. Avoid presenting the log discrepancy as a demonstrated save failure. Preserve supported historical findings: substantial full-block waits, unclear next actions and completion navigation, the confirmed ignored equipment note, and successful rebuild recovery with visible history. Keep the equipment remediation attributed and untested. The live practical facts appropriately qualify normal free/Pro limits and future prices; no new pricing test or numeric change is supported. Aldo remains public under Ryan's instruction and no developer privacy/removal request has been received.
+
+### Scoring recommendation for owner approval: Legit 77, not applied
+
+Propose Reliability 65 -> 75, leaving Core execution 80, Usability 65, Value 90 and Support/privacy 75. The rounded equal-weight mean is 77. Originality remains 78 and evidence confidence remains Moderate.
+
+Reason: the earlier stronger reliability rationale depended partly on a definitive false recap and apparently uncorrectable stored weights. The recap is disputed and the completed-state editing path is confirmed available. The record mismatch may reflect unupdated targets and locked-state editing rather than failed persistence. These cannot retain the same weight as confirmed logging or recap failures. The corroborated equipment-note failure remains a material historical consistency issue, but the functioning workout paths, retained history, successful rebuild and available corrections support the lower strong band (75), not demonstrated high repeatability. Usability remains in the material-issues band (65): long waits and repeated navigation/rebuild/next-action friction persist as historical evidence, and reopening was not discovered in the original encounter. No bonus is awarded for correspondence or an untested remediation. Do not change any numeric proposal or public value until Ryan has reviewed this recommendation and the exact updated card.
+
+Proposed concise caveat, pending owner approval:
+
+During October testing, full-block generation involved substantial waits, and next-workout and completion navigation were not always clear. A saved dumbbell limit was ignored; the developer reports a later profile change that WAI has not retested. Two sets retained prescribed rather than performed weights; the cause was not established. Editing is available by reopening a completed session or through History, but the tester did not discover it during the original attempt. A reported recap discrepancy remains unresolved. A separate bands-only plan was inspected, not performed; long-term progression and normal free/Pro limits remain unverified.
+
+Proposed Legit rationale for a 77 assessment, pending owner approval:
+
+Legit 77 reflects useful programming with material workflow friction in October testing. Core execution (80): completed strength workouts, helpful warm-ups and integrated logging, plus successful rebuild recovery. Usability (65): lengthy full-block builds and difficulty locating next actions and completed-session editing. Reliability (75): a saved equipment limit was ignored, but history remained available and workout paths functioned. The reported recap discrepancy is disputed, and the weight mismatch does not establish a save failure; reopening and History editing are available. The developer reports a later equipment-profile change, not retested by WAI. Value (90): useful no-card test access; normal free/Pro limits and future prices remain unverified. Support/privacy (75): dated disclosures and a contact route, not an audit or credit for editorial correspondence. Five owner-reported workouts and a separate unperformed bands-only plan inform this assessment; long-term progression, daily generation and other platforms remain unverified.
+
+### Correspondence boundary
+
+Draft the reply in chat or the private non-repository workspace only. No email draft or verbatim correspondence is added to GitHub. Record only this evidence reconciliation in research. The reply should acknowledge the feedback explanation, retain uncertainty about the equipment remediation, provide 185/185/185 and the post-finish edit sequence, confirm available edit routes, and use the contemporaneous per-set-feedback sequence without inventing message text.
+
+## Earlier research record
+
+The earlier current-proposal headers and October 22 scores below are retained as history. The latest facts and unapproved 77 recommendation above supersede conflicting conclusions, not the actual saved/public score of 75.
+
+
+
 Updated October 22, 2026. This current assessment supersedes conflicting scope, score and unresolved-recovery wording in the historical research below. It is a local proposal, not the saved admin card, an owner-approved Reviewed record, or a public listing. The owner will push the files, review proposed changes, save the selected entry fields and separately confirm Reviewed. Publication remains separate.
 
 ## Final owner closeout | October 22, 2026

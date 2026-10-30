@@ -2,7 +2,7 @@
 // Keep first-party claims attributed to their publisher and leave untested behavior qualified.
 export type PreparedEvidence = {
   id: string;
-  source_type: "Official website" | "Google Play" | "Apple App Store" | "Official documentation" | "Privacy policy" | "Hands-on testing";
+  source_type: "Official website" | "Google Play" | "Apple App Store" | "Official documentation" | "Privacy policy" | "Hands-on testing" | "Developer correspondence";
   url: string | null;
   claim_supported: string;
   checked_at: number;
@@ -116,6 +116,8 @@ export const catalogPreparedEvidence: Record<string, PreparedEvidence[]> = {
   ],
 
   "aldo-coach": [
+    {"id":"research-aldo-coach-2026-10-30-owner-clarification","source_type":"Hands-on testing","url":null,"claim_supported":"October 30 owner clarification, using contemporaneous session notes: on October 21 all three deadlift working sets were performed at 185 pounds, against a 170-pound prescription. The owner cannot determine whether a prompt to update remaining targets was missed or absent. After Finish workout, a recap revealed recorded values 185/170/170. Attempts to change the other two weight fields to 185 reverted to 170 on blur before the owner found how to reopen the finished session. The owner now confirms the Session Complete link says Tap to reopen and edit, and History editing is straightforward. This supports edit discoverability/completed-state friction, not unavailable editing or a confirmed save failure. An earlier 180 reference was corrected as a chat typo. Separately, the contemporaneous notes locate the reported 5 x 5 statement in per-set feedback when AI was re-enabled for accessories after AI-off deadlifts; do not relocate it to the end-of-workout summary. No screenshot or verbatim message is available, and Jack did not find that statement in the two recaps he inspected. Its cause remains unresolved.","checked_at":1793388084000,"public":0,"internal_note":"Contemporaneous notes identify the feedback sequence; later owner confirmation establishes performed weights and available edit routes. No automatic score credit for developer contact or claimed fixes."},
+    {"id":"research-aldo-coach-2026-10-30-developer-clarification","source_type":"Developer correspondence","url":null,"claim_supported":"Jack reports that disabling per-set feedback stops the immediate Claude call when logging, but a later coach request reads that day's saved sets, including those logged with feedback off. He confirms that the saved 25-pound dumbbell note was ignored by the October 19 rebuild, and reports equipment-profile integration since October 26. That change has not been retested for effective constraint enforcement. He reports 185/170/170 deadlift records and normal completed-session locking with reopening/History edit routes. He says the two recaps he inspected described three working sets, and suggests warm-up counting as a hypothesis. These are attributed developer explanations, not an independent backend or data-flow audit, and the inspected recaps need not be the per-set feedback message described in the notes. His editorial response earns no support-response points.","checked_at":1793388084000,"public":0,"internal_note":"Attributed private evidence summary, not a verbatim email or draft. Claimed equipment fix and backend behavior are not independently verified. Do not equate inspected recaps with the reported per-set message."},
     {
       id: "research-aldo-coach-2026-10-22-fresh-account",
       source_type: "Hands-on testing",
