@@ -143,28 +143,41 @@ export default function EditorialStandardsPage() {
         </p>
       </section>
       <section>
-        <h2>Paid work and editorial independence</h2>
+        <h2>Reevaluation, paid retests, and private services</h2>
         <p>
-          Initial submission and factual corrections are free. We may separately
-          agree to focused follow-up testing of a changed app or a broader
-          private audit. A fee buys defined work and private findings. It does
-          not guarantee a listing, publication, a favorable conclusion, score,
-          ranking, recommendation, or finder placement. We record all material
-          findings from a test, including problems found before a stopping point.
-          If paid work materially informs a public profile, we disclose the
-          relationship there. Our disclosure approach is informed by the
-          <a href="https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking"> FTC&apos;s Endorsement Guides</a>.
+          App submission and evidence-backed factual corrections are free. An
+          unlisted or unscored app may become eligible for another no-fee
+          editorial evaluation after a material public update. This ordinarily
+          occurs no sooner than approximately six months after the prior
+          decision and remains subject to our priorities and capacity.
+          Eligibility does not guarantee testing, scoring, listing, or publication.
+        </p>
+        <p>
+          A developer may separately pay for a bounded editorial retest before
+          that window. The fee buys earlier testing time and editorial
+          reconsideration. We apply the same methodology, scoring rubric,
+          evidence requirements, and owner-approval process. The result may be
+          a scored profile, an unscored conclusion, or no listing. The fee is
+          the same regardless of outcome and is never contingent on positive
+          coverage. Developers cannot approve findings or buy a higher score,
+          favorable conclusion, ranking, recommendation, finder placement, or
+          publication. If developer-funded expedited testing materially informs
+          a public profile, we disclose it on that profile.
+        </p>
+        <p>
+          A focused private fix check or broader private audit instead buys a
+          developer-facing deliverable. Neither service by itself reopens
+          editorial listing consideration. Our disclosure approach is informed
+          by the <a href="https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking">FTC&apos;s Endorsement Guides</a>.
         </p>
       </section>
       <section>
         <h2>Updates and corrections</h2>
         <p>
           Apps change. We consider documented factual corrections for free at
-          any time, and update profiles when the evidence supports a change. A
+          any time and update profiles when the evidence supports a change. A
           new fact does not automatically change a score or reopen the full
-          evaluation. We generally consider a new free full-review request
-          after six months, subject to capacity; paid follow-up testing may be
-          arranged sooner. If you find an error, use our
+          evaluation. If you find an error, use our
           <Link href="/corrections"> corrections form</Link> and include a
           source we can check.
         </p>

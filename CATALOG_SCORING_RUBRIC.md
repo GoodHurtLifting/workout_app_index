@@ -37,4 +37,4 @@ These are evidence-scope anchors, not a formula or a reward for time spent. More
 
 ## Editorial boundary
 
-Developer answers may correct facts, but they do not set WAI scores. The owner reviews the exact evidence-backed card before approval; publication is a separate action. Any paid private audit conversation is separate from these scores and from listing eligibility.
+Developer answers may correct facts, but they do not set WAI scores. The owner reviews the exact evidence-backed card before approval; publication is a separate action. A paid expedited editorial retest uses this same rubric and approval path, with a fee fixed regardless of outcome. Private fix checks and audits buy developer-facing work and do not by themselves reopen listing consideration. Payment cannot buy a higher score, favorable conclusion, ranking, finder placement, or publication.

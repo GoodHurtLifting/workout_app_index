@@ -13,7 +13,7 @@ Read `CATALOG_REVIEW.md`, `CATALOG_DICTATED_REVIEW_PROTOCOL.md`, the app's priva
 - Attribute current behavior to **WAI's tested path**, not every user, device, tier, or later release. Do not turn an unresolved cause into a diagnosed defect.
 - Check the latest known product changes. If a later release was not retested, make the test date explicit and do not imply the finding still occurs. A developer's statement that a fix shipped is not a retest.
 - Keep factual corrections distinct from a request for another full evaluation. Evidence-backed corrections may be submitted at any time through `https://workoutappindex.com/corrections`; they do not automatically change scores or trigger retesting.
-- Do not include raw private notes, internal confidence labels, unpublished scores, or a proposed public profile. Developer correspondence alone is not independent product evidence. A decision email may state the standard free correction and reassessment routes and the *availability-dependent* paid testing option below. Do not attach a price, sales pitch, contract, checkout link, or promise of access. Payment buys defined work and private findings, never an editorial outcome.
+- Do not include raw private notes, internal confidence labels, unpublished scores, or a proposed public profile. Developer correspondence alone is not independent product evidence. A decision email may state the free correction and no-fee reevaluation routes and the *availability-dependent* paid options below. Do not attach a price, sales pitch, contract, checkout link, or promise of access in a routine outcome email. Payment never buys a particular editorial outcome.
 
 ## Outcome A: selected and publicly listed
 
@@ -68,9 +68,9 @@ The material findings were:
 
 {{Supported_positive_result_if_material}} We did not establish {{important_unknowns_or_causes}} or evaluate {{important_unassessed_paths_tiers_or_long_term_results}}. {{Version_or_later_release_limit_if_relevant}}
 
-Evidence-backed factual corrections are welcome free of charge at any time through WAI's corrections form: https://workoutappindex.com/corrections. You may request another free full evaluation after roughly six months, subject to capacity; this does not reserve a date.
+Evidence-backed factual corrections are welcome free of charge at any time through WAI's corrections form: https://workoutappindex.com/corrections. An unlisted or unscored app may become eligible for another no-fee editorial evaluation after a material public update, ordinarily no sooner than approximately six months after the prior decision and subject to WAI priorities and capacity. This does not reserve a date or guarantee a score or listing.
 
-If available, WAI may separately agree to an earlier, focused paid retest of a materially changed released version. A broader private audit is also separate. Payment buys defined testing and private findings, never a score, favorable conclusion, ranking, finder placement, or publication. Addressing the findings above would not itself guarantee a listing.
+If available, WAI may separately agree to a paid expedited editorial retest of a materially changed released version under its normal methodology and approval process. The fee is fixed regardless of outcome and buys earlier testing and reconsideration, not a score, favorable conclusion, ranking, finder placement, or publication. A focused private fix check or broader private audit instead provides developer-facing findings and does not by itself reopen listing consideration. Addressing the findings above would not itself guarantee a listing.
 
 Thank you again for the opportunity to evaluate the app.
 

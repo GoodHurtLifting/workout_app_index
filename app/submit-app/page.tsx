@@ -49,10 +49,11 @@ export default function SubmitAppPage() {
           Submission is free. We may screen, waitlist, or decline an app
           according to fit, evidence, access, and editorial capacity. Submission
           does not guarantee testing, scoring, listing, publication, a timeline,
-          or a favorable conclusion. Factual corrections are free. Optional
-          paid follow-up testing, if separately agreed, pays for testing time
-          and private findings, not a public score, ranking, recommendation,
-          finder placement, or publication. See our
+          or a favorable conclusion. Factual corrections are free. A separate
+          paid expedited editorial retest may buy earlier reconsideration of a
+          materially updated released app, under the same standards and without
+          a guaranteed outcome. Private fix checks and audits do not by
+          themselves reopen listing consideration. See our
           <Link href="/editorial-standards"> editorial standards</Link> for how we
           handle later product changes.
         </p>
