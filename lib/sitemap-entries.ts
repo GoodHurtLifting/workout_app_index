@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import type { AppRecord } from "./catalog";
 
 const baseUrl = "https://workoutappindex.com";
-const informationPaths = ["how-we-score", "editorial-standards", "corrections", "submit-app"];
+const informationPaths = ["how-we-score", "editorial-standards", "corrections", "submit-app", "services", "partnerships"];
 
 export function validSitemapDate(value: unknown): string | undefined {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined;

@@ -31,7 +31,7 @@ export function CopyResearchBrief({ submission }: { submission: SubmissionBrief 
       `Claimed pricing: ${submission.pricing}`,
       "Developer description and claims:",
       submission.details,
-      "Research needed: verify current availability, pricing, features, privacy terms, fit, tradeoffs, and any unanswered questions using independent sources.",
+      "Research needed: check current primary sources for availability, pricing, features, privacy terms, fit, and tradeoffs. Keep official/app-store claims, developer reports, observations, conflicts, and unknowns distinct. Ordinary owner verification is zero to approximately ten minutes; do not invent scores to satisfy the current approval gate.",
     ].join("\n");
 
     try {

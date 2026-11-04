@@ -8,6 +8,8 @@ import { getAdminFirestore } from "@/lib/firebase-admin";
 import type { ReviewOutcome, ServiceStage, SubmissionStatus } from "@/lib/submission-workflow";
 import { monthKey } from "@/lib/submission-workflow";
 
+import { serviceInquirySchema, partnershipInquirySchema } from "@/lib/commercial-inquiries";
+
 const text = (max: number) => z.string().trim().min(1).max(max);
 function parseUrl(value: string): URL | null {
   try {
@@ -22,6 +24,8 @@ const publicUrl = z.string().url().refine((value) => {
 }, "Use a website URL.");
 
 const requestSchema = z.discriminatedUnion("kind", [
+  serviceInquirySchema,
+  partnershipInquirySchema,
   z.object({
     kind: z.literal("app"),
     name: text(100),
@@ -184,7 +188,7 @@ export async function saveEditorialRequest(input: unknown): Promise<boolean> {
     });
     const { companyWebsite: _honeypot, ...content } = request;
     void _honeypot;
-    transaction.create(entryRef, { ...content, createdAt: now, status: "received", classification: "unverified research lead" });
+    transaction.create(entryRef, { ...content, createdAt: now, status: "received", classification: request.kind === "service" || request.kind === "partnership" ? "private commercial inquiry" : "unverified research lead" });
     if (request.kind === "app" && notificationEmail) {
       transaction.create(notificationRef, { ...notificationJob, delivery: { state: "PENDING" }, createdAt: now });
     }

@@ -1235,12 +1235,12 @@ export default function Home({
               not influence app scores, rankings, or inclusion. Where required,
               an advertising consent message lets you manage those choices.
             </p>
-            <h2>Editorial submissions</h2>
+            <h2>Submissions and private inquiries</h2>
             <p>
-              If you submit an app or request a correction, we store the
+              If you submit an app, request a correction, or send a service or partnership inquiry, we store the
               information you provide in a private review queue. We use your
               contact details to evaluate the request and follow up if needed.
-              Submissions are not published automatically.
+              Submissions and inquiries are not published automatically. Inquiry contact details and message content are not included in our custom analytics events.
             </p>
             <h2>Your choice</h2>
             <p>
@@ -1256,7 +1256,7 @@ export default function Home({
               Questions or correction requests can be sent to Turf King LLC at
               <a href="mailto:ryan@workoutappindex.com">ryan@workoutappindex.com</a>.
             </p>
-            <p className="privacy-updated">Last updated: October 7, 2026</p>
+            <p className="privacy-updated">Last updated: November 4, 2026</p>
           </div>
         </section>
       )}
@@ -1356,6 +1356,8 @@ export default function Home({
           <Link href="/editorial-standards">Editorial standards</Link>
           <Link href="/corrections">Corrections</Link>
           <Link href="/submit-app">Submit an app</Link>
+          <Link href="/services">Testing &amp; Research</Link>
+          <Link href="/partnerships">Partnerships</Link>
           <button onClick={() => navigate("privacy")}>Privacy</button>
         </div>
         <small>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Check, ChevronRight, LogOut } from "lucide-react";
+import { serviceOffers, partnershipTopics } from "@/lib/commercial-inquiries";
 import { catalogVersion } from "@/lib/catalog";
 import { isLegacyPublicApp } from "@/lib/legacy-public-catalog";
 import { requireCatalogAdmin } from "@/lib/admin-auth";
@@ -20,14 +21,14 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const publications = await listPublications();
   const { requests: editorialRequests, nextCursor } = await listEditorialRequests(cursor);
   const capacity = await getEditorialCapacity();
-  const newRequests = editorialRequests.filter(request => request.kind === "app" && !request.seenAt).length;
+  const newRequests = editorialRequests.filter(request => !request.seenAt).length;
   const reviewed = apps.filter(app => app.researchStatus === "Reviewed").length;
 
   return <main className="admin-page standalone-admin">
     <div className="admin-utility"><Link href="/">← Public preview</Link><span>{user.displayName}</span><form action="/api/auth/logout" method="post"><button type="submit"><LogOut/> Sign out</button></form></div>
     <div className="admin-head"><div><p className="eyebrow">INTERNAL CATALOG · {catalogVersion}</p><h1>Research dashboard</h1><p>The operating surface for building a trustworthy public index.</p></div><form action={importPreliminaryCatalog}><button className="admin-primary" type="submit">Import missing preliminary apps</button></form></div>
     <nav className="admin-section-nav" aria-label="Dashboard sections">
-      <a href="#editorial-inbox">Submissions <span>{newRequests} unseen on this page</span></a>
+      <a href="#editorial-inbox">Requests <span>{newRequests} unseen on this page</span></a>
       <a href="#app-evaluations">App evaluations <span>{apps.length}</span></a>
       <a href="#publication-history">Publication history</a>
     </nav>
@@ -35,12 +36,12 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       {workflow === "decision" ? <p className="admin-action-message" role="status">Owner decision saved. The catalog has not been published.</p> : null}
       {workflow === "round" ? <p className="admin-action-message" role="status">New review round started. Earlier findings remain in the history.</p> : null}
       {workflow === "service" ? <p className="admin-action-message" role="status">Private-work stage saved. No contract, payment, or message was created.</p> : null}
-      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>App submissions and corrections</h2><p className="editor-help">Submissions are unverified research leads. The stages below track intake and review rounds. A completed evaluation needs an owner decision; selecting an app for listing still requires an approved card and a separate catalog publication. Paid work is tracked separately and cannot change that decision.</p>
-      <p className="editor-help">This month: {capacity.screenings} screens · {capacity.acceptances} research acceptances. Active deep reviews: {capacity.activeReviews}. No developer stage emails are sent.</p></div>
+      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>Submissions, corrections, and private inquiries</h2><p className="editor-help">Submissions are unverified research leads. The stages below track intake and review rounds. A completed evaluation needs an owner decision; selecting an app for listing still requires an approved card and a separate catalog publication. Commercial inquiries are private, carry no editorial stage controls, and cannot change that decision. No commercial inquiry triggers a notification, contract, or payment.</p>
+      <p className="editor-help">This month: {capacity.screenings} screens · {capacity.acceptances} research acceptances. Active research rounds: {capacity.activeReviews}. No developer stage emails are sent.</p></div>
       {editorialRequests.length ? editorialRequests.map((request) => (
         <article id={`submission-${request.id}`} key={request.id}>
           <div className="editorial-inbox-heading">
-            <strong>{request.kind === "app" ? `App submission: ${request.appName}` : "Correction request"}</strong>
+            <strong>{request.kind === "app" ? `App submission: ${request.appName}` : request.kind === "correction" ? "Correction request" : request.kind === "service" ? "Private service scope request" : "Private partnership inquiry"}</strong>
             <span>{request.kind === "app" ? statusLabels[normalizeAppSubmissionStatus(request.status)] : request.seenAt ? "Seen" : "Received"} · {new Date(request.createdAt).toLocaleDateString("en-US")}</span>
           </div>
           <p>From {request.name} · <a href={`mailto:${request.email}`}>{request.email}</a></p>
@@ -52,10 +53,16 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
               {request.storeUrl ? <a href={request.storeUrl} target="_blank" rel="noopener noreferrer">Store listing</a> : null}
               <a href={request.privacyUrl} target="_blank" rel="noopener noreferrer">Privacy policy</a>
             </div>
-          ) : (
+          ) : request.kind === "correction" ? (
             <div className="editorial-inbox-details">
               <a href={request.pageUrl} target="_blank" rel="noopener noreferrer">Page to correct</a>
               <a href={request.sourceUrl} target="_blank" rel="noopener noreferrer">Source</a>
+            </div>
+          ) : (
+            <div className="editorial-inbox-details">
+              <span>Company or product: {request.organization}</span>
+              <span>Interest: {request.kind === "service" ? serviceOffers[request.topic] : partnershipTopics[request.topic]}</span>
+              <span>Inquiry only. No agreement, payment, or editorial decision.</span>
             </div>
           )}
           {request.kind === "app" ? <CopyResearchBrief submission={request} /> : null}
@@ -74,7 +81,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
             {!request.seenAt ? <form action={markEditorialRequestSeen}><input type="hidden" name="id" value={request.id}/><button type="submit">Mark seen</button></form> : null}
             {request.kind === "app" && ["received", "waitlisted_unassessed", "not_scheduled"].includes(normalizeAppSubmissionStatus(request.status)) ? <form action={startSubmissionScreening}><input type="hidden" name="id" value={request.id}/><button type="submit">Start 10–15 minute screen</button></form> : null}
             {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "waitlisted_eligible" ? <form action={acceptAppSubmissionForResearch}><input type="hidden" name="id" value={request.id}/><button className="accept-candidate" type="submit">Accept for research</button></form> : null}
-            {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "accepted_for_research" ? <form action={changeSubmissionReviewStage}><input type="hidden" name="id" value={request.id}/><input type="hidden" name="target" value="active_review"/><button type="submit">Start deep review</button></form> : null}
+            {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "accepted_for_research" ? <form action={changeSubmissionReviewStage}><input type="hidden" name="id" value={request.id}/><input type="hidden" name="target" value="active_review"/><button type="submit">Start catalog research</button></form> : null}
             {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "active_review" ? <form action={changeSubmissionReviewStage}><input type="hidden" name="id" value={request.id}/><input type="hidden" name="target" value="research_ready"/><button type="submit">Research ready for owner</button></form> : null}
             {request.kind === "app" && ["waitlisted_eligible", "accepted_for_research", "active_review", "research_ready"].includes(normalizeAppSubmissionStatus(request.status)) ? <form className="submission-defer" action={changeSubmissionReviewStage}><input type="hidden" name="id" value={request.id}/><input type="hidden" name="target" value="not_scheduled"/><input name="note" required maxLength={500} aria-label="Reason not scheduled" placeholder="Brief reason"/><button type="submit">Not currently scheduled</button></form> : null}
             {request.kind === "app" && request.candidateAppId ? <Link href={`/admin/apps/${request.candidateAppId}`}>Open catalog evaluation →</Link> : null}
@@ -97,7 +104,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
             <input type="hidden" name="id" value={request.id}/>
             {cursor ? <input type="hidden" name="cursor" value={cursor}/> : null}
             <h3>Start another review round</h3>
-            <p>Prior findings stay in the history below. This does not change an existing public listing. Free reassessments are generally considered after six months, subject to capacity.</p>
+            <p>Prior findings stay in the history below. This does not change an existing public listing. Further hands-on work is selected according to consumer usefulness and capacity. The retained paid-follow-up control is for prior agreements, not a new editorial-priority offer.</p>
             <label>Why reopen this app? <input name="note" required maxLength={500} placeholder="Released changes and scope to check"/></label>
             <div className="editorial-actions">
               <button name="basis" value="free_reassessment" type="submit">Start free reassessment</button>

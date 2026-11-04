@@ -44,7 +44,7 @@ export function EditorialRequestForm({ kind }: { kind: "app" | "correction" }) {
 
   return (
     <section className="editorial-request-section">
-      <h2>{kind === "app" ? "Send your app for review" : "Send the correction"}</h2>
+      <h2>{kind === "app" ? "Submit an app for consideration" : "Send the correction"}</h2>
       <p>
         We use your name and email only to evaluate this request and contact you
         if we need clarification. Please do not include passwords or private

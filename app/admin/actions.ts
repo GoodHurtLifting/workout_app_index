@@ -232,7 +232,7 @@ export async function changeSubmissionReviewStage(formData: FormData) {
     if (!request.exists || data?.kind !== "app") throw new Error("App submission not found");
     const status = normalizeAppSubmissionStatus(data.status);
     if (!canTransition(status, target as typeof status)) throw new Error("That stage change is not allowed");
-    if (target === "active_review" && !data.candidateAppId) throw new Error("Link a catalog Candidate before starting deep review");
+    if (target === "active_review" && !data.candidateAppId) throw new Error("Link a catalog Candidate before starting catalog research");
     const now = Date.now();
     const round = Number.isInteger(data.reviewRound) && data.reviewRound > 0 ? data.reviewRound : 1;
     const history = Array.isArray(data.reviewRounds) ? data.reviewRounds : [];

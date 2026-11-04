@@ -27,20 +27,24 @@ export default function EditorialStandardsPage() {
         </p>
       </section>
       <section>
-        <h2>How a review begins</h2>
+        <h2>How catalog research begins</h2>
         <p>
           We start with official product websites, app store listings, pricing
           pages, privacy documents, and available support information. We note
           the source, date, region, and access tier behind important claims.
           A developer submission starts research; it does not verify a claim or
-          guarantee testing, a listing, or publication.
+          guarantee testing, a listing, or publication. Ordinary profiles begin
+          with sourced factual research, with zero to approximately ten minutes
+          of owner verification when opening the product would help. Extensive
+          unpaid testing is not required for an ordinary factual profile.
         </p>
       </section>
       <section>
         <h2>What hands-on testing covers</h2>
         <p>
-          When access is practical, an initial evaluation usually allows about
-          60 to 90 minutes. We try the app&apos;s main workout task and a
+          We select deeper testing for consumer interest, search demand,
+          useful comparisons, or a defined editorial purpose. A selected
+          hands-on editorial evaluation usually allows about 60 to 90 minutes. We try the app&apos;s main workout task and a
           representative path through other functions central to its offer,
           such as nutrition or recovery. If a material problem blocks a main
           task or makes its result unreliable, we try one reasonable retry and
@@ -58,9 +62,12 @@ export default function EditorialStandardsPage() {
       <section>
         <h2>What counts as evidence</h2>
         <p>
-          We separate what we observed in the app from what an official source
-          documents, what a developer reports, and what we infer editorially.
-          An unresolved or untested claim is qualified or left out. Published
+          We distinguish independently observed behavior, officially documented
+          claims, app-store documentation, developer reports, conflicting
+          information, and facts not established. Editorial analysis is tied to
+          its underlying evidence. Untested information remains unknown; it is
+          not treated as a missing feature or product failure. Important claims
+          retain their source and verification date. Published
           privacy terms and visible controls inform our assessment, but we do
           not certify an app&apos;s underlying data handling, security, or legal
           compliance. A review is a bounded assessment, not an exhaustive
@@ -143,33 +150,33 @@ export default function EditorialStandardsPage() {
         </p>
       </section>
       <section>
-        <h2>Reevaluation, paid retests, and private services</h2>
+        <h2>Factual updates and private services</h2>
         <p>
-          App submission and evidence-backed factual corrections are free. An
-          unlisted or unscored app may become eligible for another no-fee
-          editorial evaluation after a material public update. This ordinarily
-          occurs no sooner than approximately six months after the prior
-          decision and remains subject to our priorities and capacity.
-          Eligibility does not guarantee testing, scoring, listing, or publication.
+          App submission and evidence-backed factual corrections are free at
+          any time. Factual profile research is separate from selected hands-on
+          editorial work. An updated fact does not automatically reopen a
+          scored evaluation. We choose deeper coverage by consumer usefulness
+          and editorial capacity, without a promise of testing or publication.
         </p>
         <p>
-          A developer may separately pay for a bounded editorial retest before
-          that window. The fee buys earlier testing time and editorial
-          reconsideration. We apply the same methodology, scoring rubric,
-          evidence requirements, and owner-approval process. The result may be
-          a scored profile, an unscored conclusion, or no listing. The fee is
-          the same regardless of outcome and is never contingent on positive
-          coverage. Developers cannot approve findings or buy a higher score,
-          favorable conclusion, ranking, recommendation, finder placement, or
-          publication. If developer-funded expedited testing materially informs
-          a public profile, we disclose it on that profile.
+          <Link href="/services">Testing &amp; Research Services</Link> provide a
+          private deliverable. These services do not by themselves reopen
+          editorial listing consideration or change public coverage. Scope is
+          agreed before payment. Fees cannot buy a listing, score, ranking,
+          recommendation, finder placement, publication, or removal of legitimate
+          criticism. Material commercial relationships that inform public
+          coverage will be disclosed.
         </p>
-        <p>
-          A focused private fix check or broader private audit instead buys a
-          developer-facing deliverable. Neither service by itself reopens
-          editorial listing consideration. Our disclosure approach is informed
-          by the <a href="https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking">FTC&apos;s Endorsement Guides</a>.
-        </p>
+      </section>
+      <section>
+        <h2>Affiliates, referrals, sponsors, and research buyers</h2>
+        <p>Commercial links disclose compensation near the link. Products without
+          affiliate programs remain eligible for equal editorial consideration.
+          Sponsorships, founder spotlights, and paid enhancements are clearly
+          labeled; they cannot determine editorial selection, conclusions,
+          scores, rankings, or finder results. Market-research products and
+          private intelligence work are separately scoped. See our
+          <Link href="/partnerships"> commercial partnerships</Link> page.</p>
       </section>
       <section>
         <h2>Updates and corrections</h2>

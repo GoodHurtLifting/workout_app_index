@@ -19,7 +19,7 @@ export const statusLabels: Record<AppSubmissionStatus, string> = {
   waitlisted_unassessed: "Waitlisted, not screened",
   waitlisted_eligible: "Waitlisted, eligible",
   accepted_for_research: "Accepted for research",
-  active_review: "Active deep review",
+  active_review: "Active catalog research",
   research_ready: "Research ready for owner review",
   not_scheduled: "Not currently scheduled",
   declined: "Declined",

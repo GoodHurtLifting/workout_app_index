@@ -30,6 +30,8 @@ export function PublicInformationLayout({
           <Link href="/editorial-standards">Editorial standards</Link>
           <Link href="/corrections">Corrections</Link>
           <Link href="/submit-app">Submit an app</Link>
+          <Link href="/services">Testing &amp; Research</Link>
+          <Link href="/partnerships">Partnerships</Link>
           <Link href="/">Back to the index</Link>
         </nav>
       </div>
