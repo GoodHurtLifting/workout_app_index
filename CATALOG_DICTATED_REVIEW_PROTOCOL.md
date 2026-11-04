@@ -1,6 +1,14 @@
 # Dictated product review protocol
 
-Use this for every new app and substantial reassessment. This is an interviewer guide for WAI, not a form for the owner or another publication gate. The owner may narrate in any order, by voice, during ordinary use. Do not require a new workout, a support request, or a return visit solely to complete this guide. Record `not observed` when appropriate. Refer to [the scoring rubric](CATALOG_SCORING_RUBRIC.md) before proposing numbers.
+## Scope update — November 4, 2026
+
+Use this protocol for **selected hands-on editorial work** and agreed private testing, not as a mandatory checklist for every factual catalog profile. Ordinary research starts with public primary sources and zero to approximately ten minutes of owner verification when useful; unknowns remain unknown. See the dated override in [CATALOG_REVIEW.md](CATALOG_REVIEW.md) and the governing [business plan](WAI_BUSINESS_PLAN.md).
+
+For articles, comparisons, pricing research, alternatives, best-app articles, onboarding/paywall comparisons, and podcast/video source material, use [EDITORIAL_CONTENT_TEMPLATE.md](EDITORIAL_CONTENT_TEMPLATE.md). Dictated notes are the primary evidence for the owner's experience. Preserve the words and context; do not embellish, generalize across untested tiers, or manufacture a firsthand verdict from documentation. App-store documentation is distinct from other official documentation; explicitly label conflicts and facts not established. Pricing-only research can be source-only and must say so.
+
+The 60–90 minute limit below is for selected editorial sessions. Paid work follows its separately agreed one-hour or two-to-three-hour scope. Neither longer use nor a private engagement creates a publication entitlement. Scores are considered only when evidence can support all required dimensions; the current schema limitation is documented in FACTS_FIRST_IMPLEMENTATION.md.
+
+Use the guide below for selected hands-on reviews and substantive hands-on reassessments. This is an interviewer guide for WAI, not a form for the owner or another publication gate. The owner may narrate in any order, by voice, during ordinary use. Do not require a new workout, a support request, or a return visit solely to complete this guide. Record `not observed` when appropriate. Refer to [the scoring rubric](CATALOG_SCORING_RUBRIC.md) before proposing numbers.
 
 ## 1. Prepare before asking the owner
 
@@ -10,7 +18,7 @@ The pre-use brief should take at most a few lines: the product's stated job, its
 
 ### Normal-review testing limit
 
-Budget approximately 60-90 minutes of hands-on use for a routine catalog review, separate from public-source research and drafting. Follow one primary-user journey, allow one reasonable retry after a barrier, and try one obvious alternative route if one exists. Stop when the main journey and material tradeoff are understood, or when the timebox and retry/alternative limit are reached. The owner may continue using an app voluntarily, but extra use is not a publication prerequisite and does not automatically make the review a paid audit.
+Budget approximately 60-90 minutes of hands-on use for a selected hands-on editorial review, separate from public-source research and drafting. Follow one primary-user journey, allow one reasonable retry after a barrier, and try one obvious alternative route if one exists. Stop when the main journey and material tradeoff are understood, or when the timebox and retry/alternative limit are reached. The owner may continue using an app voluntarily, but extra use is not a publication prerequisite and does not automatically make the review a paid audit.
 
 Do not troubleshoot accounts beyond that ordinary retry, coordinate special tester access, test unreleased builds, or help a developer repair a blocked workflow as part of catalog research. If a consequential feature remains inaccessible, record the attempted path and disclose the limitation; do not claim the feature is absent or working. A subscription or access barrier may be described from current public terms without purchasing access solely to finish a catalog card.
 

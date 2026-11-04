@@ -1,5 +1,13 @@
 # Developer catalog decision messages
 
+## Prospective use after November 4, 2026
+
+The [facts-first business plan](WAI_BUSINESS_PLAN.md) supersedes routine deep testing and paid editorial-selection offers. The outcome templates below are for completed **hands-on** review rounds only. Do not use them to imply that an ordinary sourced profile was personally tested, or that a previous unlisted decision prevents later neutral factual research. No developer response or permission is needed for factual coverage. Keep actual historical correspondence and agreements intact.
+
+For a factual-profile notification, if the owner specifically requests one: state only the verified publication status and profile link, describe public-source research as such, identify any limited firsthand scope accurately, and offer free sourced corrections. Do not supply invented test findings or a sales pitch. No routine notification is required. All personal messages remain draft-only until Ryan approves sending.
+
+Do not offer paid expedited editorial selection using the historical paragraphs below. Current paid offers are separately scoped private testing and research, which do not automatically change public coverage. The old six-month reevaluation guidance concerns historical full review rounds, not free factual corrections or facts-first research. Apply current editorial priorities and capacity to any new selected hands-on work.
+
 Keep app-specific email drafts and correspondence out of the repository and GitHub. Store them in the private chat or a non-repository workspace. This file contains reusable templates and editorial rules only.
 
 Use these as starting points for a personal email or direct message after a bounded WAI review. They communicate an **editorial outcome**, not an automated submission status. `Accept for research`, a completed local draft, `Research ready for owner review`, and an admin `Reviewed` card are not permission to tell a developer their app has been listed. Ryan approves each final message before it is sent. The admin owner decision is the internal source of truth for the outcome; this file controls wording, not status.
