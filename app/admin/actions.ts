@@ -6,6 +6,7 @@ import { apps, calculateLegitScore, calculateOriginalityScore, catalogEvidenceSe
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { getCatalogRecord, getCatalogWithdrawal, getLatestPublishedCatalog, getPublicCatalog, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveCatalogWithdrawal, saveEvidence, savePublication, syncPreparedResearchEvidence } from "@/lib/catalog-repository";
+import { isFactual, prepareFactClaims, disclosureSchema, publicCatalogRecord } from "@/lib/catalog-facts";
 import { fitMethodologyVersion } from "@/lib/matching";
 import { canStartAnotherReview, canTransition, monthKey, normalizeAppSubmissionStatus, publicationDecision, reviewOutcomes, serviceStages, type ReviewOutcome, type ServiceStage } from "@/lib/submission-workflow";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
@@ -32,22 +33,23 @@ function score(data:FormData,name:string):number {
 async function assertReviewedCatalogRecord(record: AppRecord, confirmed: boolean) {
   if (missingReviewProfileDetails(record).length) throw new Error("Replace candidate placeholders with verified profile details before marking Reviewed");
   if (!confirmed) throw new Error("Confirm that you reviewed this exact profile before marking it Reviewed");
-  if (!(await listEvidence(record.id)).some(isRecheckedEvidence)) throw new Error("Recheck and attach at least one current source before marking this profile Reviewed");
+  if (!isFactual(record) && !(await listEvidence(record.id)).some(isRecheckedEvidence)) throw new Error("Recheck and attach at least one current source before marking this profile Reviewed");
 }
 const personRoles = new Set<PersonAssociation["role"]>(["Creator", "Founder", "Trainer", "Program author", "Featured athlete"]);
 
 function candidateFromSubmission(id: string, name: string): AppRecord {
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]?.toUpperCase() ?? "").join("") || "?";
   return {
+    coverageMode: "factual", factClaims: [], commercialDisclosure: {status:"not-established",statement:""},
     id, name, initials, color: "#536b83", type: "Unclassified",
     bestFor: "Not yet assessed",
-    description: "Developer-submitted candidate. Product claims have not been independently verified.",
+    description: "Research candidate. Product facts have not been established.",
     price: "Not verified", monthlyPrice: null,
-    hasUsableFreeTier: false,
-    freeTierCapabilities: { completeProgram: false, adaptiveProgramming: false, programLibrary: false },
-    platforms: [], ai: "Not assessed", legit: 0, goals: [], features: [], level: [],
+    hasUsableFreeTier: null,
+    freeTierCapabilities: { completeProgram: null, adaptiveProgramming: null, programLibrary: null },
+    platforms: [], ai: "Not assessed", legit: null, goals: [], features: [], level: [],
     authorship: "Not assessed", caveat: "Not yet assessed",
-    deliversCompleteProgram: false, programLibrary: false, adaptiveProgramming: false,
+    deliversCompleteProgram: null, programLibrary: null, adaptiveProgramming: null,
     supportedTrainingEnvironments: [], researchStatus: "Candidate", verifiedSections: 0, totalSections: 7,
     trainingRelationship: {
       planningStyle: "Not assessed", choiceLoad: "Not assessed", continuity: "Not assessed",
@@ -55,11 +57,7 @@ function candidateFromSubmission(id: string, name: string): AppRecord {
       decisionsRemaining: "Not yet assessed", tradeoff: "Not yet assessed",
       idealUser: "Not yet assessed", notFor: "Not yet assessed",
     },
-    originalityProfile: {
-      score: 0, level: "Not assessed", originalMechanics: 0, productPointOfView: 0,
-      visualIdentity: 0, meaningfulDifferentiation: 0, defensibility: 0,
-      summary: "Not yet assessed.", evidenceNote: "Developer claims have not been independently verified.",
-    },
+
   };
 }
 
@@ -390,7 +388,18 @@ export async function updateCatalogApp(formData:FormData){
     ? catalogRecordFingerprint({ ...(savedRow!.record as AppRecord), researchStatus: savedRow!.publication_status as ResearchStatus })
     : "unsaved";
   if (field(formData,"savedFingerprint") !== currentFingerprint) redirect(`/admin/apps/${id}?save=stale`);
-  const existing=await getCatalogRecord(id); if(!existing) throw new Error("App not found");
+  let existing=await getCatalogRecord(id); if(!existing) throw new Error("App not found");
+  const mode=field(formData,"coverageMode");
+  if (mode!=="factual" && mode!=="scored") throw new Error("Choose a valid coverage mode");
+  const factual=mode==="factual";
+  if(factual && savedSnapshot.exists) existing={...(savedRow!.record as AppRecord),researchStatus:savedRow!.publication_status as ResearchStatus};
+  function factBoolean(name:string):boolean|null {
+    const value=field(formData,name);
+    if(value==="true") return true;
+    if(value==="false") return false;
+    if(value==="unknown") return null;
+    throw new Error("Choose Yes, No, or Not established for finder facts");
+  }
   const monthlyRaw=String(formData.get("monthlyPrice")??"").trim();
   const relationship:TrainingRelationship={
     ...getTrainingRelationship(existing),
@@ -405,7 +414,7 @@ export async function updateCatalogApp(formData:FormData){
     idealUser:field(formData,"idealUser"),
     notFor:field(formData,"notFor"),
   };
-  const originality:OriginalityProfile={
+  const originality:OriginalityProfile=factual ? getOriginalityProfile(existing) : {
     ...getOriginalityProfile(existing),
     score:existing.legitAssessment?0:score(formData,"originalityScore"),
     level:field(formData,"originalityLevel") as OriginalityProfile["level"],
@@ -417,8 +426,8 @@ export async function updateCatalogApp(formData:FormData){
     summary:field(formData,"originalitySummary"),
     evidenceNote:field(formData,"originalityEvidenceNote"),
   };
-  if(existing.legitAssessment) originality.score=calculateOriginalityScore(originality);
-  const legitAssessment:LegitAssessment|undefined=existing.legitAssessment ? {
+  if(!factual && existing.legitAssessment) originality.score=calculateOriginalityScore(originality);
+  const legitAssessment:LegitAssessment|undefined=factual ? existing.legitAssessment : existing.legitAssessment ? {
     ...existing.legitAssessment,
     rubricVersion:"initial-v1",
     coreExecution:score(formData,"coreExecution"),
@@ -434,23 +443,26 @@ export async function updateCatalogApp(formData:FormData){
   const researchStatus=existing.researchStatus;
   const record:AppRecord={
     ...existing,
+    coverageMode:mode,
+    commercialDisclosure:disclosureSchema.parse({status:field(formData,"disclosureStatus"),statement:field(formData,"disclosureStatement")}),
     name:field(formData,"name"), initials:field(formData,"initials"), color:field(formData,"color"),
     type:field(formData,"type"), bestFor:field(formData,"bestFor"), description:field(formData,"description"),
     caveat:field(formData,"caveat"), price:field(formData,"price"),
     monthlyPrice:monthlyRaw===""?null:Number(monthlyRaw),
-    supportsOneTimePurchase:checked(formData,"supportsOneTimePurchase"),
-    hasUsableFreeTier:checked(formData,"hasUsableFreeTier"),
-    freeTierCapabilities:{completeProgram:checked(formData,"freeCompleteProgram"),adaptiveProgramming:checked(formData,"freeAdaptiveProgramming"),programLibrary:checked(formData,"freeProgramLibrary")},
+    supportsOneTimePurchase:factBoolean("supportsOneTimePurchase"),
+    hasUsableFreeTier:factBoolean("hasUsableFreeTier"),
+    freeTierCapabilities:{completeProgram:factBoolean("freeCompleteProgram"),adaptiveProgramming:factBoolean("freeAdaptiveProgramming"),programLibrary:factBoolean("freeProgramLibrary")},
     platforms:splitList(formData.get("platforms")), ai:field(formData,"ai") as AiStatus,
-    legit:legitAssessment?calculateLegitScore(legitAssessment):score(formData,"legit"),
+    legit:factual ? existing.legit : legitAssessment?calculateLegitScore(legitAssessment):score(formData,"legit"),
     ...(legitAssessment?{legitAssessment}:{}),
     goals:splitList(formData.get("goals")), features:splitList(formData.get("features")),
     level:splitList(formData.get("level")), authorship:field(formData,"authorship"),
-    deliversCompleteProgram:checked(formData,"deliversCompleteProgram"),programLibrary:checked(formData,"programLibrary"),adaptiveProgramming:checked(formData,"adaptiveProgramming"),
+    deliversCompleteProgram:factBoolean("deliversCompleteProgram"),programLibrary:factBoolean("programLibrary"),adaptiveProgramming:factBoolean("adaptiveProgramming"),
     supportedTrainingEnvironments:splitList(formData.get("supportedTrainingEnvironments")),
     researchStatus,people:parsePeople(formData.get("people")),
-    trainingRelationship:relationship,originalityProfile:originality,
+    trainingRelationship:relationship,...(!factual ? {originalityProfile:originality} : {}),
   };
+  record.factClaims=prepareFactClaims(JSON.parse(field(formData,"factClaims") || "[]"),record);
   if(!record.name||!record.description||!record.type) throw new Error("Name, description, and product type are required");
   if(!record.bestFor||!record.initials||!record.color||!/^#[0-9a-fA-F]{6}$/.test(record.color)) throw new Error("Best fit, initials, and a valid color are required");
   if(!Number.isFinite(record.monthlyPrice??0)||(record.monthlyPrice??0)<0) throw new Error("Monthly price must be zero or greater");
@@ -459,8 +471,8 @@ export async function updateCatalogApp(formData:FormData){
   const styles=["Not assessed","Follow a complete path","Choose a proven path","Let the app adapt","Build it yourself","Just log the work"];
   if(!styles.includes(relationship.planningStyle)||relationship.secondaryStyles?.some(style=>!styles.includes(style))) throw new Error("Invalid training style");
   if(!["Not assessed","Low","Moderate","High"].includes(relationship.choiceLoad)||!["Not assessed","Single coherent system","Program-based","Session-adaptive","User-directed"].includes(relationship.continuity)||!["Not assessed","Follow as written","Guided flexibility","Full control"].includes(relationship.customization)) throw new Error("Invalid training relationship");
-  if(!["Not assessed","Conventional","Clear identity","Distinctive","Category-defining"].includes(originality.level)||!originality.summary||!originality.evidenceNote) throw new Error("Complete the originality assessment");
-  if(!relationship.idealUser||!relationship.notFor) throw new Error("Complete the fit assessment");
+  if(!factual && (!["Not assessed","Conventional","Clear identity","Distinctive","Category-defining"].includes(originality.level)||!originality.summary||!originality.evidenceNote)) throw new Error("Complete the originality assessment");
+  if(!factual && (!relationship.idealUser||!relationship.notFor)) throw new Error("Complete the fit assessment");
   if (JSON.stringify(record).includes("\u2014")) throw new Error("Replace em dashes in public copy before saving");
   if(researchStatus==="Reviewed") {
     const confirmed=checked(formData,"confirmReview");
@@ -608,10 +620,12 @@ export async function publishApprovedCatalog(_previous:PublishCatalogResult, _fo
       coverage.set(source.app_id,categories);
     }
     const required=["platforms","pricing","ai","features"];
-    const missing=rows.flatMap(row=>required.filter(category=>!coverage.get(row.id)?.has(category)).map(category=>`${row.id}: ${category}`));
+    const profileProblems=rows.flatMap(row=>missingReviewProfileDetails(row.record).map(problem=>`${row.id}: ${problem}`));
+    if(profileProblems.length) throw new Error(`Reviewed apps need complete approved profiles. Missing ${profileProblems.join(", ")}`);
+    const missing=rows.filter(row=>!isFactual(row.record)).flatMap(row=>required.filter(category=>!coverage.get(row.id)?.has(category)).map(category=>`${row.id}: ${category}`));
     if(missing.length) throw new Error(`Reviewed apps need evidence for platforms, pricing, AI, and features. Missing ${missing.join(", ")}`);
     const now=Date.now(); const version=`catalog-${new Date(now).toISOString().replace(/[-:.]/g,"")}`;
-    const snapshot=rows.map(row=>row.record);
+    const snapshot=rows.map(row=>publicCatalogRecord(row.record));
     if (JSON.stringify(snapshot).includes("\u2014")) throw new Error("Replace em dashes in reviewed app copy before publishing");
     await savePublication({id:crypto.randomUUID(),catalog_version:version,fit_methodology_version:fitMethodologyVersion,legit_methodology_version:"legit-1",snapshot,published_by:user.userId,published_at:now});
     saved=true;
@@ -649,9 +663,22 @@ export async function restoreCatalogListing(formData:FormData){
   if(!withdrawal?.active) redirect(`/admin/apps/${id}?visibility=visible`);
   const published=(await getLatestPublishedCatalog())?.find(app=>app.id===id&&app.researchStatus==="Reviewed");
   const saved=await getAdminFirestore().collection("catalogApps").doc(id).get();
-  if(!published||!saved.exists||saved.data()?.publication_status!=="Reviewed"||JSON.stringify(saved.data()?.record)!==JSON.stringify(published)) throw new Error("Review and publish the current card before restoring this listing");
+  if(!published||!saved.exists||saved.data()?.publication_status!=="Reviewed"||catalogRecordFingerprint(publicCatalogRecord(saved.data()?.record as AppRecord))!==catalogRecordFingerprint(published)) throw new Error("Review and publish the current card before restoring this listing");
   await saveCatalogWithdrawal(id,{active:false,reason:withdrawal.reason,updated_at:Date.now(),updated_by:user.userId});
   updateTag("public-catalog-visibility");
   revalidatePath("/");revalidatePath(`/apps/${id}`);revalidatePath("/sitemap.xml");revalidatePath("/admin");
   redirect(`/admin/apps/${id}?visibility=visible`);
+}
+
+export async function createFactualCatalogDraft(formData:FormData) {
+  const user=await getCatalogAdminForAction();
+  const name=field(formData,"name");
+  if (!name || name.length>120) throw new Error("Enter an app name");
+  const id=candidateId(name);
+  const ref=getAdminFirestore().collection("catalogApps").doc(id);
+  if(apps.some(app=>app.id===id) || catalogResearchDrafts[id]) throw new Error("Open the existing app card instead");
+  const record=candidateFromSubmission(id,name);
+  await ref.create({id,slug:id,name,publication_status:"Candidate",record,updated_by:user.userId,updated_at:Date.now(),created_at:Date.now()});
+  revalidatePath("/admin");
+  redirect(`/admin/apps/${id}`);
 }

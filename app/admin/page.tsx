@@ -9,7 +9,7 @@ import { getEditorialCapacity, listEditorialRequests } from "@/lib/editorial-req
 import { canStartAnotherReview, normalizeAppSubmissionStatus, serviceStageLabels, statusLabels } from "@/lib/submission-workflow";
 import { CopyResearchBrief } from "@/components/copy-research-brief";
 import { PublishCatalogForm } from "@/components/publish-catalog-form";
-import { acceptAppSubmissionForResearch, changeSubmissionReviewStage, completeSubmissionScreening, deleteAppSubmission, importPreliminaryCatalog, markEditorialRequestSeen, recordDeveloperServiceStage, recordSubmissionDecision, startAnotherReviewRound, startSubmissionScreening } from "./actions";
+import { createFactualCatalogDraft, acceptAppSubmissionForResearch, changeSubmissionReviewStage, completeSubmissionScreening, deleteAppSubmission, importPreliminaryCatalog, markEditorialRequestSeen, recordDeveloperServiceStage, recordSubmissionDecision, startAnotherReviewRound, startSubmissionScreening } from "./actions";
 import "./admin.css";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +27,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   return <main className="admin-page standalone-admin">
     <div className="admin-utility"><Link href="/">← Public preview</Link><span>{user.displayName}</span><form action="/api/auth/logout" method="post"><button type="submit"><LogOut/> Sign out</button></form></div>
     <div className="admin-head"><div><p className="eyebrow">INTERNAL CATALOG · {catalogVersion}</p><h1>Research dashboard</h1><p>The operating surface for building a trustworthy public index.</p></div><form action={importPreliminaryCatalog}><button className="admin-primary" type="submit">Import missing preliminary apps</button></form></div>
+    <form action={createFactualCatalogDraft} className="submission-decision"><h2>Start a factual profile</h2><p>Research a public product without developer participation. This creates a private Candidate with unknown facts and no rating.</p><label>App name<input name="name" required maxLength={120}/></label><button type="submit">Create private factual draft</button></form>
     <nav className="admin-section-nav" aria-label="Dashboard sections">
       <a href="#editorial-inbox">Requests <span>{newRequests} unseen on this page</span></a>
       <a href="#app-evaluations">App evaluations <span>{apps.length}</span></a>

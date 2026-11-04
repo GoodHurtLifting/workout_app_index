@@ -4,6 +4,7 @@ import { calculateLegitScore, calculateOriginalityScore, type AppRecord } from "
 type ProposalField = { path: string; label: string; group: string };
 
 const fields: ProposalField[] = [
+  ...[["coverageMode", "Coverage mode"], ["factClaims", "Dated factual claims"], ["commercialDisclosure", "Commercial relationship disclosure"]].map(([path,label])=>({path,label,group:"Facts-first coverage"})),
   ...[
     ["name", "Name"], ["initials", "Logo initials"], ["color", "Logo color"],
     ["type", "Product type"], ["bestFor", "Best for"], ["description", "Description"],
@@ -114,12 +115,12 @@ export function applyCatalogProposal(saved: AppRecord, draft: AppRecord, selecte
     if (value === undefined) delete target[keys.at(-1)!];
     else target[keys.at(-1)!] = structuredClone(value);
   }
-  if (next.legitAssessment && selectedPaths.some(path => [
+  if (next.coverageMode !== "factual" && next.legitAssessment && selectedPaths.some(path => [
     "legitAssessment",
     "legitAssessment.coreExecution", "legitAssessment.usability", "legitAssessment.reliability",
     "legitAssessment.value", "legitAssessment.supportPrivacy",
   ].includes(path))) next.legit = calculateLegitScore(next.legitAssessment);
-  if (next.originalityProfile && selectedPaths.some(path => [
+  if (next.coverageMode !== "factual" && next.originalityProfile && selectedPaths.some(path => [
     "originalityProfile",
     "originalityProfile.originalMechanics", "originalityProfile.productPointOfView",
     "originalityProfile.visualIdentity", "originalityProfile.meaningfulDifferentiation",

@@ -11,6 +11,7 @@ import type { AppRecord, ResearchStatus } from "@/lib/catalog";
 import { catalogResearchDrafts, catalogResearchSources, getUnmodifiedPlaceholderResearchDraft } from "@/lib/catalog-research-drafts";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { isLegacyPublicApp } from "@/lib/legacy-public-catalog";
+import { isFactual, supportedFact, publicCatalogRecord } from "@/lib/catalog-facts";
 import { missingReviewProfileDetails } from "@/lib/catalog-review-readiness";
 import "../../admin.css";
 
@@ -56,10 +57,15 @@ export default async function CatalogAppPage({params,searchParams}:{params:Promi
   const publicApp=publicCatalog.apps.find(item=>item.id===id);
   const withdrawal=await getCatalogWithdrawal(id);
   const publishedRecord=withdrawal?.active ? (await getLatestPublishedCatalog())?.find(item=>item.id===id&&item.researchStatus==="Reviewed") : null;
-  const canRestore=Boolean(publishedRecord&&savedRecord?.researchStatus==="Reviewed"&&JSON.stringify(savedRecord)===JSON.stringify(publishedRecord));
-  const draftMatchesPublic=publicApp ? JSON.stringify(publicApp)===JSON.stringify(app) : false;
+  const canRestore=Boolean(publishedRecord&&savedRecord?.researchStatus==="Reviewed"&&catalogRecordFingerprint(publicCatalogRecord(savedRecord))===catalogRecordFingerprint(publishedRecord));
+  const draftMatchesPublic=publicApp ? catalogRecordFingerprint(publicApp)===catalogRecordFingerprint(publicCatalogRecord(app)) : false;
   const missingProfile=missingReviewProfileDetails(checklistRecord);
-  const checks=[
+  const checks=isFactual(checklistRecord) ? [
+    {label:"Dated facts, explicit unknowns, and public context",pass:missingProfile.length===0},
+    {label:"Supported identity and platforms",pass:supportedFact(checklistRecord,"identity")&&supportedFact(checklistRecord,"platforms")},
+    {label:"Commercial relationships resolved",pass:Boolean(checklistRecord.commercialDisclosure && checklistRecord.commercialDisclosure.status!=="not-established")},
+    {label:"Owner review confirmed",pass:checklistRecord.researchStatus==="Reviewed"},
+  ] : [
     {label:"Identity, fit, scores, and training relationship",pass:!missingProfile.includes("Identity, position, and description")&&!missingProfile.includes("Scores and training relationship")},
     {label:"Platforms recorded",pass:!missingProfile.includes("Platforms")},
     {label:"Pricing recorded",pass:!missingProfile.includes("Pricing")},
@@ -81,7 +87,7 @@ export default async function CatalogAppPage({params,searchParams}:{params:Promi
   {stage&&stageNotices[stage]?<p className="catalog-proposal-notice" role={stage==="updated"?"status":"alert"}>{stageNotices[stage]}</p>:null}
   {save&&saveNotices[save]?<p className="catalog-proposal-notice" role={save==="updated"?"status":"alert"}>{saveNotices[save]}</p>:null}
   {stored.exists&&catalogResearchDrafts[id]?<CatalogProposalReview saved={{ ...(stored.data()!.record as typeof app), researchStatus: stored.data()!.publication_status }} proposed={catalogResearchDrafts[id]}/>:null}
-  <div className="editor-layout"><div className="editor-main"><CatalogReviewForm key={savedFingerprint} app={app} savedFingerprint={savedFingerprint} /><CatalogReviewStatusForm id={id} currentStatus={savedRecord?.researchStatus ?? app.researchStatus} savedAt={savedAt} canMarkReviewed={checks.slice(0,6).every(check=>check.pass)} /></div>
+  <div className="editor-layout"><div className="editor-main"><CatalogReviewForm key={savedFingerprint} app={app} savedFingerprint={savedFingerprint} /><CatalogReviewStatusForm id={id} currentStatus={savedRecord?.researchStatus ?? app.researchStatus} savedAt={savedAt} canMarkReviewed={checks.filter(check=>check.label!=="Owner review confirmed").every(check=>check.pass)} /></div>
   <aside className="editor-sidebar">
     <section><p className="eyebrow">SAVED CARD REVIEW CHECKLIST</p><h2>{checks.filter(check=>check.pass).length} of {checks.length} checks passed</h2><ul className="gate-list">{checks.map(check=><li className={check.pass?"passed":"missing"} key={check.label}><span>{check.pass?"✓":"!"}</span>{check.label}</li>)}</ul>{missingProfile.length?<p className="editor-help">Still missing from the saved card: {missingProfile.join(", ")}.</p>:null}<p className="editor-help">These checks use the saved private record, not the local proposal shown in the editor. They are workflow checks, not a count of product features tested. WAI prepares the dated sources; your role is to review the card and confirm it when ready.</p></section>
     {researchSources.length?<section><p className="eyebrow">RESEARCH CONTEXT</p><h2>Sources and test notes</h2><p className="editor-help">These working notes explain the draft and its limits. Only dated, vetted sources in the source log below count toward publication. If a source or claim is missing, flag it in chat for WAI research rather than entering it yourself.</p>{researchSources.map(source=><article key={source.label}>{source.url?<a href={source.url} target="_blank" rel="noreferrer">{source.label} ↗</a>:<strong>{source.label}</strong>}<p>{source.supports}</p>{source.followUp?<small>{source.followUp}</small>:null}</article>)}</section>:null}

@@ -34,7 +34,20 @@ export type PersonAssociation = {
   checkedAt: string;
 };
 
+export type FactClaim = {
+  field: string;
+  status: "Officially documented" | "App-store documented" | "Developer-reported" | "Independently observed" | "Conflicting" | "Not established";
+  statement: string;
+  checkedAt: string;
+  url: string;
+  context: string;
+  value: unknown;
+};
+
 export type AppRecord = {
+  coverageMode?: "scored" | "factual";
+  factClaims?: FactClaim[];
+  commercialDisclosure?: { status: "none" | "material" | "not-established"; statement: string };
   id: string;
   name: string;
   initials: string;
@@ -44,25 +57,25 @@ export type AppRecord = {
   description: string;
   price: string;
   monthlyPrice: number | null;
-  supportsOneTimePurchase?: boolean;
-  hasUsableFreeTier: boolean;
+  supportsOneTimePurchase?: boolean | null;
+  hasUsableFreeTier: boolean | null;
   freeTierCapabilities: {
-    completeProgram: boolean;
-    adaptiveProgramming: boolean;
-    programLibrary: boolean;
+    completeProgram: boolean | null;
+    adaptiveProgramming: boolean | null;
+    programLibrary: boolean | null;
   };
   platforms: string[];
   ai: AiStatus;
-  legit: number;
+  legit: number | null;
   legitAssessment?: LegitAssessment;
   goals: string[];
   features: string[];
   level: string[];
   authorship: string;
   caveat: string;
-  deliversCompleteProgram: boolean;
-  programLibrary: boolean;
-  adaptiveProgramming: boolean;
+  deliversCompleteProgram: boolean | null;
+  programLibrary: boolean | null;
+  adaptiveProgramming: boolean | null;
   supportedTrainingEnvironments: string[];
   researchStatus: ResearchStatus;
   verifiedSections: number;
@@ -1938,6 +1951,10 @@ export const trainingRelationships: Record<string, TrainingRelationship> = {
 };
 
 export function getTrainingRelationship(app: string | AppRecord): TrainingRelationship {
+  if (typeof app !== "string" && app.coverageMode === "factual" && !app.trainingRelationship) return {
+    planningStyle: "Not assessed", choiceLoad: "Not assessed", continuity: "Not assessed", customization: "Not assessed",
+    decisionsRemoved: "Not established", decisionsRemaining: "Not established", tradeoff: "Not established", idealUser: "Not established", notFor: "Not established",
+  };
   const appId = typeof app === "string" ? app : app.id;
   return (
     (typeof app === "string" ? undefined : app.trainingRelationship) ??

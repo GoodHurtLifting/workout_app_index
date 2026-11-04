@@ -543,6 +543,7 @@ export const catalogResearchSources: Record<string, ResearchSource[]> = {
 };
 
 export function getUnmodifiedPlaceholderResearchDraft(record: AppRecord, sourceSubmissionId?: string): AppRecord | null {
+  if (record.coverageMode === "factual") return null;
   const draft = catalogResearchDrafts[record.id];
   const expectedSubmissionId = catalogResearchSubmissionIds[record.id];
   if (!draft || (expectedSubmissionId && expectedSubmissionId !== sourceSubmissionId) ||

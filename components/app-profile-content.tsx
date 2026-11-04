@@ -1,13 +1,16 @@
 import Link from "next/link";
+import { isFactual, relatedOptions } from "@/lib/catalog-facts";
+import { FactualProfileContent, CommercialDisclosure, FactSourceLog } from "@/components/factual-profile-content";
 import { getOriginalityProfile, getTrainingRelationship, type AppRecord } from "@/lib/catalog";
 import type { EvidenceRow } from "@/lib/catalog-repository";
 import { AdSlot } from "@/components/ad-slot";
 import { OutboundAppButton } from "@/components/outbound-app-button";
 
 export function AppProfileContent({ app, apps, publicEvidence = [], destinations = { official_site: null, store: null } }: { app: AppRecord; apps: AppRecord[]; publicEvidence?: EvidenceRow[]; destinations?: { official_site: string | null; store: string | null } }) {
+  if(isFactual(app)) return <main className="product-shell public-profile-shell"><FactualProfileContent app={app} apps={apps} destinations={destinations}/></main>;
   const relationship = getTrainingRelationship(app);
   const originality = getOriginalityProfile(app);
-  const related = apps.filter((candidate) => candidate.id !== app.id && candidate.goals.some((goal) => app.goals.includes(goal))).sort((a, b) => b.legit - a.legit).slice(0, 3);
+  const related = relatedOptions(app, apps);
   const structuredData = { "@context": "https://schema.org", "@type": "SoftwareApplication", name: app.name, description: app.description, applicationCategory: "HealthApplication", operatingSystem: app.platforms.join(", "), url: `https://workoutappindex.com/apps/${app.id}` };
 
   return <main className="product-shell public-profile-shell">
@@ -22,6 +25,7 @@ export function AppProfileContent({ app, apps, publicEvidence = [], destinations
         </div>
       </div>
       <div className="profile-verdict"><div><p className="eyebrow">QUICK VERDICT</p><h2>Best for {app.bestFor.toLowerCase()}.</h2><p>{app.caveat}</p><div className="profile-outbound-actions">{destinations.official_site ? <OutboundAppButton destinationType="official_site" appSlug={app.id} url={destinations.official_site}/> : null}{destinations.store ? <OutboundAppButton destinationType="store" appSlug={app.id} url={destinations.store}/> : null}</div></div><Link className="profile-finder-link" href="/">Find my app</Link></div>
+      <CommercialDisclosure app={app}/><FactSourceLog app={app}/>
       <div className="profile-grid">
         <article><p className="eyebrow">AT A GLANCE</p><dl><div><dt>Price</dt><dd>{app.price}</dd></div><div><dt>Platforms</dt><dd>{app.platforms.join(", ")}</dd></div><div><dt>Programming</dt><dd>{app.authorship}</dd></div><div><dt>AI status</dt><dd>{app.ai}</dd></div><div><dt>Experience</dt><dd>{app.level.join(", ")}</dd></div></dl></article>
         <article><p className="eyebrow">NOTABLE FEATURES</p><div className="feature-list">{app.features.map((feature) => <span key={feature}>✓ {feature}</span>)}</div></article>

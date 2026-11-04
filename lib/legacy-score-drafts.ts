@@ -101,7 +101,7 @@ export const legacyOriginalityDrafts: Record<LegacyId, OriginalityDimensions> = 
 
 export function withPrivateLegacyScoreDraft(app: AppRecord, bundled: AppRecord): AppRecord {
   const assessment = legacyScoreDrafts[app.id as LegacyId];
-  if (!assessment || app.researchStatus === "Reviewed" || app.legitAssessment || app.legit !== bundled.legit) return app;
+  if (app.coverageMode === "factual" || !assessment || app.researchStatus === "Reviewed" || app.legitAssessment || app.legit !== bundled.legit) return app;
   const originality = getOriginalityProfile(app);
   const [originalMechanics, productPointOfView, visualIdentity, meaningfulDifferentiation, defensibility] = legacyOriginalityDrafts[app.id as LegacyId];
   const originalityDraft = {

@@ -1,3 +1,4 @@
+import { publicCatalogRecord } from "@/lib/catalog-facts";
 import { FieldValue } from "firebase-admin/firestore";
 import { cache } from "react";
 import { unstable_cache } from "next/cache";
@@ -96,7 +97,7 @@ export const getPublicCatalog = cache(async (): Promise<{ apps: AppRecord[]; sou
   // Visibility must fail closed. If the withdrawal state cannot be read, do not
   // silently fall back to a catalog that could expose a withdrawn listing.
   const withdrawnIds=new Set(await getWithdrawnCatalogIds());
-  return {apps:filterWithdrawnCatalog(catalog,withdrawnIds),source};
+  return {apps:filterWithdrawnCatalog(catalog,withdrawnIds).map(publicCatalogRecord),source};
 });
 
 export async function saveCatalogRecord(record:AppRecord,userId:string){

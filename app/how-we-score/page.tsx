@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 export default function HowWeScorePage() {
   return <PublicInformationLayout eyebrow="OUR METHODOLOGY" title="How we score" introduction="The best fitness app is not the one with the most features or the highest number. It is the one that does the job you need, in a way you will want to keep using.">
     <section>
-      <p><strong>Methodology versions:</strong> Finder matching <code>{fitMethodologyVersion}</code>; editorial scoring rubric <code>initial-v1</code>. The catalog and commercial policy was revised November 4, 2026; existing editorial scores are unchanged. Finder version fit-2 removes the former Distinctive experience preference and its Originality-based bonus. Earlier public profiles are addressed below; existing scores are not changed retroactively.</p>
-      <p>Existing scored profiles use three separate measures: App Fit, Legit Score, and Originality &amp; Identity. Confidence describes how much evidence supports an evaluation. It is not another quality score. An app we decide not to list receives no public score.</p>
+      <p><strong>Methodology versions:</strong> Finder matching <code>{fitMethodologyVersion}</code>; editorial scoring rubric <code>initial-v1</code>. The catalog and commercial policy was revised November 4, 2026; existing editorial scores are unchanged. Finder version fit-3 preserves that removal and uses supported, dated facts for factual profiles. Unknown or conflicting facts do not earn preference points. Earlier public profiles are addressed below; existing scores are not changed retroactively.</p>
+      <p>Factual profiles are unrated and may be published from dated primary sources without a completed hands-on review. Existing scored profiles use three separate measures: App Fit, Legit Score, and Originality &amp; Identity. Confidence describes how much evidence supports an evaluation. It is not another quality score. An app we decide not to list receives no public score.</p>
     </section>
     <section>
       <h2>App Fit: right for you, not best overall</h2>

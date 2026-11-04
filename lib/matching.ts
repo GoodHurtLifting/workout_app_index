@@ -3,7 +3,9 @@ import {
   type AppRecord,
 } from "./catalog.ts";
 
-export const fitMethodologyVersion = "fit-2";
+import { matchingFacts, isFactual, supportedFact, factValue } from "./catalog-facts.ts";
+
+export const fitMethodologyVersion = "fit-3";
 
 export type FinderAnswers = Record<string, string>;
 
@@ -48,30 +50,34 @@ export function exclusionReasons(
   app: AppRecord,
   answers: FinderAnswers,
 ): string[] {
+  const raw=app;
+  app=matchingFacts(app);
+  const uncertain=(field:string)=>factValue(raw,field)==null || factValue(raw,field)==="Not assessed" || isFactual(raw) && !supportedFact(raw,field);
   const reasons: string[] = [];
   if (answers.ai === "Avoid all AI" && app.ai !== "No AI identified")
-    reasons.push("Uses AI somewhere in the product");
+    reasons.push(uncertain("ai") ? "AI use is not established for your avoid-AI requirement" : "Uses AI somewhere in the product");
   if (
     answers.job === "Give me a complete program" &&
     !app.deliversCompleteProgram
   )
-    reasons.push("Does not provide a complete training program");
+    reasons.push(uncertain("deliversCompleteProgram") ? "Complete-program support is not established" : "Does not provide a complete training program");
   if (answers.job === "Adapt training for me" && !app.adaptiveProgramming)
-    reasons.push("Does not adapt programming automatically");
+    reasons.push(uncertain("adaptiveProgramming") ? "Adaptive programming is not established" : "Does not adapt programming automatically");
   if (
     answers.job === "Let me choose a proven program" &&
     !supportsProvenProgramChoice(app)
   )
-    reasons.push("Does not offer a program library");
+    reasons.push(uncertain("programLibrary") ? "Program choice is not established" : "Does not offer a program library");
   const needsPaidAccess = requestedExperienceNeedsPaidAccess(app, answers);
+  const freeField = answers.job === "Give me a complete program" ? "freeTierCapabilities.completeProgram" : answers.job === "Adapt training for me" ? "freeTierCapabilities.adaptiveProgramming" : answers.job === "Let me choose a proven program" ? "freeTierCapabilities.programLibrary" : null;
   if (answers.budget === "Free only" && needsPaidAccess)
-    reasons.push("The requested experience is not available in the free tier");
+    reasons.push((uncertain("hasUsableFreeTier") || app.hasUsableFreeTier===true && Boolean(freeField && uncertain(freeField))) ? "Free access to the requested experience is not established" : "The requested experience is not available in the free tier");
   if (
     answers.budget === "One-time purchase" &&
     needsPaidAccess &&
     app.supportsOneTimePurchase !== true
   )
-    reasons.push("The requested experience requires a recurring subscription");
+    reasons.push(uncertain("supportsOneTimePurchase") ? "One-time purchase access is not established" : "The requested experience requires a recurring subscription");
   const ceiling = budgetCeiling[answers.budget];
   if (
     ceiling &&
@@ -88,7 +94,7 @@ export function exclusionReasons(
     !app.supportedTrainingEnvironments.includes(answers.equipment)
   )
     reasons.push(
-      `Does not clearly support ${answers.equipment.toLowerCase()} training`,
+      uncertain("supportedTrainingEnvironments") ? `Training-environment support is not established for ${answers.equipment.toLowerCase()}` : `Does not clearly support ${answers.equipment.toLowerCase()} training`,
     );
   return reasons;
 }
@@ -99,6 +105,7 @@ export function fitScore(
   includeExcluded = false,
 ): number {
   if (!includeExcluded && exclusionReason(app, answers)) return 0;
+  app=matchingFacts(app);
   // The weighted preferences total 100. Hard requirements are handled above.
   let score = 22;
   const job = answers.job;

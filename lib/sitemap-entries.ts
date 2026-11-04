@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import type { AppRecord } from "./catalog";
+import { isFactual, latestFactDate } from "./catalog-facts.ts";
 
 const baseUrl = "https://workoutappindex.com";
 const informationPaths = ["how-we-score", "editorial-standards", "corrections", "submit-app", "services", "partnerships"];
@@ -22,8 +23,8 @@ export function buildSitemapEntries(apps: AppRecord[]): MetadataRoute.Sitemap {
     })),
     ...apps.map((app) => ({
       url: `${baseUrl}/apps/${app.id}`,
-      ...(app.researchStatus === "Reviewed" && validSitemapDate(app.legitAssessment?.checkedAt)
-        ? { lastModified: validSitemapDate(app.legitAssessment?.checkedAt) }
+      ...(app.researchStatus === "Reviewed" && validSitemapDate(isFactual(app) ? latestFactDate(app) : app.legitAssessment?.checkedAt)
+        ? { lastModified: validSitemapDate(isFactual(app) ? latestFactDate(app) : app.legitAssessment?.checkedAt) }
         : {}),
       changeFrequency: "monthly" as const,
       priority: 0.8,

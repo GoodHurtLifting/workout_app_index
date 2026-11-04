@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { FactClaimsEditor } from "@/components/fact-claims-editor";
 import type { AppRecord } from "@/lib/catalog";
 import { calculateLegitScore, calculateOriginalityScore, getOriginalityProfile, getTrainingRelationship } from "@/lib/catalog";
 import { updateCatalogApp } from "@/app/admin/actions";
@@ -13,11 +17,13 @@ const planningStyles = [
   "Just log the work",
 ];
 
-function ScoreField({ label, name, value }: { label: string; name: string; value: number }) {
-  return <label>{label}<input name={name} type="number" min="0" max="100" step="1" defaultValue={value} required /></label>;
+function ScoreField({ label, name, value }: { label: string; name: string; value: number | null }) {
+  return <label>{label}<input name={name} type="number" min="0" max="100" step="1" defaultValue={value ?? ""} required /></label>;
 }
 
 export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; savedFingerprint: string }) {
+  const [mode,setMode]=useState(app.coverageMode ?? "scored");
+  const factual=mode === "factual";
   const relationship = getTrainingRelationship(app);
   const originality = getOriginalityProfile(app);
 
@@ -25,6 +31,12 @@ export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; s
     <input type="hidden" name="savedFingerprint" value={savedFingerprint} />
     <input type="hidden" name="id" value={app.id} />
     <p className="editor-help">Save your changes as a draft. They do not change the public profile until a reviewed catalog is published.</p>
+    <section><h2>Coverage and disclosure</h2>
+      <label>Coverage mode<select name="coverageMode" value={mode} onChange={event=>setMode(event.target.value as "factual" | "scored")}><option value="scored">Scored editorial profile</option><option value="factual">Factual profile without ratings</option></select></label>
+      <p className="editor-help">Changing coverage saves a private draft only. Existing scores are retained internally when choosing factual coverage, but are hidden from public factual profiles. A new scored assessment needs supported scores and the normal owner gates.</p>
+      <label>Commercial relationship<select name="disclosureStatus" defaultValue={app.commercialDisclosure?.status ?? "not-established"}><option value="not-established">Not established yet</option><option value="none">No material commercial relationship</option><option value="material">Material relationship, disclosed below</option></select></label>
+      <label>Public disclosure<textarea name="disclosureStatement" defaultValue={app.commercialDisclosure?.statement ?? ""} rows={3}/></label>
+    </section>
     <section>
       <h2>Identity and public verdict</h2>
       <div className="form-grid">
@@ -51,17 +63,17 @@ export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; s
       <label>Training environments, comma separated<input name="supportedTrainingEnvironments" defaultValue={app.supportedTrainingEnvironments.join(", ")} /></label>
       <label>Notable features, comma separated<textarea name="features" defaultValue={app.features.join(", ")} rows={5} /></label>
       <div className="check-grid">
-        <label><input type="checkbox" name="deliversCompleteProgram" defaultChecked={app.deliversCompleteProgram} /> Complete program</label>
-        <label><input type="checkbox" name="programLibrary" defaultChecked={app.programLibrary} /> Program library</label>
-        <label><input type="checkbox" name="adaptiveProgramming" defaultChecked={app.adaptiveProgramming} /> Adaptive programming</label>
-        <label><input type="checkbox" name="supportsOneTimePurchase" defaultChecked={app.supportsOneTimePurchase} /> One-time purchase available</label>
-        <label><input type="checkbox" name="hasUsableFreeTier" defaultChecked={app.hasUsableFreeTier} /> Usable free tier</label>
+        <FactBoolean name="deliversCompleteProgram" value={app.deliversCompleteProgram} label="Complete program" />
+        <FactBoolean name="programLibrary" value={app.programLibrary} label="Program library" />
+        <FactBoolean name="adaptiveProgramming" value={app.adaptiveProgramming} label="Adaptive programming" />
+        <FactBoolean name="supportsOneTimePurchase" value={app.supportsOneTimePurchase} label="One-time purchase available" />
+        <FactBoolean name="hasUsableFreeTier" value={app.hasUsableFreeTier} label="Usable free tier" />
       </div>
       <p className="editor-help">What the free tier actually includes:</p>
       <div className="check-grid">
-        <label><input type="checkbox" name="freeCompleteProgram" defaultChecked={app.freeTierCapabilities.completeProgram} /> Complete program</label>
-        <label><input type="checkbox" name="freeAdaptiveProgramming" defaultChecked={app.freeTierCapabilities.adaptiveProgramming} /> Adaptive programming</label>
-        <label><input type="checkbox" name="freeProgramLibrary" defaultChecked={app.freeTierCapabilities.programLibrary} /> Program library</label>
+        <FactBoolean name="freeCompleteProgram" value={app.freeTierCapabilities.completeProgram} label="Complete program" />
+        <FactBoolean name="freeAdaptiveProgramming" value={app.freeTierCapabilities.adaptiveProgramming} label="Adaptive programming" />
+        <FactBoolean name="freeProgramLibrary" value={app.freeTierCapabilities.programLibrary} label="Program library" />
       </div>
     </section>
     <section>
@@ -77,10 +89,10 @@ export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; s
       <label>Decisions the app makes easier<textarea name="decisionsRemoved" defaultValue={relationship.decisionsRemoved ?? ""} rows={3} /></label>
       <label>Decisions the user still owns<textarea name="decisionsRemaining" defaultValue={relationship.decisionsRemaining ?? ""} rows={3} /></label>
       <label>Central tradeoff<textarea name="tradeoff" defaultValue={relationship.tradeoff ?? ""} rows={3} /></label>
-      <label>This may sound like you<textarea name="idealUser" defaultValue={relationship.idealUser} rows={3} required /></label>
-      <label>Probably not your fit<textarea name="notFor" defaultValue={relationship.notFor} rows={3} required /></label>
+      <label>This may sound like you<textarea name="idealUser" defaultValue={relationship.idealUser} rows={3} required={!factual} /></label>
+      <label>Probably not your fit<textarea name="notFor" defaultValue={relationship.notFor} rows={3} required={!factual} /></label>
     </section>
-    <section>
+    <fieldset disabled={factual} hidden={factual}>
       <h2>Scores and originality</h2>
       <p className="editor-help">These are WAI editorial judgments. Check the supporting evidence and rationale before approval. Initial-v1 assessments use five equally weighted criteria; legacy entries still need reassessment.</p>
       <div className="form-grid">
@@ -106,9 +118,14 @@ export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; s
       </> : null}
       <label>Public originality summary<textarea name="originalitySummary" defaultValue={originality.summary} rows={3} required /></label>
       <label>Public evidence note<textarea name="originalityEvidenceNote" defaultValue={originality.evidenceNote} rows={3} required /></label>
-    </section>
+    </fieldset>
+    <FactClaimsEditor initialClaims={app.factClaims ?? []} />
     <PersonAssociationEditor initialPeople={app.people ?? []} />
     {app.researchStatus === "Reviewed" ? <label className="review-confirmation"><input type="checkbox" name="confirmReview" required /> I have reviewed these edits and approve the updated profile.</label> : null}
     <AdminSubmitButton label="Save catalog record" pendingLabel="Saving record…" />
   </form>;
+}
+
+function FactBoolean({name,value,label}:{name:string;value:boolean|null|undefined;label:string}) {
+  return <label>{label}<select name={name} defaultValue={value==null?"unknown":String(value)}><option value="unknown">Not established</option><option value="true">Yes</option><option value="false">No</option></select></label>;
 }

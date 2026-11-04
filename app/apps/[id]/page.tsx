@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getPublicCatalog, isRecheckedEvidence, listEvidence } from "@/lib/catalog-repository";
 import { AppProfileContent } from "@/components/app-profile-content";
 import { AppProfileViewed } from "@/components/app-profile-viewed";
+import { isFactual, currentClaim } from "@/lib/catalog-facts";
 import { catalogEvidenceSeeds } from "@/lib/catalog";
 
 type Props = { params: Promise<{ id: string }> };
@@ -14,9 +15,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { apps } = await getPublicCatalog();
   const app = apps.find((candidate) => candidate.id === id);
   if (!app) return {};
-  const title = `${app.name} Review, Pricing & Best Fit | Workout App Index`;
+  const title = `${app.name} ${isFactual(app) ? "Facts" : "Review"}, Pricing & Best Fit | Workout App Index`;
   const description = `${app.description} See pricing, platforms, AI use, training style, tradeoffs, and who ${app.name} fits best.`;
-  return { title, description, alternates: { canonical: `/apps/${app.id}` }, openGraph: { title, description, type: "article", url: `/apps/${app.id}`, siteName: "Workout App Index" } };
+  return { title, description, alternates: { canonical: `/apps/${app.id}` }, openGraph: { title, description, type: isFactual(app) ? "website" : "article", url: `/apps/${app.id}`, siteName: "Workout App Index" } };
 }
 
 export default async function AppProfilePage({ params }: Props) {
@@ -28,10 +29,11 @@ export default async function AppProfilePage({ params }: Props) {
     ? await listEvidence(app.id).then(rows => rows.filter(row => row.public && row.url && isRecheckedEvidence(row))).catch(() => [])
     : [];
   const sources = [
+    ...(isFactual(app) ? (app.factClaims ?? []).filter(claim=>claim.url && currentClaim(app,claim.field) && ["Officially documented","App-store documented"].includes(claim.status)).map(claim=>({type:claim.status==="App-store documented" ? "Store listing" : "Official website",url:claim.url})) : []),
     ...publicEvidence.map(source => ({ type: source.source_type, url: source.url })),
     ...catalogEvidenceSeeds.filter(source => source.appId === app.id && source.public).map(source => ({ type: source.sourceType, url: source.url })),
   ];
   const link = (types: string[]) => sources.find(source => types.includes(source.type) && source.url?.startsWith("https://"))?.url ?? null;
-  const destinations = { official_site: link(["Official website"]), store: link(["Apple App Store", "Google Play"]) };
+  const destinations = { official_site: link(["Official website"]), store: link(["Apple App Store", "Google Play", "Store listing"]) };
   return <><AppProfileViewed appSlug={app.id} /><AppProfileContent app={app} apps={apps} publicEvidence={publicEvidence} destinations={destinations} /></>;
 }

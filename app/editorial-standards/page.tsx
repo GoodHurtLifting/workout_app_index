@@ -75,7 +75,8 @@ export default function EditorialStandardsPage() {
         </p>
       </section>
       <section>
-        <h2>Three different scores</h2>
+        <h2>Factual profiles and scored editorial coverage</h2>
+        <p>Factual profiles identify sourced claims and unknowns without numeric editorial ratings. A factual listing does not imply hands-on testing. Selected scored coverage remains a separate editorial product. Older scored profiles keep their ratings until individually revised and approved.</p>
         <p>
           App Fit is personal to a visitor&apos;s finder answers. It is not a
           universal quality ranking. Legit Score and Originality &amp; Identity

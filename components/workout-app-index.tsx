@@ -30,6 +30,8 @@ import {
   getTrainingRelationship,
   type AppRecord,
 } from "@/lib/catalog";
+import { isFactual, supportedFact } from "@/lib/catalog-facts";
+import { FactualProfileContent, CommercialDisclosure, FactSourceLog } from "@/components/factual-profile-content";
 import { exclusionReasons, fitScore } from "@/lib/matching";
 import { matchingPeople } from "@/lib/people";
 import { openAnalyticsPreferences, trackEvent } from "@/lib/analytics";
@@ -287,6 +289,7 @@ function AppCard({
         </span>
       </div>
       <div className="card-rule" />
+      {isFactual(app) ? <p className="evidence-note">Factual profile · Unrated</p> : <>
       <div className="legit-row">
         <span>
           <ShieldCheck size={16} /> Legit Score{app.legitAssessment ? "" : " (preliminary)"}
@@ -299,6 +302,7 @@ function AppCard({
         </span>
         <strong>{getOriginalityProfile(app).score}/100</strong>
       </div>
+      </>}
       <p className="caveat">
         <strong>Watch for:</strong> {app.caveat}
       </p>
@@ -438,7 +442,7 @@ export default function Home({
             (platformFilter === "All" ||
               app.platforms.includes(platformFilter)) &&
             (authorshipFilter === "All" || app.authorship === authorshipFilter) &&
-            (featureFilter === "All" || app.features.includes(featureFilter)),
+            (featureFilter === "All" || supportedFact(app,"features") && app.features.includes(featureFilter)),
         )
         .sort(
           (a, b) =>
@@ -603,8 +607,8 @@ export default function Home({
                   <span>{heroFeatured.bestFor}</span>
                 </div>
                 <div className="hero-score">
-                  <strong>{getOriginalityProfile(heroFeatured).score}</strong>
-                  <span>ORIGINALITY{heroFeatured.legitAssessment ? "" : " · PRELIMINARY"}</span>
+                  <strong>{isFactual(heroFeatured) ? "Unrated" : getOriginalityProfile(heroFeatured).score}</strong>
+                  <span>{isFactual(heroFeatured) ? "FACTUAL PROFILE" : `ORIGINALITY${heroFeatured.legitAssessment ? "" : " · PRELIMINARY"}`}</span>
                 </div>
               </div>
               <div className="match-reasons">
@@ -907,7 +911,7 @@ export default function Home({
           )}
         </section>
       )}
-      {view === "profile" && (
+      {view === "profile" && (isFactual(profile) ? <FactualProfileContent app={profile} apps={apps}/> : (
         <section className="profile-page">
           <button className="back-link" onClick={() => navigate("browse")}>
             ← Back to all apps
@@ -950,6 +954,7 @@ export default function Home({
                 : "Add to comparison"}
             </Button>
           </div>
+          <CommercialDisclosure app={profile}/><FactSourceLog app={profile}/>
           <div className="profile-grid">
             <article>
               <p className="eyebrow">AT A GLANCE</p>
@@ -1095,7 +1100,7 @@ export default function Home({
             {profile.id === "lift-league" ? <p>The Lift League and Workout App Index share an owner, Turf King LLC. This preliminary score is not an independent third-party certification. Ownership does not add finder points or guarantee favorable coverage.</p> : null}
           </div>
         </section>
-      )}
+      ))}
       {view === "compare" && (
         <section className="compare-page">
           <button className="back-link" onClick={() => navigate("browse")}>
@@ -1140,46 +1145,44 @@ export default function Home({
                     [
                       "Planning style",
                       (a: AppRecord) =>
-                        getTrainingRelationship(a).planningStyle,
+                        supportedFact(a,"trainingRelationship") ? getTrainingRelationship(a).planningStyle : "Not established",
                     ],
                     [
                       "Choice load",
                       (a: AppRecord) =>
-                        getTrainingRelationship(a).choiceLoad,
+                        supportedFact(a,"trainingRelationship") ? getTrainingRelationship(a).choiceLoad : "Not established",
                     ],
                     [
                       "Other ways to use it",
                       (a: AppRecord) =>
-                        getTrainingRelationship(a).secondaryStyles?.join(
-                          ", ",
-                        ) || "None identified",
+                        supportedFact(a,"trainingRelationship") ? getTrainingRelationship(a).secondaryStyles?.join(", ") || (isFactual(a) ? "Not established" : "None identified") : "Not established",
                     ],
                     [
                       "Decisions you still own",
                       (a: AppRecord) =>
-                        getTrainingRelationship(a).decisionsRemaining ||
-                        "Not yet evaluated",
+                        supportedFact(a,"trainingRelationship") ? getTrainingRelationship(a).decisionsRemaining || "Not established" : "Not established",
                     ],
                     [
                       "Ideal user",
-                      (a: AppRecord) => getTrainingRelationship(a).idealUser,
+                      (a: AppRecord) => supportedFact(a,"trainingRelationship") ? getTrainingRelationship(a).idealUser : "Not established",
                     ],
-                    ["Legit Score", (a: AppRecord) => `${a.legit}/100${a.legitAssessment ? "" : " (preliminary)"}`],
+                    ["Legit Score", (a: AppRecord) => isFactual(a) ? "Unrated factual profile" : `${a.legit}/100${a.legitAssessment ? "" : " (preliminary)"}`],
                     [
                       "Originality & identity",
                       (a: AppRecord) => {
+                        if(isFactual(a)) return "Unrated factual profile";
                         const originality = getOriginalityProfile(a);
                         return `${originality.score}/100 · ${originality.level}${a.legitAssessment ? "" : " (preliminary)"}`;
                       },
                     ],
-                    ["Price", (a: AppRecord) => a.price],
-                    ["Platforms", (a: AppRecord) => a.platforms.join(", ")],
-                    ["Programming", (a: AppRecord) => a.authorship],
-                    ["AI use", (a: AppRecord) => a.ai],
-                    ["Experience", (a: AppRecord) => a.level.join(", ")],
+                    ["Price", (a: AppRecord) => supportedFact(a,"pricing") ? a.price || "Not established" : "Not established"],
+                    ["Platforms", (a: AppRecord) => supportedFact(a,"platforms") ? a.platforms.join(", ") || "Not established" : "Not established"],
+                    ["Programming", (a: AppRecord) => supportedFact(a,"authorship") ? a.authorship || "Not established" : "Not established"],
+                    ["AI use", (a: AppRecord) => supportedFact(a,"ai") ? a.ai || "Not established" : "Not established"],
+                    ["Experience", (a: AppRecord) => supportedFact(a,"level") ? a.level.join(", ") || "Not established" : "Not established"],
                     [
                       "Notable features",
-                      (a: AppRecord) => a.features.join(" • "),
+                      (a: AppRecord) => supportedFact(a,"features") ? a.features.join(" • ") || "Not established" : "Not established",
                     ],
                     ["Key tradeoff", (a: AppRecord) => a.caveat],
                   ].map(([label, read]) => (
