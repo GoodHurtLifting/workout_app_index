@@ -83,6 +83,7 @@ export const getLatestPublishedCatalog = unstable_cache(async ():Promise<AppReco
 
 export const getPublicCatalog = cache(async (): Promise<{ apps: AppRecord[]; source: "published" | "preliminary" }> => {
   const legacyApps = getLegacyPublicApps(apps);
+  if(process.env.NODE_ENV === "development" && process.env.WAI_LOCAL_CATALOG_PREVIEW === "true") return {apps:legacyApps.map(publicCatalogRecord),source:"preliminary"};
   let catalog:AppRecord[]=legacyApps;
   let source:"published"|"preliminary"="preliminary";
   try {

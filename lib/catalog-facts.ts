@@ -84,7 +84,7 @@ export function matchingFacts(app:AppRecord):AppRecord {
     deliversCompleteProgram:boolean("deliversCompleteProgram",app.deliversCompleteProgram),
     adaptiveProgramming:boolean("adaptiveProgramming",app.adaptiveProgramming),programLibrary:boolean("programLibrary",app.programLibrary),
     freeTierCapabilities:{completeProgram:boolean("freeTierCapabilities.completeProgram",app.freeTierCapabilities.completeProgram),adaptiveProgramming:boolean("freeTierCapabilities.adaptiveProgramming",app.freeTierCapabilities.adaptiveProgramming),programLibrary:boolean("freeTierCapabilities.programLibrary",app.freeTierCapabilities.programLibrary)},
-    ai:supportedFact(app,"ai")?app.ai:"Not assessed",goals:list("goals",app.goals),level:list("level",app.level),supportedTrainingEnvironments:list("supportedTrainingEnvironments",app.supportedTrainingEnvironments),
+    platforms:list("platforms",app.platforms),ai:supportedFact(app,"ai")?app.ai:"Not assessed",goals:list("goals",app.goals),level:list("level",app.level),supportedTrainingEnvironments:list("supportedTrainingEnvironments",app.supportedTrainingEnvironments),
     features:list("features",app.features).filter(feature=>
       (feature!=="Fast logging" || supportedFact(app,"feature:Fast logging",true)) &&
       (!/Progression|Adaptive/.test(feature) || app.features.includes("Automatic progression") && supportedFact(app,"feature:Automatic progression"))),

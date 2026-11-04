@@ -3,6 +3,7 @@ import Script from "next/script";
 import { AnalyticsConsent } from "@/components/analytics-consent";
 import "./globals.css";
 import "./relationship.css";
+import "./facts-first.css";
 
 const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
 const adsEnabled = process.env.NEXT_PUBLIC_ADSENSE_ENABLED === "true";
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://workoutappindex.com"),
   title: "Workout App Index | Find the Right Workout App",
   description:
-    "Find and compare strength-training apps by features, programming style, price, AI use, and overall quality.",
+    "Compare workout apps by price, free access, platforms, AI use, and how each app expects you to train. Find a fit based on your needs.",
   alternates: { canonical: "/" },
   icons: {
     icon: "/favicon.svg",
@@ -31,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body className="antialiased">
         {adsEnabled && adClientId && hasAdUnits ? (
           <Script

@@ -18,7 +18,7 @@ export default async function Home({
   const { apps } = await getPublicCatalog();
   const { finder } = await searchParams;
   return (
-    <WorkoutAppIndex
+    <WorkoutAppIndex key="home"
       initialApps={apps}
       restoreFinderOnMount={finder === "results"}
     />

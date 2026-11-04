@@ -5,7 +5,9 @@ import {
 
 import { matchingFacts, isFactual, supportedFact, factValue } from "./catalog-facts.ts";
 
-export const fitMethodologyVersion = "fit-3";
+import { normalizeFinderAnswers } from "./finder-questions.ts";
+
+export const fitMethodologyVersion = "fit-4";
 
 export type FinderAnswers = Record<string, string>;
 
@@ -50,10 +52,13 @@ export function exclusionReasons(
   app: AppRecord,
   answers: FinderAnswers,
 ): string[] {
+  answers=normalizeFinderAnswers(answers);
   const raw=app;
   app=matchingFacts(app);
   const uncertain=(field:string)=>factValue(raw,field)==null || factValue(raw,field)==="Not assessed" || isFactual(raw) && !supportedFact(raw,field);
   const reasons: string[] = [];
+  const platform=answers.platform==="iPhone"?"iOS":answers.platform;
+  if(platform && !["No preference","Not sure"].includes(platform) && !app.platforms.includes(platform)) reasons.push(uncertain("platforms") ? `Support for ${answers.platform} is not established` : `Not listed for ${answers.platform}`);
   if (answers.ai === "Avoid all AI" && app.ai !== "No AI identified")
     reasons.push(uncertain("ai") ? "AI use is not established for your avoid-AI requirement" : "Uses AI somewhere in the product");
   if (
@@ -104,6 +109,7 @@ export function fitScore(
   answers: FinderAnswers,
   includeExcluded = false,
 ): number {
+  answers=normalizeFinderAnswers(answers);
   if (!includeExcluded && exclusionReason(app, answers)) return 0;
   app=matchingFacts(app);
   // The weighted preferences total 100. Hard requirements are handled above.
@@ -185,4 +191,17 @@ export function fitScore(
     score += 4;
   if (answers.ai === "No preference" || !answers.ai) score += 2;
   return Math.min(score, 98);
+}
+
+export function matchReasons(app:AppRecord, input:FinderAnswers):string[] {
+  const answers=normalizeFinderAnswers(input);const facts=matchingFacts(app);const reasons:string[]=[];
+  const platform=answers.platform==="iPhone"?"iOS":answers.platform;
+  if(platform && facts.platforms.includes(platform)) reasons.push(`Available for ${answers.platform}`);
+  const styles:Record<string,string>={"Show me the next workout, with no decisions needed":"Follow a complete path","Give me a few proven programs to choose from":"Choose a proven path","Adjust the workout based on my recent training":"Let the app adapt","Let me build exactly what I want":"Build it yourself","Just stay out of the way while I log":"Just log the work"};
+  const style=styles[answers.planning];const relationship=getTrainingRelationship(facts);
+  if(style && (relationship.planningStyle===style || relationship.secondaryStyles?.includes(style as typeof relationship.planningStyle))) reasons.push("Fits the way you want to plan training");
+  const goal=answers.goal==="Stay consistent"?"Consistency":answers.goal;
+  if(goal && facts.goals.includes(goal)) reasons.push(`Supports your goal: ${answers.goal.toLowerCase()}`);
+  if(answers.budget==="Free only" && !exclusionReasons(app,answers).length) reasons.push("Your requested experience has free access");
+  return reasons.slice(0,3);
 }

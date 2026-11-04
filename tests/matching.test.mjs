@@ -3,8 +3,8 @@ import test from "node:test";
 import { apps } from "../lib/catalog.ts";
 import { fitScore, exclusionReasons, fitMethodologyVersion } from "../lib/matching.ts";
 
-test("fit-3 ignores editorial scores, including a retired saved priority", () => {
-  assert.equal(fitMethodologyVersion, "fit-3");
+test("fit-4 ignores editorial scores, including a retired saved priority", () => {
+  assert.equal(fitMethodologyVersion, "fit-4");
   const app = { ...apps[0] };
   Object.defineProperty(app, "originalityProfile", { get() { throw new Error("Finder must not read Originality"); } });
   Object.defineProperty(app, "legit", { get() { throw new Error("Finder must not read Legit"); } });

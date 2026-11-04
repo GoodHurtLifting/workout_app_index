@@ -2,112 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { fitMethodologyVersion } from "@/lib/matching";
 import { PublicInformationLayout } from "@/components/public-information-layout";
-
-export const metadata: Metadata = {
-  title: "How We Score Fitness Apps | Workout App Index",
-  description: "How Workout App Index calculates App Fit, Legit Score, and Originality & Identity, and how evidence and confidence shape each review.",
-  alternates: { canonical: "/how-we-score" },
-};
-
-export default function HowWeScorePage() {
-  return <PublicInformationLayout eyebrow="OUR METHODOLOGY" title="How we score" introduction="The best fitness app is not the one with the most features or the highest number. It is the one that does the job you need, in a way you will want to keep using.">
-    <section>
-      <p><strong>Methodology versions:</strong> Finder matching <code>{fitMethodologyVersion}</code>; editorial scoring rubric <code>initial-v1</code>. The catalog and commercial policy was revised November 4, 2026; existing editorial scores are unchanged. Finder version fit-3 preserves that removal and uses supported, dated facts for factual profiles. Unknown or conflicting facts do not earn preference points. Earlier public profiles are addressed below; existing scores are not changed retroactively.</p>
-      <p>Factual profiles are unrated and may be published from dated primary sources without a completed hands-on review. Existing scored profiles use three separate measures: App Fit, Legit Score, and Originality &amp; Identity. Confidence describes how much evidence supports an evaluation. It is not another quality score. An app we decide not to list receives no public score.</p>
-    </section>
-    <section>
-      <h2>App Fit: right for you, not best overall</h2>
-      <p>App Fit answers, &ldquo;How closely does this app match my finder answers?&rdquo; It is personalized, not an overall quality score, popularity contest, or endorsement.</p>
-      <p>Some answers can rule an app out. Depending on what you request, the finder checks documented program type, adaptation, AI use, training environment, free access, and price. An unknown fact does not earn a match; when it is essential to a hard requirement, the app may be excluded. If none meet every requirement, we show nearby alternatives and their compromises.</p>
-      <p>For compatible apps, the current finder starts at 22 points and adds:</p>
-      <ul>
-        <li>Up to 20 for the requested main job.</li>
-        <li>16 for the primary planning style, or 9 for a supported secondary style.</li>
-        <li>14 for the training goal.</li>
-        <li>12 for a match to the single most important feature or priority.</li>
-        <li>6 for experience level and up to 10 for AI preference.</li>
-      </ul>
-      <p>The final Fit result is capped at 98. Compatible apps are ordered by this result. Neither Legit Score nor Originality &amp; Identity adds finder points, and WAI ownership adds no finder points. Meaningful product differences may receive recognition in selected editorial coverage, with an explanation of what differs, who benefits, and how it worked in the tested scope.</p>
-      <p>Fit depends on accurate catalog fields. It cannot promise that an app will work for everyone who gives the same answers.</p>
-    </section>
-    <section>
-      <h2>Legit Score: how well the product delivers</h2>
-      <p>Legit Score assesses the product and access tier evaluated. It is not a claim that an app is legally compliant, medically valid, secure, bug-free, or suitable for everyone. We score five dimensions from 0 to 100, give each <strong>20% weight</strong>, and round their arithmetic mean to the nearest whole number.</p>
-      <ul>
-        <li><strong>Core execution:</strong> Can a user complete the principal training, planning, coaching, or logging job in the evaluated path?</li>
-        <li><strong>Usability:</strong> Can a user find the next action, understand the controls, finish a session, and return without undue friction?</li>
-        <li><strong>Reliability:</strong> Do the paths we actually test function and retain expected state? Strong claims of consistency need repeated evidence.</li>
-        <li><strong>Value:</strong> What useful work is available at the current price, and where do trials, paywalls, or tier limits interrupt it?</li>
-        <li><strong>Support and privacy:</strong> Are published privacy disclosures, visible controls, help routes, and ordinary customer-facing support coherent? This is not a security or compliance audit. A developer&apos;s response to WAI editorial outreach does not earn support points.</li>
-      </ul>
-      <p>Our working anchors are <strong>90 to 100</strong> for demonstrated, consistently strong performance; <strong>75 to 89</strong> for strong observed or documented performance with limited issues; <strong>60 to 74</strong> for a credible offering with material observed limitations; <strong>40 to 59</strong> for major observed limitations; and <strong>below 40</strong> for core failure or substantial negative evidence. New dimension judgments normally use five-point steps. We explain why evidence fits a band rather than adjusting a dimension to produce a preferred total.</p>
-    </section>
-    <section>
-      <h2>Originality &amp; Identity: what gives it its own place</h2>
-      <p>Originality is separate from quality. A conventional app may execute brilliantly; a distinctive app may still be difficult to use. We score five dimensions from 0 to 100, weight each <strong>20%</strong>, and round their arithmetic mean.</p>
-      <ul>
-        <li><strong>Original mechanics:</strong> A specific, meaningful product or training mechanism that differs from relevant alternatives.</li>
-        <li><strong>Product point of view:</strong> Coherent decisions about whom the app serves and which tradeoffs it makes.</li>
-        <li><strong>Visual identity:</strong> Recognizable, consistent design that supports the intended experience, not merely a style we like.</li>
-        <li><strong>Meaningful differentiation:</strong> A verified reason a target user might choose it over named alternatives.</li>
-        <li><strong>Defensibility:</strong> Evidence that a mechanism, integrated workflow, community, data advantage, or other asset would be meaningfully hard to reproduce.</li>
-      </ul>
-      <p>We may also use a descriptive label such as &ldquo;Clear identity&rdquo; or &ldquo;Distinctive.&rdquo; The label is an editorial summary, not a second mathematical formula or a claim that a feature is exclusive.</p>
-      <p>More features, code, citations, technical complexity, or years of development do not automatically raise either editorial score. A feature matters when evidence shows that it improves a relevant dimension. Citations may explain a design choice without proving the app&apos;s calculations, outcomes, or scientific accuracy.</p>
-    </section>
-    <section>
-      <h2>Confidence measures evidence, not quality</h2>
-      <p>Confidence describes the breadth and strength of evidence behind an assessment. It never adds or subtracts points.</p>
-      <ul>
-        <li><strong>Low:</strong> At most one principal journey on one platform, a documentation-only assessment, or important workflows and repeatability remain untested.</li>
-        <li><strong>Moderate:</strong> The main journey was completed, some return use or history was examined, and important pricing and policy facts were cross-checked. Material gaps are still stated.</li>
-        <li><strong>High:</strong> Multiple representative sessions or workflows support repeatability, and major claims have been independently checked. This should be uncommon in a bounded catalog evaluation.</li>
-      </ul>
-      <p>A strong app can have Low Confidence. Missing evidence is not a defect or an automatic deduction, but cannot support a high band that requires demonstrated or consistent performance. A confirmed failure in a tested path can affect its dimension; an untested path remains unknown. If a profile has no confidence label, do not infer that WAI completed a High-Confidence evaluation.</p>
-    </section>
-    <section>
-      <h2>What counts as evidence</h2>
-      <ol>
-        <li><strong>Directly observed:</strong> What WAI did and saw in a particular version, platform, country, tier, and date, when known. One observation is not universal proof.</li>
-        <li><strong>Officially documented:</strong> What a current site, store listing, privacy policy, or help page says. This establishes the publisher&apos;s statement, not necessarily the feature&apos;s performance.</li>
-        <li><strong>Developer-reported:</strong> What a developer says in a submission or conversation. It directs research but is not independent verification.</li>
-        <li><strong>Editorial inference:</strong> WAI&apos;s reasoned conclusion about fit, tradeoffs, differentiation, or score, tied to evidence and relevant comparisons.</li>
-        <li><strong>Unresolved:</strong> A missing, conflicting, stale, inaccessible, or untested claim. We qualify it, leave it out, or withhold the profile rather than silently treating it as true or false.</li>
-      </ol>
-      <p>When sources conflict, we identify the context. A current observed workflow is useful for what happened in that workflow; a current store or policy page may be a better source for stated availability, price, or privacy terms. Neither can be generalized beyond what was checked. We revisit a score when new evidence materially changes a dimension.</p>
-    </section>
-    <section>
-      <h2>How we check an app</h2>
-      <p>Ordinary catalog research starts with current primary sources and zero to approximately ten minutes of owner verification when useful. Selected hands-on editorial work is a separate, deeper activity in which we try the main jobs the app promises. For a workout app, that means getting into a workout, recording and finishing it, and finding the result. If nutrition, recovery, or another function is central to the offer, we try a representative path there too.</p>
-      <p>We may stop when a material problem blocks a main job or makes its result unreliable after a reasonable retry. A confusing control or minor visual issue alone does not mean the app fails. Our basic evaluation has a limited testing window, not a promise to test every feature, device, or future release.</p>
-      <p>Hands-on coverage identifies what we tested, when, and on which platform and access tier. We say when important behavior remains unverified. We may leave an app unlisted when we cannot confidently describe its current experience. A developer&apos;s report of a fix is useful information, but we call it tested only after checking the released product ourselves.</p>
-      <h3>Earlier profiles</h3>
-      <p>Some original catalog entries remain visible with preliminary scores while we reassess them. Read their dates and evidence scope before comparing them with newer reviewed profiles.</p>
-    </section>
-    <section>
-      <h2>Submissions, corrections, and editorial decisions</h2>
-      <p><Link href="/submit-app">Submitting an app</Link> is free. It gives us a starting point, not a verified profile or a promise of testing, scoring, listing, publication, or timing. An app may remain unscheduled or unpublished.</p>
-      <p>Developers and readers may send <Link href="/corrections">evidence-backed factual corrections</Link> for free at any time. We check the particular claim and may update a fact without changing a score. Another full evaluation is separate from correcting a fact. Developers do not approve conclusions or negotiate scores before publication.</p>
-      <p>WAI may decline a new listing or withdraw an existing one when current evidence and practical access do not let us represent the user experience responsibly, especially when a material core claim cannot be verified or qualified fairly. Nonpublication is not itself a finding that an app is fraudulent or unsafe.</p>
-    </section>
-    <section>
-      <h2>Money, access, and ownership</h2>
-      <p>WAI is free for visitors. Advertising and commercial links are disclosed where they appear. <Link href="/services">Paid private testing and research</Link> buy a separately agreed private deliverable, not a listing, score, ranking, recommendation, finder placement, publication, or removal of legitimate criticism. Private findings do not automatically change public coverage. Material commercial relationships that inform public coverage will be disclosed. <Link href="/partnerships">Sponsorship, affiliate, referral, and intelligence arrangements</Link> cannot determine editorial conclusions or matching results.</p>
-      <p>Workout App Index and <strong>The Lift League</strong> share an owner, Turf King LLC. <strong>Caliper Cal</strong> is also a Turf King product. Readers should know this conflict of interest. Ownership is disclosed on any profile of a WAI-owned product; those products receive no finder bonus or guaranteed coverage. We treat our own product claims as first-party claims and state where independent evidence or testing is absent. We do not present an owner&apos;s self-evaluation as an independent third-party certification.</p>
-    </section>
-    <section>
-      <h2>What our scores do not certify</h2>
-      <p>We may read privacy policies, store disclosures, technical explanations, and cited studies, and test visible controls. Unless we identify a narrow claim and describe how we independently checked it, WAI does <strong>not</strong> certify legal compliance, actual backend data handling, security, medical validity, scientific accuracy, long-term reliability, or training outcomes. A high score describes the evidence-backed dimensions and scope stated in the profile, not every part of the product.</p>
-    </section>
-    <section>
-      <h2>Common questions</h2>
-      <h3>Why didn&apos;t a new feature increase the score?</h3><p>The score reflects what the feature demonstrably changes within a scored dimension. Mere presence, complexity, or development effort does not earn points. It may still deserve an accurate feature listing.</p>
-      <h3>Why wasn&apos;t a developer&apos;s statement treated as verified?</h3><p>A submission or email tells us what to check. We distinguish that report from a current official source and from behavior WAI directly observed.</p>
-      <h3>Can a developer request a rescore?</h3><p>A developer can send a documented correction or material update. A factual correction is free and does not automatically reopen the full evaluation. We select further hands-on coverage according to consumer interest, material product changes, priorities, and capacity; factual updates do not require a new full evaluation. We do not negotiate a target number or promise a listing.</p>
-      <h3>Does paying WAI affect coverage?</h3><p>Payment buys an agreed private service or disclosed commercial deliverable. It cannot purchase editorial selection, conclusions, or publication. Private work does not automatically change coverage; material relationships that inform public coverage will be disclosed.</p>
-      <h3>Does a high score mean WAI endorses every feature?</h3><p>No. Read the dimension rationale, confidence, tested context, and unresolved limits. A high total is not an exhaustive certification.</p>
-      <h3>Can an app be left unpublished?</h3><p>Yes. A submission can remain in research, be declined, or be left unpublished if we cannot support a fair current profile. An existing listing may also need to be withdrawn when its material claims can no longer be responsibly represented.</p>
-      <h3>How often are profiles updated?</h3><p>There is no automatic update for each app release. We consider factual corrections at any time and fuller reevaluations as capacity allows. Price, features, policies, and availability may change between checks, so the dates and scope shown with a profile matter.</p>
-    </section>
-  </PublicInformationLayout>;
-}
+export const metadata:Metadata={title:"How Matching & Research Work | Workout App Index",description:"How WAI uses sourced product facts and your preferences to match workout apps, handles unknowns, and separates firsthand editorial coverage.",alternates:{canonical:"/how-we-score"}};
+export default function MatchingMethodology(){return <PublicInformationLayout eyebrow="FACTS, FIT, AND FIRSTHAND EXPERIENCE" title="How matching works" introduction="A useful shortlist starts with what you need and what the product can support. A match percentage is not an overall quality rating.">
+  <section><h2>Start with product facts</h2><p>We research official websites, current regional app-store listings, pricing and trial terms, privacy documents, and product help. Ordinary factual profiles do not require an exhaustive hands-on review or developer participation. When opening the app would clarify something useful, ordinary owner verification is zero to approximately ten minutes.</p><p>Profiles explain what an app offers, what it costs, what is free, where it runs, how it uses AI, and <strong>how this app expects you to train</strong>. Important facts retain their sources and check dates when recorded. Older references without recorded verification dates are identified as such.</p></section>
+  <section><h2>Eight questions, one training relationship</h2><p>The <Link href="/find">finder</Link> asks about your platform, main goal, experience, preferred training approach, equipment, feature priority, comfort with AI, and budget.</p><p>The training-approach question covers both the job you want done and how much planning you want to own. You do not need to answer two versions of the same question. You can skip an answer when you are unsure.</p></section>
+  <section><h2>Requirements before preference points</h2><p>We first check essential constraints such as your selected platform, required program type, adaptation, AI avoidance, training equipment, free access, and budget. An unknown fact cannot satisfy a hard requirement. A conflict or missing source is explained as uncertainty, not automatically described as a missing feature.</p><p>Free access means the experience you requested is usable without a mandatory paid subscription or time-limited trial. A free download alone does not establish a usable free tier.</p><p>If no profile meets every requirement, we show nearby options with the mismatches and unknowns. Those are alternatives to consider, not confirmed matches.</p></section>
+  <section><h2>What preference fit measures</h2><p>Current matching version: <code>{fitMethodologyVersion}</code>. Compatible apps start at 22 points and can receive up to 20 for the requested job, 16 for the primary training approach (or 9 for a secondary approach), 14 for the goal, 12 for the chosen feature priority, 6 for experience, and up to 10 for AI preference. The same training-approach answer supplies the requested job and preferred relationship. The total is capped at 98.</p><p>Your platform is an eligibility requirement, not a hidden ranking bonus. Ties use alphabetical order. Match explanations identify supported reasons, such as platform availability or a compatible training approach.</p><p>For factual profiles, only current supported facts earn points. Developer reports, stale evidence, conflicts, and unknowns do not count as established capabilities. Fast logging needs a specific firsthand observation; a marketing category alone is insufficient. Older catalog entries retain their existing facts while they are refreshed.</p><p>Neither earlier Legit nor Originality ratings adds finder points. WAI ownership, sponsorship, affiliate commissions, and private-service purchases add no points. A high preference fit is not a prediction of training results or a guarantee that you will enjoy the product.</p></section>
+  <section><h2>Know which kind of evidence you are reading</h2><ul><li><strong>Officially documented:</strong> A product website, pricing page, policy, or help document states it.</li><li><strong>App-store documented:</strong> A regional store listing states it, often in developer-supplied material.</li><li><strong>Developer-reported:</strong> A submission or conversation says it; this remains a report.</li><li><strong>Independently observed:</strong> WAI attempted an action and recorded what happened in a stated scope.</li><li><strong>Conflicting:</strong> Relevant sources disagree.</li><li><strong>Not established:</strong> Information remains missing, untested, stale, or inaccessible.</li></ul><p>Editing a value does not make its older source verify the new value. Changed facts need rechecking. Public claims and firsthand findings remain distinct.</p></section>
+  <section><h2>Selected firsthand editorial coverage</h2><p>We choose deeper reviews and comparisons for consumer questions, search interest, useful alternatives, or a defined editorial purpose. Coverage identifies the tested platform, version when available, date, workflows attempted, direct observations, and untested areas. Dictated observations are the basis for the editor’s firsthand experience.</p><p>We can recognize a meaningful product difference by explaining what differs, who benefits, its tradeoffs, and how it worked in the tested scope. We do not automate originality judgments or require a numerical rating for every factual profile.</p></section>
+  <section><h2>Earlier editorial ratings</h2><p>Existing ratings are preserved in an expandable section on the relevant profile. They are historical editorial context, not the basis of catalog order or finder results. Factual profiles have no editorial rating.</p><details><summary>Read the earlier scoring method</summary><p>The initial-v1 Legit rubric averages five equally weighted dimensions: core execution, usability, reliability, value, and support/privacy. Originality &amp; Identity averages original mechanics, product point of view, visual identity, meaningful differentiation, and defensibility. Totals are rounded arithmetic means.</p><p>Missing evidence is not an automatic failure, but it cannot justify a band requiring demonstrated consistency. Confidence describes evidence scope, not another quality score. Preliminary totals may predate the five-dimension assessment. These ratings do not certify security, legal compliance, medical validity, scientific accuracy, long-term reliability, or training outcomes.</p></details></section>
+  <section><h2>Corrections and commercial independence</h2><p><Link href="/corrections">Sourced factual corrections</Link> and <Link href="/submit-app">app submissions</Link> are free. Submission does not promise testing, scoring, listing, publication, or timing. Developers do not approve WAI’s conclusions.</p><p><Link href="/services">Private testing and research</Link> buy a separately agreed deliverable. <Link href="/partnerships">Commercial relationships</Link> cannot purchase a listing, favorable conclusion, recommendation, finder position, publication, or removal of legitimate criticism. Material relationships are disclosed when they inform coverage. Turf King ownership is disclosed on its product profiles and adds no matching points.</p><p>Read our <Link href="/editorial-standards">research and editorial standards</Link> for the full policy.</p></section>
+ </PublicInformationLayout>;}
