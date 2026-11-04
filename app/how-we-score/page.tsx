@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { fitMethodologyVersion } from "@/lib/matching";
 import { PublicInformationLayout } from "@/components/public-information-layout";
 
 export const metadata: Metadata = {
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 export default function HowWeScorePage() {
   return <PublicInformationLayout eyebrow="OUR METHODOLOGY" title="How we score" introduction="The best fitness app is not the one with the most features or the highest number. It is the one that does the job you need, in a way you will want to keep using.">
     <section>
-      <p><strong>Methodology versions:</strong> Finder matching <code>fit-1</code>; editorial scoring rubric <code>initial-v1</code>. The catalog and commercial policy was revised November 4, 2026; the scoring formula is unchanged. Earlier public profiles are addressed below; existing scores are not changed retroactively.</p>
+      <p><strong>Methodology versions:</strong> Finder matching <code>{fitMethodologyVersion}</code>; editorial scoring rubric <code>initial-v1</code>. The catalog and commercial policy was revised November 4, 2026; existing editorial scores are unchanged. Finder version fit-2 removes the former Distinctive experience preference and its Originality-based bonus. Earlier public profiles are addressed below; existing scores are not changed retroactively.</p>
       <p>Existing scored profiles use three separate measures: App Fit, Legit Score, and Originality &amp; Identity. Confidence describes how much evidence supports an evaluation. It is not another quality score. An app we decide not to list receives no public score.</p>
     </section>
     <section>
@@ -23,10 +24,10 @@ export default function HowWeScorePage() {
         <li>Up to 20 for the requested main job.</li>
         <li>16 for the primary planning style, or 9 for a supported secondary style.</li>
         <li>14 for the training goal.</li>
-        <li>Usually 12 for the single most important feature or priority.</li>
+        <li>12 for a match to the single most important feature or priority.</li>
         <li>6 for experience level and up to 10 for AI preference.</li>
       </ul>
-      <p>If you choose <strong>Distinctive experience</strong>, that priority instead adds 0 to 12 points based on the app&apos;s Originality score: its score minus 50, divided by four, rounded, then limited to that range. The final Fit result is capped at 98. Compatible apps are ordered by this result. Legit Score does not add a hidden ranking bonus, and WAI ownership adds no finder points.</p>
+      <p>The final Fit result is capped at 98. Compatible apps are ordered by this result. Neither Legit Score nor Originality &amp; Identity adds finder points, and WAI ownership adds no finder points. Meaningful product differences may receive recognition in selected editorial coverage, with an explanation of what differs, who benefits, and how it worked in the tested scope.</p>
       <p>Fit depends on accurate catalog fields. It cannot promise that an app will work for everyone who gives the same answers.</p>
     </section>
     <section>

@@ -44,6 +44,10 @@ Keep editorial inference in a separate reasoned paragraph with evidence IDs and 
 - Onboarding/paywalls: attempted access path, trial conversion, purchase boundary, and what happened next; no inference of backend failure.
 - Podcast/video: evidence-linked outline and demonstration plan, test date/version in source notes, accurate spoken limits, and one intended tracked action. Never fabricate footage, quotations, or a performed workout.
 
+## Recognizing meaningful product differences
+
+Credit a successful departure from comparable products through selected, evidence-backed editorial coverage. Explain what the app does differently, the comparison set, who benefits, the tradeoff, and how it worked in the actual tested scope. Separate an unusual claim from a successfully observed implementation. This recognition is an editorial judgment, not an automated feature classification, a paid benefit, or a reason to invent an Originality number for a factual profile. Existing Originality scores remain unchanged pending a separate decision. The finder no longer offers Distinctive experience or awards points from Originality.
+
 ## Public draft and approval
 
 Lead with the consumer decision. Include tested platform, available version, date, attempted workflows, direct observations, untested areas, relevant public sources, and important comparison limitations. For source-only pieces say there was no hands-on test. Disclose material commercial and Turf King ownership relationships. Reuse the same evidence across outputs without broadening its scope. Scores require the unchanged rubric and defensible evidence; do not add them merely to complete an article.

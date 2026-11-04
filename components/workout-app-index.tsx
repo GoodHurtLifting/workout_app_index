@@ -105,7 +105,6 @@ const questions = [
       "Community",
       "Human coaching",
       "Offline use",
-      "Distinctive experience",
     ],
   },
   {

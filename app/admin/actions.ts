@@ -6,6 +6,7 @@ import { apps, calculateLegitScore, calculateOriginalityScore, catalogEvidenceSe
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { getCatalogRecord, getCatalogWithdrawal, getLatestPublishedCatalog, getPublicCatalog, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveCatalogWithdrawal, saveEvidence, savePublication, syncPreparedResearchEvidence } from "@/lib/catalog-repository";
+import { fitMethodologyVersion } from "@/lib/matching";
 import { canStartAnotherReview, canTransition, monthKey, normalizeAppSubmissionStatus, publicationDecision, reviewOutcomes, serviceStages, type ReviewOutcome, type ServiceStage } from "@/lib/submission-workflow";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
 import { applyCatalogProposal, catalogProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
@@ -612,7 +613,7 @@ export async function publishApprovedCatalog(_previous:PublishCatalogResult, _fo
     const now=Date.now(); const version=`catalog-${new Date(now).toISOString().replace(/[-:.]/g,"")}`;
     const snapshot=rows.map(row=>row.record);
     if (JSON.stringify(snapshot).includes("\u2014")) throw new Error("Replace em dashes in reviewed app copy before publishing");
-    await savePublication({id:crypto.randomUUID(),catalog_version:version,fit_methodology_version:"fit-1",legit_methodology_version:"legit-1",snapshot,published_by:user.userId,published_at:now});
+    await savePublication({id:crypto.randomUUID(),catalog_version:version,fit_methodology_version:fitMethodologyVersion,legit_methodology_version:"legit-1",snapshot,published_by:user.userId,published_at:now});
     saved=true;
     updateTag("public-catalog");
     revalidatePath("/admin");

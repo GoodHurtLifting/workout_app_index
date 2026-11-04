@@ -1,8 +1,9 @@
 import {
-  getOriginalityProfile,
   getTrainingRelationship,
   type AppRecord,
-} from "@/lib/catalog";
+} from "./catalog.ts";
+
+export const fitMethodologyVersion = "fit-2";
 
 export type FinderAnswers = Record<string, string>;
 
@@ -158,12 +159,7 @@ export function fitScore(
       candidate.features.includes("Human coaching"),
     "Offline use": (candidate) => candidate.features.includes("Offline use"),
   };
-  if (answers.priority === "Distinctive experience") {
-    score += Math.max(
-      0,
-      Math.min(12, Math.round((getOriginalityProfile(app).score - 50) / 4)),
-    );
-  } else if (priorityMatches[answers.priority]?.(app)) {
+  if (priorityMatches[answers.priority]?.(app)) {
     score += 12;
   }
   const level =
