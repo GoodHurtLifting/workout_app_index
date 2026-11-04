@@ -4,7 +4,7 @@ Workout App Index helps people find and compare strength-training apps using exp
 
 ## Business and editorial direction
 
-See [WAI_BUSINESS_PLAN.md](./WAI_BUSINESS_PLAN.md) for the November 4, 2026 facts-first growth plan, [FACTS_FIRST_IMPLEMENTATION.md](./FACTS_FIRST_IMPLEMENTATION.md) for source findings, migration limits and manual validation, and [EDITORIAL_CONTENT_TEMPLATE.md](./EDITORIAL_CONTENT_TEMPLATE.md) for reusable dictated editorial source packs. Changes use the existing site and Firebase projects.
+See [WAI_BUSINESS_PLAN.md](./WAI_BUSINESS_PLAN.md) for the November 4, 2026 facts-first growth plan, [FACTS_FIRST_IMPLEMENTATION.md](./FACTS_FIRST_IMPLEMENTATION.md) for source findings, migration limits and manual validation, and [EDITORIAL_CONTENT_TEMPLATE.md](./EDITORIAL_CONTENT_TEMPLATE.md) for reusable dictated editorial source packs. [FACTUAL_PROFILE_MIGRATION.md](./FACTUAL_PROFILE_MIGRATION.md) documents the approved unrated-profile workflow, source binding, and manual checks. Changes use the existing site and Firebase projects.
 
 ## Architecture
 

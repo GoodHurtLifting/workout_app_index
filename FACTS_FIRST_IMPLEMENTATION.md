@@ -1,5 +1,7 @@
 # Facts-first release record — November 4, 2026
 
+**Current update:** Ryan approved the additive unscored-profile migration. Its implementation, limits, and validation are documented in [FACTUAL_PROFILE_MIGRATION.md](FACTUAL_PROFILE_MIGRATION.md). The schema-boundary findings and recommendation below describe the earlier foundation state; they are retained as design history, not a current implementation blocker. Existing records are still not mass-converted.
+
 ## Governing direction and checkpoint
 
 WAI maintains a broad, sourced factual catalog, selectively produces firsthand editorial content where consumer interest justifies testing, and separately offers paid private testing and product research. WAI_BUSINESS_PLAN.md is the exact supplied plan, retained at the repository root alongside existing operating documents.
