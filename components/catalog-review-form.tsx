@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState,type ReactNode } from "react";
 import { FactClaimsEditor } from "@/components/fact-claims-editor";
 import type { AppRecord } from "@/lib/catalog";
-import { calculateLegitScore, calculateOriginalityScore, getOriginalityProfile, getTrainingRelationship } from "@/lib/catalog";
+import { getTrainingRelationship } from "@/lib/catalog";
+import { publicCatalogRecord } from "@/lib/catalog-facts";
+import { AdjacentFeatureEditor } from "@/components/adjacent-feature-editor";
 import { updateCatalogApp } from "@/app/admin/actions";
 import { PersonAssociationEditor } from "@/components/person-association-editor";
 import { AdminSubmitButton } from "@/components/admin-submit-button";
@@ -17,28 +19,17 @@ const planningStyles = [
   "Just log the work",
 ];
 
-function ScoreField({ label, name, value }: { label: string; name: string; value: number | null }) {
-  return <label>{label}<input name={name} type="number" min="0" max="100" step="1" defaultValue={value ?? ""} required /></label>;
-}
-
-export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; savedFingerprint: string }) {
-  const [mode,setMode]=useState(app.coverageMode ?? "scored");
-  const factual=mode === "factual";
+export function CatalogReviewForm({ app, savedFingerprint,publiclyListed=false,sourceLog }: { app: AppRecord; savedFingerprint: string;publiclyListed?:boolean;sourceLog?:ReactNode }) {
+  const [result,action]=useActionState(updateCatalogApp,{error:""});
   const relationship = getTrainingRelationship(app);
-  const originality = getOriginalityProfile(app);
+  const audit=publicCatalogRecord(app).adjacentFeatureEvidence;
 
-  return <form action={updateCatalogApp} className="record-form">
+  return <form action={action} className="record-form">
     <input type="hidden" name="savedFingerprint" value={savedFingerprint} />
     <input type="hidden" name="id" value={app.id} />
-    <p className="editor-help">Save your changes as a draft. They do not change the public profile until a reviewed catalog is published.</p>
-    <section><h2>Coverage and disclosure</h2>
-      <label>Coverage mode<select name="coverageMode" value={mode} onChange={event=>setMode(event.target.value as "factual" | "scored")}><option value="scored">Historical editorial record (private ratings)</option><option value="factual">Factual profile without ratings</option></select></label>
-      <p className="editor-help">Changing coverage saves a private draft only. Historical ratings remain private in either coverage mode. Public profiles contain product facts and scoped observations, not editorial ratings.</p>
-      <label>Commercial relationship<select name="disclosureStatus" defaultValue={app.commercialDisclosure?.status ?? "not-established"}><option value="not-established">Not established yet</option><option value="none">No material commercial relationship</option><option value="material">Material relationship, disclosed below</option></select></label>
-      <label>Public disclosure<textarea name="disclosureStatement" defaultValue={app.commercialDisclosure?.statement ?? ""} rows={3}/></label>
-    </section>
+    <p className="editor-help">Save a draft while you work, or update this public listing after checking its facts and sources. Other listings are unaffected.</p>
     <section>
-      <h2>Identity and public verdict</h2>
+      <h2>Product details</h2>
       <div className="form-grid">
         <label>Name<input name="name" defaultValue={app.name} required /></label>
         <label>Product type<input name="type" defaultValue={app.type} required /></label>
@@ -46,11 +37,10 @@ export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; s
         <label>Logo color<input name="color" type="color" defaultValue={app.color} required /></label>
       </div>
       <label>Short description<textarea name="description" defaultValue={app.description} required rows={4} /></label>
-      <label>Best for<input name="bestFor" defaultValue={app.bestFor} required /></label>
-      <label>Primary caveat<textarea name="caveat" defaultValue={app.caveat} rows={3} /></label>
+      <label>May suit<input name="bestFor" defaultValue={app.bestFor} required /></label>
+      <label>Important limits<textarea name="caveat" defaultValue={app.caveat} rows={3} /></label>
     </section>
-    <section>
-      <h2>Access, features, and finder facts</h2>
+    <details className="entry-editor-section" open><summary>Access &amp; product facts <small>Pricing, platforms, AI and features</small></summary><div>
       <div className="form-grid">
         <label>Price summary<input name="price" defaultValue={app.price} required /></label>
         <label>Monthly price in USD, if applicable<input name="monthlyPrice" type="number" min="0" step="0.01" defaultValue={app.monthlyPrice ?? ""} /></label>
@@ -75,10 +65,9 @@ export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; s
         <FactBoolean name="freeAdaptiveProgramming" value={app.freeTierCapabilities.adaptiveProgramming} label="Adaptive programming" />
         <FactBoolean name="freeProgramLibrary" value={app.freeTierCapabilities.programLibrary} label="Program library" />
       </div>
-    </section>
-    <section>
-      <h2>Training relationship</h2>
-      <p className="editor-help">These judgments appear on the public profile and influence fit matching. Finder rank and related-app suggestions are calculated from the saved facts and cannot be edited as standalone text.</p>
+    </div></details>
+    <details className="entry-editor-section"><summary>Training approach <small>Planning, equipment and user choices</small></summary><div>
+      <p className="editor-help">Describe the product workflow using supported facts. Preference matching uses these details; rankings cannot be edited directly.</p>
       <div className="form-grid">
         <label>Primary planning style<select name="planningStyle" defaultValue={relationship.planningStyle}>{planningStyles.map(value => <option key={value}>{value}</option>)}</select></label>
         <label>Secondary styles, comma separated<input name="secondaryStyles" defaultValue={relationship.secondaryStyles?.join(", ") ?? ""} /></label>
@@ -89,40 +78,20 @@ export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; s
       <label>Decisions the app makes easier<textarea name="decisionsRemoved" defaultValue={relationship.decisionsRemoved ?? ""} rows={3} /></label>
       <label>Decisions the user still owns<textarea name="decisionsRemaining" defaultValue={relationship.decisionsRemaining ?? ""} rows={3} /></label>
       <label>Central tradeoff<textarea name="tradeoff" defaultValue={relationship.tradeoff ?? ""} rows={3} /></label>
-      <label>This may sound like you<textarea name="idealUser" defaultValue={relationship.idealUser} rows={3} required={!factual} /></label>
-      <label>Probably not your fit<textarea name="notFor" defaultValue={relationship.notFor} rows={3} required={!factual} /></label>
-    </section>
-    <fieldset disabled={factual} hidden={factual}>
-      <h2>Private historical ratings</h2>
-      <p className="editor-help">These are WAI editorial judgments. Check the supporting evidence and rationale before approval. Initial-v1 assessments use five equally weighted criteria; legacy entries still need reassessment.</p>
-      <div className="form-grid">
-        {app.legitAssessment ? <label>Provisional Legit Score<output>{calculateLegitScore(app.legitAssessment)}/100 (calculated from the five criteria below)</output></label> : <ScoreField label="Legit Score" name="legit" value={app.legit} />}
-        {app.legitAssessment ? <label>Provisional originality score<output>{calculateOriginalityScore(originality)}/100 (calculated from the five dimensions below)</output></label> : <ScoreField label="Originality score" name="originalityScore" value={originality.score} />}
-        <label>Originality level<select name="originalityLevel" defaultValue={originality.level}>{["Not assessed","Conventional","Clear identity","Distinctive","Category-defining"].map(value => <option key={value}>{value}</option>)}</select></label>
-        <ScoreField label="Original mechanics" name="originalMechanics" value={originality.originalMechanics} />
-        <ScoreField label="Product point of view" name="productPointOfView" value={originality.productPointOfView} />
-        <ScoreField label="Visual identity" name="visualIdentity" value={originality.visualIdentity} />
-        <ScoreField label="Meaningful differentiation" name="meaningfulDifferentiation" value={originality.meaningfulDifferentiation} />
-        <ScoreField label="Defensibility" name="defensibility" value={originality.defensibility} />
-      </div>
-      {app.legitAssessment ? <>
-        <div className="form-grid">
-          <ScoreField label="Core execution" name="coreExecution" value={app.legitAssessment.coreExecution} />
-          <ScoreField label="Usability" name="usability" value={app.legitAssessment.usability} />
-          <ScoreField label="Reliability" name="reliability" value={app.legitAssessment.reliability} />
-          <ScoreField label="Value" name="value" value={app.legitAssessment.value} />
-          <ScoreField label="Support and privacy" name="supportPrivacy" value={app.legitAssessment.supportPrivacy} />
-          <label>Assessment confidence<select name="legitConfidence" defaultValue={app.legitAssessment.confidence}>{["Low","Moderate","High"].map(value => <option key={value}>{value}</option>)}</select></label>
-        </div>
-        <label>Legit Score rationale<textarea name="legitRationale" defaultValue={app.legitAssessment.rationale} rows={4} required /></label>
-      </> : null}
-      <label>Public originality summary<textarea name="originalitySummary" defaultValue={originality.summary} rows={3} required /></label>
-      <label>Public evidence note<textarea name="originalityEvidenceNote" defaultValue={originality.evidenceNote} rows={3} required /></label>
-    </fieldset>
+      <label>This may sound like you<textarea name="idealUser" defaultValue={relationship.idealUser} rows={3}  /></label>
+      <label>Probably not your fit<textarea name="notFor" defaultValue={relationship.notFor} rows={3}  /></label>
+    </div></details>
+    <AdjacentFeatureEditor name={app.name} initialAudit={audit}/>
+    <details className="entry-editor-section"><summary>Sources &amp; verification <small>Claim-specific links, dates and unknowns</small></summary><div>
     <FactClaimsEditor initialClaims={app.factClaims ?? []} />
-    <PersonAssociationEditor initialPeople={app.people ?? []} />
-    {app.researchStatus === "Reviewed" ? <label className="review-confirmation"><input type="checkbox" name="confirmReview" required /> I have reviewed these edits and approve the updated profile.</label> : null}
-    <AdminSubmitButton label="Save catalog record" pendingLabel="Saving record…" />
+    {sourceLog}
+    </div></details>
+    <details className="entry-editor-section"><summary>Creators &amp; trainers <small>Optional associations</small></summary><div><PersonAssociationEditor initialPeople={app.people ?? []} /></div></details>
+    <details className="entry-editor-section"><summary>Ownership &amp; disclosure</summary><div>      <label>Commercial relationship<select name="disclosureStatus" defaultValue={app.commercialDisclosure?.status ?? "not-established"}><option value="not-established">Not established yet</option><option value="none">No material commercial relationship</option><option value="material">Material relationship, disclosed below</option></select></label>
+      <label>Public disclosure<textarea name="disclosureStatement" defaultValue={app.commercialDisclosure?.statement ?? ""} rows={3}/></label>
+    </div></details>
+    {result.error?<p className="catalog-proposal-notice" role="alert">{result.error}</p>:null}
+    <div className="entry-save-bar"><AdminSubmitButton label="Save draft" pendingLabel="Saving…" name="intent" value="draft"/><AdminSubmitButton label={publiclyListed?"Update public listing":"Publish listing"} pendingLabel="Saving…" name="intent" value="publish"/></div>
   </form>;
 }
 

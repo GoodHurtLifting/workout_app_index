@@ -1,3 +1,4 @@
+import { adjacentFeatureResearch } from "./adjacent-feature-research.ts";
 import { z } from "zod";
 import type { AppRecord, FactClaim } from "./catalog.ts";
 
@@ -96,7 +97,9 @@ export function matchingFacts(app:AppRecord):AppRecord {
 
 export function publicCatalogRecord(app:AppRecord):AppRecord {
   // Ratings are private historical data for every coverage mode.
-  const result={...app,legit:null};
+  const researched=adjacentFeatureResearch[app.id];
+  const audit=app.adjacentFeatureEvidence && (app.adjacentFeatureEvidence.ownerEdited || !researched || app.adjacentFeatureEvidence.checkedAt>=researched.checkedAt) ? app.adjacentFeatureEvidence : researched;
+  const result={...app,legit:null,...(audit?{adjacentFeatureEvidence:audit}:{})};
   delete result.legitAssessment;
   delete result.originalityProfile;
   return result;

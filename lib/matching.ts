@@ -1,3 +1,4 @@
+import { currentAdjacentFinding } from "./adjacent-features.ts";
 import {
   getTrainingRelationship,
   type AppRecord,
@@ -5,9 +6,9 @@ import {
 
 import { matchingFacts, isFactual, supportedFact, factValue } from "./catalog-facts.ts";
 
-import { normalizeFinderAnswers } from "./finder-questions.ts";
+import { normalizeFinderAnswers, selectedAdjacentFeatures } from "./finder-questions.ts";
 
-export const fitMethodologyVersion = "fit-4";
+export const fitMethodologyVersion = "fit-5";
 
 export type FinderAnswers = Record<string, string>;
 
@@ -112,7 +113,7 @@ export function fitScore(
   answers=normalizeFinderAnswers(answers);
   if (!includeExcluded && exclusionReason(app, answers)) return 0;
   app=matchingFacts(app);
-  // The weighted preferences total 100. Hard requirements are handled above.
+  // Core preferences total 100; optional adjacent features add at most six points.
   let score = 22;
   const job = answers.job;
   if (job === "Give me a complete program" && app.deliversCompleteProgram)
@@ -190,11 +191,40 @@ export function fitScore(
   )
     score += 4;
   if (answers.ai === "No preference" || !answers.ai) score += 2;
+  score += Math.min(6,matchedAdjacentFeatures(app,answers).length * 2);
   return Math.min(score, 98);
+}
+
+// Explicit feature labels only: descriptions, health integrations, and body measurements
+// do not establish these capabilities. Factual profiles also pass the evidence gate.
+const adjacentFeatureLabels:Record<string,string[]> = {
+  Nutrition:["Nutrition guidance","Nutrition tracking","Meal plans","Calorie tracking","Macro tracking"],
+  Recovery:["Recovery tracking","Recovery workouts","Recovery guidance"],
+  Mindfulness:["Mindfulness","Meditation","Guided meditation"],
+  Cardio:["Cardio","Cardio workouts","Cardio tracking"],
+  "Body composition":["Body composition","Body composition tracking","Body fat tracking"],
+  "Wearable integration":["Wearables","Apple Watch","Wear OS","Garmin integration","Wearable integration"],
+};
+export function matchedAdjacentFeatures(app:AppRecord,answers:FinderAnswers):string[] {
+  const facts=matchingFacts(app);
+  return selectedAdjacentFeatures(answers.extras).filter(option => {
+    const audit=app.adjacentFeatureEvidence;
+    if (audit) {
+      const finding=audit.features[option];
+      const platform=answers.platform==="iPhone"?"iOS":answers.platform;
+      return currentAdjacentFinding(audit,option) && finding?.status==="Documented" &&
+        finding.sourceUrls.some(url=>/^https?:\/\//.test(url)) &&
+        !(answers.budget==="Free only" && finding.requiresPaid) &&
+        !(platform && !["Not sure","No preference"].includes(platform) && finding.platforms && !finding.platforms.includes(platform));
+    }
+    return adjacentFeatureLabels[option].some(label => facts.features.includes(label));
+  });
 }
 
 export function matchReasons(app:AppRecord, input:FinderAnswers):string[] {
   const answers=normalizeFinderAnswers(input);const facts=matchingFacts(app);const reasons:string[]=[];
+  const extras=matchedAdjacentFeatures(app,answers);
+  if(extras.length) reasons.push(`Additional preferences: ${extras.join(", ")}`);
   const platform=answers.platform==="iPhone"?"iOS":answers.platform;
   if(platform && facts.platforms.includes(platform)) reasons.push(`Available for ${answers.platform}`);
   const styles:Record<string,string>={"Show me the next workout, with no decisions needed":"Follow a complete path","Give me a few proven programs to choose from":"Choose a proven path","Adjust the workout based on my recent training":"Let the app adapt","Let me build exactly what I want":"Build it yourself","Just stay out of the way while I log":"Just log the work"};

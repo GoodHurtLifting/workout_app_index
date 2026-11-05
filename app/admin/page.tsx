@@ -1,14 +1,12 @@
 import Link from "next/link";
-import { Check, ChevronRight, LogOut } from "lucide-react";
+import { ChevronRight, LogOut } from "lucide-react";
 import { serviceOffers, partnershipTopics } from "@/lib/commercial-inquiries";
 import { catalogVersion } from "@/lib/catalog";
-import { isLegacyPublicApp } from "@/lib/legacy-public-catalog";
 import { requireCatalogAdmin } from "@/lib/admin-auth";
-import { listCatalogRecords, listPublications } from "@/lib/catalog-repository";
+import { listCatalogRecords, listPublications, getPublicCatalog } from "@/lib/catalog-repository";
 import { getEditorialCapacity, listEditorialRequests } from "@/lib/editorial-requests";
 import { canStartAnotherReview, normalizeAppSubmissionStatus, serviceStageLabels, statusLabels } from "@/lib/submission-workflow";
 import { CopyResearchBrief } from "@/components/copy-research-brief";
-import { PublishCatalogForm } from "@/components/publish-catalog-form";
 import { createFactualCatalogDraft, acceptAppSubmissionForResearch, changeSubmissionReviewStage, completeSubmissionScreening, deleteAppSubmission, importPreliminaryCatalog, markEditorialRequestSeen, recordDeveloperServiceStage, recordSubmissionDecision, startAnotherReviewRound, startSubmissionScreening } from "./actions";
 import "./admin.css";
 
@@ -22,7 +20,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const { requests: editorialRequests, nextCursor } = await listEditorialRequests(cursor);
   const capacity = await getEditorialCapacity();
   const newRequests = editorialRequests.filter(request => !request.seenAt).length;
-  const reviewed = apps.filter(app => app.researchStatus === "Reviewed").length;
+  const publicIds=new Set((await getPublicCatalog()).apps.map(app=>app.id));
+  const listed=apps.filter(app=>publicIds.has(app.id)).length;
 
   return <main className="admin-page standalone-admin">
     <div className="admin-utility"><Link href="/">← Public preview</Link><span>{user.displayName}</span><form action="/api/auth/logout" method="post"><button type="submit"><LogOut/> Sign out</button></form></div>
@@ -164,8 +163,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       )) : <p>No submissions on this page.</p>}
       <nav className="submission-pagination" aria-label="Submission pages"><Link href="/admin#editorial-inbox">Newest</Link>{nextCursor ? <Link href={`/admin?cursor=${nextCursor}#editorial-inbox`}>Older submissions →</Link> : null}</nav>
     </section>
-    <div className="admin-stats"><article><span>{apps.length}</span><p>Catalog evaluations</p></article><article><span>{reviewed}</span><p>Owner-reviewed profiles</p></article><article><span>{apps.length-reviewed}</span><p>Still in review</p></article></div>
-    <div className="admin-work" id="app-evaluations"><div className="admin-list"><div className="admin-list-head"><h2>App evaluations</h2><span>Research state</span></div>{apps.map(app=><Link className="admin-row" href={`/admin/apps/${app.id}`} key={app.id}><span className="app-logo" style={{background:app.color}}>{app.initials}</span><span><strong>{app.name}</strong><small>{app.type}{isLegacyPublicApp(app.id)?" · Legacy public":""}</small></span><i className={app.researchStatus.toLowerCase().replace(" ","-")}>{app.researchStatus}</i><ChevronRight/></Link>)}</div><aside><p className="eyebrow">PUBLISHING GATE</p><h2>New entries require your review.</h2><ul><li><Check/> Platforms and access checked</li><li><Check/> Pricing dated and sourced</li><li><Check/> AI status classified</li><li><Check/> Feature evidence attached</li><li><Check/> Legit Score reviewed</li><li><Check/> Disclosures complete</li></ul><p>The original 36 are marked Legacy public and stay visible while you review them. Newly submitted apps need both a Reviewed card and a “Selected for listing” decision before publication. Publishing is still a separate action. Apps already public remain visible during a later review round.</p><PublishCatalogForm hasReviewed={apps.some(app=>app.researchStatus==="Reviewed")} latestPublication={publications[0] ? {catalog_version:publications[0].catalog_version,published_at:publications[0].published_at} : undefined}/></aside></div>
-    <section className="publication-history" id="publication-history"><div><p className="eyebrow">PUBLICATION HISTORY</p><h2>Versioned catalog snapshots</h2></div>{publications.length?<div>{publications.map(item=><article key={item.id}><strong>{item.catalog_version}</strong><span>{new Date(item.published_at).toLocaleString("en-US")}</span><small>Fit {item.fit_methodology_version} · Legit {item.legit_methodology_version}</small></article>)}</div>:<p>No catalog snapshots published yet.</p>}</section>
+    <div className="admin-stats"><article><span>{apps.length}</span><p>Catalog entries</p></article><article><span>{listed}</span><p>Public listings</p></article><article><span>{apps.length-listed}</span><p>Not public</p></article></div>
+    <div className="admin-work" id="app-evaluations"><div className="admin-list"><div className="admin-list-head"><h2>Catalog entries</h2><span>Listing</span></div>{apps.map(app=><Link className="admin-row" href={`/admin/apps/${app.id}`} key={app.id}><span className="app-logo" style={{background:app.color}}>{app.initials}</span><span><strong>{app.name}</strong><small>{app.type}</small></span><i className={publicIds.has(app.id)?"reviewed":"researching"}>{publicIds.has(app.id)?"Public":"Not public"}</i><ChevronRight/></Link>)}</div><aside><p className="eyebrow">CATALOG EDITING</p><h2>Facts first. Edit each listing.</h2><p>Open an entry to edit its facts, sources, features and disclosure. Save a private draft, update that public listing, or hide it. No quality score or editorial review stage is required.</p><p>Public updates check identity, platforms, dated sources and disclosure. Optional capabilities can remain unknown. Other listings stay as they are.</p></aside></div>
+    <section className="publication-history" id="publication-history"><div><p className="eyebrow">PUBLICATION HISTORY</p><h2>Versioned catalog snapshots</h2></div>{publications.length?<div>{publications.map(item=><article key={item.id}><strong>{item.catalog_version}</strong><span>{new Date(item.published_at).toLocaleString("en-US")}</span><small>Matching {item.fit_methodology_version}</small></article>)}</div>:<p>No catalog snapshots published yet.</p>}</section>
   </main>;
 }

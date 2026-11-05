@@ -1,3 +1,5 @@
+import type { AdjacentFeatureAudit } from "./adjacent-features.ts";
+
 export type AiStatus =
   "Not assessed" | "No AI identified" | "Optional AI" | "AI supporting features" | "AI central";
 
@@ -45,6 +47,7 @@ export type FactClaim = {
 };
 
 export type AppRecord = {
+  adjacentFeatureEvidence?:AdjacentFeatureAudit;
   coverageMode?: "scored" | "factual";
   factClaims?: FactClaim[];
   commercialDisclosure?: { status: "none" | "material" | "not-established"; statement: string };

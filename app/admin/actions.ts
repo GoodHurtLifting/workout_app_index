@@ -2,19 +2,19 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
-import { apps, calculateLegitScore, calculateOriginalityScore, catalogEvidenceSeeds, getOriginalityProfile, getTrainingRelationship, type AiStatus, type AppRecord, type LegitAssessment, type OriginalityProfile, type PersonAssociation, type PlanningStyle, type ResearchStatus, type TrainingRelationship } from "@/lib/catalog";
+import { apps, catalogEvidenceSeeds, type AppRecord, type PersonAssociation, type ResearchStatus } from "@/lib/catalog";
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
-import { getCatalogRecord, getCatalogWithdrawal, getLatestPublishedCatalog, getPublicCatalog, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveCatalogWithdrawal, saveEvidence, savePublication, syncPreparedResearchEvidence } from "@/lib/catalog-repository";
-import { isFactual, prepareFactClaims, disclosureSchema, publicCatalogRecord } from "@/lib/catalog-facts";
+import { getCatalogWithdrawal, getLatestPublishedCatalog, getPublicCatalog, isRecheckedEvidence, listAllEvidence, listEvidence, listReviewedCatalogRecords, saveCatalogRecord, saveCatalogWithdrawal, saveEvidence, savePublication, syncPreparedResearchEvidence } from "@/lib/catalog-repository";
+import { isFactual, publicCatalogRecord } from "@/lib/catalog-facts";
 import { fitMethodologyVersion } from "@/lib/matching";
 import { canStartAnotherReview, canTransition, monthKey, normalizeAppSubmissionStatus, publicationDecision, reviewOutcomes, serviceStages, type ReviewOutcome, type ServiceStage } from "@/lib/submission-workflow";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
-import { applyCatalogProposal, catalogProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
+import { applyCatalogProposal, catalogEntryProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
 import { reviewStageProblem } from "@/lib/catalog-review-stage";
 import { missingReviewProfileDetails } from "@/lib/catalog-review-readiness";
+import { buildCatalogEntryUpdate,catalogListingProblems,catalogEditIsCurrent,replacePublicCatalogEntry,hasCatalogPublicSource } from "@/lib/catalog-entry-editing";
 
-const splitList=(value:FormDataEntryValue|null)=>String(value??"").split(",").map(item=>item.trim()).filter(Boolean);
 const field=(data:FormData,name:string)=>String(data.get(name)??"").trim();
 const checked=(data:FormData,name:string)=>data.get(name)==="on";
 function returnToSubmission(formData: FormData, id: string, workflow: "decision" | "round" | "service"): never {
@@ -22,13 +22,6 @@ function returnToSubmission(formData: FormData, id: string, workflow: "decision"
   const cursor = field(formData, "cursor");
   if (/^[A-Za-z0-9]{20}$/.test(cursor)) params.set("cursor", cursor);
   redirect(`/admin?${params.toString()}#submission-${id}`);
-}
-function score(data:FormData,name:string):number {
-  const raw=field(data,name);
-  if(raw==="") throw new Error(`${name} is required`);
-  const value=Number(raw);
-  if(!Number.isInteger(value)||value<0||value>100) throw new Error(`${name} must be a whole number from 0 to 100`);
-  return value;
 }
 async function assertReviewedCatalogRecord(record: AppRecord, confirmed: boolean) {
   if (missingReviewProfileDetails(record).length) throw new Error("Replace candidate placeholders with verified profile details before marking Reviewed");
@@ -379,111 +372,56 @@ export async function importPreliminaryCatalog(){
   revalidatePath("/admin");
 }
 
-export async function updateCatalogApp(formData:FormData){
-  const user=await getCatalogAdminForAction(); const id=String(formData.get("id")??"");
-  if (!/^[a-z0-9-]{1,80}$/.test(id)) throw new Error("Invalid catalog record");
-  const savedSnapshot=await getAdminFirestore().collection("catalogApps").doc(id).get();
-  const savedRow=savedSnapshot.data();
-  const currentFingerprint=savedSnapshot.exists
-    ? catalogRecordFingerprint({ ...(savedRow!.record as AppRecord), researchStatus: savedRow!.publication_status as ResearchStatus })
-    : "unsaved";
-  if (field(formData,"savedFingerprint") !== currentFingerprint) redirect(`/admin/apps/${id}?save=stale`);
-  let existing=await getCatalogRecord(id); if(!existing) throw new Error("App not found");
-  const mode=field(formData,"coverageMode");
-  if (mode!=="factual" && mode!=="scored") throw new Error("Choose a valid coverage mode");
-  const factual=mode==="factual";
-  if(factual && savedSnapshot.exists) existing={...(savedRow!.record as AppRecord),researchStatus:savedRow!.publication_status as ResearchStatus};
-  function factBoolean(name:string):boolean|null {
-    const value=field(formData,name);
-    if(value==="true") return true;
-    if(value==="false") return false;
-    if(value==="unknown") return null;
-    throw new Error("Choose Yes, No, or Not established for finder facts");
-  }
-  const monthlyRaw=String(formData.get("monthlyPrice")??"").trim();
-  const relationship:TrainingRelationship={
-    ...getTrainingRelationship(existing),
-    planningStyle:field(formData,"planningStyle") as PlanningStyle,
-    secondaryStyles:splitList(formData.get("secondaryStyles")) as PlanningStyle[],
-    choiceLoad:field(formData,"choiceLoad") as TrainingRelationship["choiceLoad"],
-    continuity:field(formData,"continuity") as TrainingRelationship["continuity"],
-    customization:field(formData,"customization") as TrainingRelationship["customization"],
-    decisionsRemoved:field(formData,"decisionsRemoved"),
-    decisionsRemaining:field(formData,"decisionsRemaining"),
-    tradeoff:field(formData,"tradeoff"),
-    idealUser:field(formData,"idealUser"),
-    notFor:field(formData,"notFor"),
-  };
-  const originality:OriginalityProfile=factual ? getOriginalityProfile(existing) : {
-    ...getOriginalityProfile(existing),
-    score:existing.legitAssessment?0:score(formData,"originalityScore"),
-    level:field(formData,"originalityLevel") as OriginalityProfile["level"],
-    originalMechanics:score(formData,"originalMechanics"),
-    productPointOfView:score(formData,"productPointOfView"),
-    visualIdentity:score(formData,"visualIdentity"),
-    meaningfulDifferentiation:score(formData,"meaningfulDifferentiation"),
-    defensibility:score(formData,"defensibility"),
-    summary:field(formData,"originalitySummary"),
-    evidenceNote:field(formData,"originalityEvidenceNote"),
-  };
-  if(!factual && existing.legitAssessment) originality.score=calculateOriginalityScore(originality);
-  const legitAssessment:LegitAssessment|undefined=factual ? existing.legitAssessment : existing.legitAssessment ? {
-    ...existing.legitAssessment,
-    rubricVersion:"initial-v1",
-    coreExecution:score(formData,"coreExecution"),
-    usability:score(formData,"usability"),
-    reliability:score(formData,"reliability"),
-    value:score(formData,"value"),
-    supportPrivacy:score(formData,"supportPrivacy"),
-    confidence:field(formData,"legitConfidence") as LegitAssessment["confidence"],
-    rationale:field(formData,"legitRationale"),
-  } : undefined;
-  if(legitAssessment&&(!["Low","Moderate","High"].includes(legitAssessment.confidence)||!legitAssessment.rationale)) throw new Error("Complete the Legit Score assessment");
-  // Content saves never change the separately managed research status.
-  const researchStatus=existing.researchStatus;
-  const record:AppRecord={
-    ...existing,
-    coverageMode:mode,
-    commercialDisclosure:disclosureSchema.parse({status:field(formData,"disclosureStatus"),statement:field(formData,"disclosureStatement")}),
-    name:field(formData,"name"), initials:field(formData,"initials"), color:field(formData,"color"),
-    type:field(formData,"type"), bestFor:field(formData,"bestFor"), description:field(formData,"description"),
-    caveat:field(formData,"caveat"), price:field(formData,"price"),
-    monthlyPrice:monthlyRaw===""?null:Number(monthlyRaw),
-    supportsOneTimePurchase:factBoolean("supportsOneTimePurchase"),
-    hasUsableFreeTier:factBoolean("hasUsableFreeTier"),
-    freeTierCapabilities:{completeProgram:factBoolean("freeCompleteProgram"),adaptiveProgramming:factBoolean("freeAdaptiveProgramming"),programLibrary:factBoolean("freeProgramLibrary")},
-    platforms:splitList(formData.get("platforms")), ai:field(formData,"ai") as AiStatus,
-    legit:factual ? existing.legit : legitAssessment?calculateLegitScore(legitAssessment):score(formData,"legit"),
-    ...(legitAssessment?{legitAssessment}:{}),
-    goals:splitList(formData.get("goals")), features:splitList(formData.get("features")),
-    level:splitList(formData.get("level")), authorship:field(formData,"authorship"),
-    deliversCompleteProgram:factBoolean("deliversCompleteProgram"),programLibrary:factBoolean("programLibrary"),adaptiveProgramming:factBoolean("adaptiveProgramming"),
-    supportedTrainingEnvironments:splitList(formData.get("supportedTrainingEnvironments")),
-    researchStatus,people:parsePeople(formData.get("people")),
-    trainingRelationship:relationship,...(!factual ? {originalityProfile:originality} : {}),
-  };
-  record.factClaims=prepareFactClaims(JSON.parse(field(formData,"factClaims") || "[]"),record);
-  if(!record.name||!record.description||!record.type) throw new Error("Name, description, and product type are required");
-  if(!record.bestFor||!record.initials||!record.color||!/^#[0-9a-fA-F]{6}$/.test(record.color)) throw new Error("Best fit, initials, and a valid color are required");
-  if(!Number.isFinite(record.monthlyPrice??0)||(record.monthlyPrice??0)<0) throw new Error("Monthly price must be zero or greater");
-  if(!["Candidate","Researching","Evaluation ready","Reviewed"].includes(researchStatus)) throw new Error("Invalid research status");
-  if(!["Not assessed","No AI identified","Optional AI","AI supporting features","AI central"].includes(record.ai)) throw new Error("Invalid AI status");
-  const styles=["Not assessed","Follow a complete path","Choose a proven path","Let the app adapt","Build it yourself","Just log the work"];
-  if(!styles.includes(relationship.planningStyle)||relationship.secondaryStyles?.some(style=>!styles.includes(style))) throw new Error("Invalid training style");
-  if(!["Not assessed","Low","Moderate","High"].includes(relationship.choiceLoad)||!["Not assessed","Single coherent system","Program-based","Session-adaptive","User-directed"].includes(relationship.continuity)||!["Not assessed","Follow as written","Guided flexibility","Full control"].includes(relationship.customization)) throw new Error("Invalid training relationship");
-  if(!factual && (!["Not assessed","Conventional","Clear identity","Distinctive","Category-defining"].includes(originality.level)||!originality.summary||!originality.evidenceNote)) throw new Error("Complete the originality assessment");
-  if(!factual && (!relationship.idealUser||!relationship.notFor)) throw new Error("Complete the fit assessment");
-  if (JSON.stringify(record).includes("\u2014")) throw new Error("Replace em dashes in public copy before saving");
-  if(researchStatus==="Reviewed") {
-    const confirmed=checked(formData,"confirmReview");
-    if(!confirmed) throw new Error("Confirm that you reviewed this exact profile before marking it Reviewed");
+export type CatalogEntrySaveResult={error:string};
+export async function updateCatalogApp(_previous:CatalogEntrySaveResult,formData:FormData):Promise<CatalogEntrySaveResult> {
+  const user=await getCatalogAdminForAction();
+  const id=field(formData,"id");
+  if(!/^[a-z0-9-]{1,80}$/.test(id))return {error:"Invalid catalog entry"};
+  const publish=field(formData,"intent")==="publish";
+  const db=getAdminFirestore();const ref=db.collection("catalogApps").doc(id);
+  try {
+    const saved=await ref.get();const savedRow=saved.data();
+    const persisted=saved.exists?{...(savedRow!.record as AppRecord),researchStatus:savedRow!.publication_status as ResearchStatus}:null;
+    if(!catalogEditIsCurrent(persisted,field(formData,"savedFingerprint")))return {error:"This entry changed after you opened it. Reload to edit the latest version; your older form has not overwritten it."};
+    // Never turn a provisional legacy score overlay into a saved historical assessment.
+    const existing=persisted??apps.find(app=>app.id===id)??catalogResearchDrafts[id];
+    if(!existing)return {error:"Catalog entry not found"};
+    const record=buildCatalogEntryUpdate(existing,formData,parsePeople(formData.get("people")));
     await syncPreparedResearchEvidence(id);
-    await assertReviewedCatalogRecord(record, confirmed);
+    if(publish){
+      const evidence=await listEvidence(id);
+      const hasSource=hasCatalogPublicSource(record,evidence);
+      const problems=catalogListingProblems(record,hasSource);
+      if(problems.length)return {error:`Before updating the public listing, complete: ${problems.join("; ")}. You can still save a draft.`};
+    }
+    const now=Date.now();const publicationRef=db.collection("catalogPublications").doc();
+    await db.runTransaction(async transaction=>{
+      const latest=await transaction.get(ref);const row=latest.data();
+      const current=latest.exists?{...(row!.record as AppRecord),researchStatus:row!.publication_status as ResearchStatus}:null;
+      if(!catalogEditIsCurrent(current,field(formData,"savedFingerprint")))throw new Error("STALE_CATALOG_EDIT");
+      const publications=publish?await transaction.get(db.collection("catalogPublications").orderBy("published_at","desc").limit(1)):null;
+      const hiddenRef=db.collection("catalogWithdrawals").doc(id);
+      const hidden=publish?await transaction.get(hiddenRef):null;
+      transaction.set(ref,{id,name:record.name,slug:id,record,publication_status:record.researchStatus,updated_by:user.userId,updated_at:now,...(!latest.exists?{created_at:now}:{})},{merge:true});
+      if(publish){
+        const snapshot=(publications?.docs[0]?.data().snapshot as AppRecord[]|undefined)??[];
+        const publishedAt=Math.max(Date.now(),Number(publications?.docs[0]?.data().published_at??0)+1);
+        transaction.create(publicationRef,{catalog_version:`catalog-${new Date(publishedAt).toISOString().replace(/[-:.]/g,"")}`,fit_methodology_version:fitMethodologyVersion,legit_methodology_version:"historical-private",snapshot:replacePublicCatalogEntry(snapshot,record),published_by:user.userId,published_at:publishedAt,created_at:publishedAt});
+        if(hidden?.exists&&hidden.data()?.active)transaction.update(hiddenRef,{active:false,updated_at:now,updated_by:user.userId});
+      }
+    });
+  } catch(error) {
+    if(error instanceof Error&&error.message==="STALE_CATALOG_EDIT")return {error:"Another edit was saved first. Reload the entry; your older form has not overwritten it."};
+    if(error instanceof Error&&error.name==="ZodError")return {error:"Check the source dates, links, feature details and disclosure. Confirmed features need a source; check dates cannot be in the future."};
+    console.error("Catalog entry update failed",error);
+    return {error:error instanceof Error&&!/credential|permission|metadata|Firestore|invalid_grant/i.test(error.message)?error.message:"The update could not be confirmed. Reload the entry before retrying."};
   }
-  await saveCatalogRecord(record,user.userId);
-  await syncPreparedResearchEvidence(id);
-  revalidatePath("/admin"); revalidatePath(`/admin/apps/${id}`);
-  redirect(`/admin/apps/${id}?save=updated`);
+  if(publish){
+    updateTag("public-catalog");updateTag("public-catalog-visibility");
+    for(const path of ["/","/apps","/find",`/apps/${id}`,"/api/catalog","/sitemap.xml"])revalidatePath(path);
+  }
+  revalidatePath("/admin");revalidatePath(`/admin/apps/${id}`);
+  redirect(`/admin/apps/${id}?save=${publish?"published":"updated"}`);
 }
 
 class CatalogProposalReviewError extends Error {
@@ -510,8 +448,7 @@ export async function applyCatalogProposalChanges(formData: FormData) {
       const row = snapshot.data()!;
       const saved = { ...(row.record as AppRecord), researchStatus: row.publication_status as ResearchStatus };
       if (catalogRecordFingerprint(saved) !== savedFingerprint) throw new CatalogProposalReviewError("stale");
-      if (saved.researchStatus === "Reviewed") throw new CatalogProposalReviewError("reviewed");
-      const changes = catalogProposalChanges(saved, draft);
+      const changes = catalogEntryProposalChanges(saved, draft);
       const acceptedPaths = applyAll ? changes.map(change => change.path) : selected;
       if (!acceptedPaths.length || acceptedPaths.some(path => !changes.some(change => change.path === path)) ||
           new Set(acceptedPaths).size !== acceptedPaths.length) throw new CatalogProposalReviewError("select");
@@ -519,7 +456,7 @@ export async function applyCatalogProposalChanges(formData: FormData) {
       if (!updated.name || !updated.type || !updated.description || !updated.bestFor ||
           !/^#[0-9a-fA-F]{6}$/.test(updated.color) ||
           !Number.isFinite(updated.monthlyPrice ?? 0) || (updated.monthlyPrice ?? 0) < 0 ||
-          JSON.stringify(updated).includes("\u2014")) throw new CatalogProposalReviewError("invalid");
+          false) throw new CatalogProposalReviewError("invalid");
       transaction.update(ref, { record: updated, name: updated.name, updated_by: user.userId, updated_at: Date.now() });
     });
   } catch (error) {

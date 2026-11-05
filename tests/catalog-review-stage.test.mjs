@@ -49,7 +49,7 @@ test("Aldo's local draft is complete while an older saved Candidate is not", () 
     },
   };
   assert.deepEqual(missingReviewProfileDetails(savedCandidate), [
-    "Identity, position, and description", "Platforms", "Pricing", "AI status", "Feature inventory", "Scores and training relationship",
+    "Identity, position, and description", "Platforms", "Pricing", "AI status", "Feature inventory",
   ]);
   const changes = catalogProposalChanges(savedCandidate, draft);
   const applied = applyCatalogProposal(savedCandidate, draft, changes.map(change => change.path));

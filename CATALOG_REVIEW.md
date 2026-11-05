@@ -1,5 +1,14 @@
 # Catalog review with the owner
 
+## Catalog editor simplification — November 5, 2026
+
+The owner approved replacing scoring inputs, coverage selection and editorial stages on catalog entry screens with factual editing. Save draft changes only the saved private entry. Update public listing validates identity, platforms, dated public sources and commercial disclosure, then atomically replaces only that entry in a new snapshot. Hide listing retains its saved history. Optional capabilities may remain unknown. Historical ratings, assessments and research stages are preserved privately and do not gate these actions. Existing legacy review/publishing utilities are retained for compatibility but are not the catalog editing workflow.
+
+Additional-feature editing covers nutrition, recovery, mindfulness, cardio, body composition and wearable integration. Preserve individual check dates, explicit unknowns, separate companion products, device/platform scope and paid-access limits. Saved owner edits take precedence over bundled research; ordinary saves do not silently copy provisional rating overlays. Stale forms are rejected transactionally. Proposed research changes show factual fields only and remain separate from public updates.
+
+Do not commit, push, deploy or monitor rollouts. Leave checked changes and intended new files visible in Android Studio for the owner.
+
+
 ## Current public boundary — November 4, 2026
 
 The owner clarified that Legit and Originality ratings must not be public, including historical expandable sections. Public pages and the catalog API no longer expose those ratings or offer scored editorial coverage. Historical rating data remains private and unchanged. Personalized preference Fit, sourced product information, and scoped firsthand observations remain. This instruction supersedes earlier transition language below that retained public ratings. No deployment-triggering push or rollout monitoring is part of this cleanup; hand off the verified local commit to the owner.

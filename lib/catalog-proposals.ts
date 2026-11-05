@@ -128,3 +128,8 @@ export function applyCatalogProposal(saved: AppRecord, draft: AppRecord, selecte
   ].includes(path))) next.originalityProfile.score = calculateOriginalityScore(next.originalityProfile);
   return next;
 }
+
+// Normal catalog editing accepts product facts, never retired rating or coverage fields.
+export function catalogEntryProposalChanges(saved:AppRecord,draft:AppRecord):CatalogProposalChange[] {
+ return catalogProposalChanges(saved,draft).filter(change=>! /^(legit(?:Assessment)?|originalityProfile)(\.|$)/.test(change.path)&&change.path!=="coverageMode");
+}
