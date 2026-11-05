@@ -1,5 +1,9 @@
 # Initial-v1 scoring rule
 
+## Current public boundary — November 4, 2026
+
+The owner clarified that Legit and Originality ratings must not be public, including historical expandable sections. Public pages and the catalog API no longer expose those ratings or offer scored editorial coverage. Historical rating data remains private and unchanged. Personalized preference Fit, sourced product information, and scoped firsthand observations remain. This instruction supersedes earlier transition language below that retained public ratings. No deployment-triggering push or rollout monitoring is part of this cleanup; hand off the verified local commit to the owner.
+
 ## Facts-first applicability — November 4, 2026
 
 The initial-v1 formula and saved/public scores are unchanged. This rubric applies to evidence-supported scored evaluations, not every factual profile. Do not backfill numbers, use zero as an unknown score, or require unpaid testing merely to satisfy the current schema. Unknown information is not failure. The ordinary-profile research allowance is zero to approximately ten minutes of firsthand owner verification; selected deeper editorial work remains separately bounded.

@@ -95,7 +95,7 @@ export function matchingFacts(app:AppRecord):AppRecord {
 }
 
 export function publicCatalogRecord(app:AppRecord):AppRecord {
-  if(!isFactual(app)) return app;
+  // Ratings are private historical data for every coverage mode.
   const result={...app,legit:null};
   delete result.legitAssessment;
   delete result.originalityProfile;

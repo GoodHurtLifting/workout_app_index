@@ -1,5 +1,9 @@
 # Catalog review with the owner
 
+## Current public boundary — November 4, 2026
+
+The owner clarified that Legit and Originality ratings must not be public, including historical expandable sections. Public pages and the catalog API no longer expose those ratings or offer scored editorial coverage. Historical rating data remains private and unchanged. Personalized preference Fit, sourced product information, and scoped firsthand observations remain. This instruction supersedes earlier transition language below that retained public ratings. No deployment-triggering push or rollout monitoring is part of this cleanup; hand off the verified local commit to the owner.
+
 ## Facts-first operating direction — November 4, 2026
 
 [WAI_BUSINESS_PLAN.md](WAI_BUSINESS_PLAN.md) governs the business direction. This dated section supersedes the ordinary deep-review requirement and paid editorial-priority offers below. Existing saved records, review rounds, decisions, public scores, and publication gates remain intact.

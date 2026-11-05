@@ -177,7 +177,7 @@ export default function WorkoutAppIndex({initialApps,initialView="home",initialF
               Google AdSense may show clearly labeled ads on selected pages to
               help keep the site free. Google and its partners may use cookies
               or similar technologies for ad delivery and measurement. Ads do
-              not influence app scores, rankings, or inclusion. Where required,
+              not influence recommendations, matching, or inclusion. Where required,
               an advertising consent message lets you manage those choices.
             </p>
             <h2>Submissions and private inquiries</h2>

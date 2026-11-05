@@ -663,7 +663,7 @@ export async function restoreCatalogListing(formData:FormData){
   if(!withdrawal?.active) redirect(`/admin/apps/${id}?visibility=visible`);
   const published=(await getLatestPublishedCatalog())?.find(app=>app.id===id&&app.researchStatus==="Reviewed");
   const saved=await getAdminFirestore().collection("catalogApps").doc(id).get();
-  if(!published||!saved.exists||saved.data()?.publication_status!=="Reviewed"||catalogRecordFingerprint(publicCatalogRecord(saved.data()?.record as AppRecord))!==catalogRecordFingerprint(published)) throw new Error("Review and publish the current card before restoring this listing");
+  if(!published||!saved.exists||saved.data()?.publication_status!=="Reviewed"||catalogRecordFingerprint(publicCatalogRecord(saved.data()?.record as AppRecord))!==catalogRecordFingerprint(publicCatalogRecord(published))) throw new Error("Review and publish the current card before restoring this listing");
   await saveCatalogWithdrawal(id,{active:false,reason:withdrawal.reason,updated_at:Date.now(),updated_by:user.userId});
   updateTag("public-catalog-visibility");
   revalidatePath("/");revalidatePath(`/apps/${id}`);revalidatePath("/sitemap.xml");revalidatePath("/admin");

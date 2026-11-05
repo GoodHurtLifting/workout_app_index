@@ -19,7 +19,8 @@ test("sourced factual profiles with explicit unknowns need no editorial score",(
   assert.equal(record.legit,null);
   assert.deepEqual(missingReviewProfileDetails(record),[]);
   const legacy=apps[0];
-  assert.equal(publicCatalogRecord(legacy),legacy);
+  assert.equal(publicCatalogRecord(legacy).legit,null);
+  assert.equal(publicCatalogRecord(legacy).id,legacy.id);
   assert.equal(getOriginalityProfile(legacy).score,getOriginalityProfile({...legacy}).score);
 });
 
@@ -109,4 +110,15 @@ test("explicit null facts on a scored record are uncertainty rather than negativ
   const record={...apps[0],coverageMode:"scored",deliversCompleteProgram:null,hasUsableFreeTier:null};
   assert.match(exclusionReasons(record,{job:"Give me a complete program"})[0],/not established/);
   assert.match(exclusionReasons(record,{budget:"Free only"})[0],/not established/);
+});
+
+test("public catalog removes historical ratings from every coverage mode without changing private records or matching",()=>{
+ for(const coverageMode of [undefined,"scored","factual"]){
+  const record={...structuredClone(apps[0]),...(coverageMode?{coverageMode}:{}),legit:93,legitAssessment:withPrivateLegacyScoreDraft(apps[0],apps[0]).legitAssessment,originalityProfile:getOriginalityProfile(apps[0])};
+  const before=catalogRecordFingerprint(record);const published=publicCatalogRecord(record);
+  assert.equal(published.legit,null);assert.equal("legitAssessment" in published,false);assert.equal("originalityProfile" in published,false);
+  assert.equal(catalogRecordFingerprint(record),before);assert.equal(record.legit,93);
+  assert.equal(fitScore(published,{platform:"Android",priority:"Fast logging"}),fitScore(record,{platform:"Android",priority:"Fast logging"}));
+  assert.equal(catalogRecordFingerprint(publicCatalogRecord(published)),catalogRecordFingerprint(published));
+ }
 });

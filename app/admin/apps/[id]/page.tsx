@@ -57,7 +57,7 @@ export default async function CatalogAppPage({params,searchParams}:{params:Promi
   const publicApp=publicCatalog.apps.find(item=>item.id===id);
   const withdrawal=await getCatalogWithdrawal(id);
   const publishedRecord=withdrawal?.active ? (await getLatestPublishedCatalog())?.find(item=>item.id===id&&item.researchStatus==="Reviewed") : null;
-  const canRestore=Boolean(publishedRecord&&savedRecord?.researchStatus==="Reviewed"&&catalogRecordFingerprint(publicCatalogRecord(savedRecord))===catalogRecordFingerprint(publishedRecord));
+  const canRestore=Boolean(publishedRecord&&savedRecord?.researchStatus==="Reviewed"&&catalogRecordFingerprint(publicCatalogRecord(savedRecord))===catalogRecordFingerprint(publicCatalogRecord(publishedRecord)));
   const draftMatchesPublic=publicApp ? catalogRecordFingerprint(publicApp)===catalogRecordFingerprint(publicCatalogRecord(app)) : false;
   const missingProfile=missingReviewProfileDetails(checklistRecord);
   const checks=isFactual(checklistRecord) ? [

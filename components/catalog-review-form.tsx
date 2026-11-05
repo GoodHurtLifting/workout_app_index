@@ -32,8 +32,8 @@ export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; s
     <input type="hidden" name="id" value={app.id} />
     <p className="editor-help">Save your changes as a draft. They do not change the public profile until a reviewed catalog is published.</p>
     <section><h2>Coverage and disclosure</h2>
-      <label>Coverage mode<select name="coverageMode" value={mode} onChange={event=>setMode(event.target.value as "factual" | "scored")}><option value="scored">Scored editorial profile</option><option value="factual">Factual profile without ratings</option></select></label>
-      <p className="editor-help">Changing coverage saves a private draft only. Existing scores are retained internally when choosing factual coverage, but are hidden from public factual profiles. A new scored assessment needs supported scores and the normal owner gates.</p>
+      <label>Coverage mode<select name="coverageMode" value={mode} onChange={event=>setMode(event.target.value as "factual" | "scored")}><option value="scored">Historical editorial record (private ratings)</option><option value="factual">Factual profile without ratings</option></select></label>
+      <p className="editor-help">Changing coverage saves a private draft only. Historical ratings remain private in either coverage mode. Public profiles contain product facts and scoped observations, not editorial ratings.</p>
       <label>Commercial relationship<select name="disclosureStatus" defaultValue={app.commercialDisclosure?.status ?? "not-established"}><option value="not-established">Not established yet</option><option value="none">No material commercial relationship</option><option value="material">Material relationship, disclosed below</option></select></label>
       <label>Public disclosure<textarea name="disclosureStatement" defaultValue={app.commercialDisclosure?.statement ?? ""} rows={3}/></label>
     </section>
@@ -93,7 +93,7 @@ export function CatalogReviewForm({ app, savedFingerprint }: { app: AppRecord; s
       <label>Probably not your fit<textarea name="notFor" defaultValue={relationship.notFor} rows={3} required={!factual} /></label>
     </section>
     <fieldset disabled={factual} hidden={factual}>
-      <h2>Scores and originality</h2>
+      <h2>Private historical ratings</h2>
       <p className="editor-help">These are WAI editorial judgments. Check the supporting evidence and rationale before approval. Initial-v1 assessments use five equally weighted criteria; legacy entries still need reassessment.</p>
       <div className="form-grid">
         {app.legitAssessment ? <label>Provisional Legit Score<output>{calculateLegitScore(app.legitAssessment)}/100 (calculated from the five criteria below)</output></label> : <ScoreField label="Legit Score" name="legit" value={app.legit} />}

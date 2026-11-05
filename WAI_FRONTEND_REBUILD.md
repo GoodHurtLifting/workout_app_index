@@ -1,5 +1,9 @@
 # Public-site rebuild — November 4, 2026
 
+## Current public boundary — November 4, 2026
+
+The owner clarified that Legit and Originality ratings must not be public, including historical expandable sections. Public pages and the catalog API no longer expose those ratings or offer scored editorial coverage. Historical rating data remains private and unchanged. Personalized preference Fit, sourced product information, and scoped firsthand observations remain. This instruction supersedes earlier transition language below that retained public ratings. No deployment-triggering push or rollout monitoring is part of this cleanup; hand off the verified local commit to the owner.
+
 The business pivot is now reflected in the main consumer experience, not just the services pages or private schema. Existing app records, rating values, Firebase projects, and publications are unchanged.
 
 - `/`: facts-first introduction, working catalog search, account-free finder entry, alphabetically selected example profiles, correctly wired need-based category links, research explanation, and a secondary services link. Removed the score-led carousel, arbitrary technical spectrum, score-count promotion, and invented feature-count headline.

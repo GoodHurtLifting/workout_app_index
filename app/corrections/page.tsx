@@ -26,7 +26,7 @@ export default function CorrectionsPage() {
         <p>
           Factual corrections are free and may be sent at any time. We check
           the evidence before changing a profile. Correcting a fact does not
-          automatically change a score or reopen the full evaluation. If a
+          automatically schedule another hands-on evaluation. If a
           product has changed materially, tell us what changed and when; a
           request does not guarantee immediate retesting or publication.
         </p>

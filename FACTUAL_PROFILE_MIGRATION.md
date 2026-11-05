@@ -1,5 +1,9 @@
 # Factual-profile migration — November 4, 2026
 
+## Current public boundary — November 4, 2026
+
+The owner clarified that Legit and Originality ratings must not be public, including historical expandable sections. Public pages and the catalog API no longer expose those ratings or offer scored editorial coverage. Historical rating data remains private and unchanged. Personalized preference Fit, sourced product information, and scoped firsthand observations remain. This instruction supersedes earlier transition language below that retained public ratings. No deployment-triggering push or rollout monitoring is part of this cleanup; hand off the verified local commit to the owner.
+
 Ryan approved implementation after the commercial foundation and removal of Distinctive experience. This is an additive code migration in the existing repository and Firebase project. No live record, score, review status, publication snapshot, withdrawal, or developer correspondence is changed by this work. There is no bulk data migration script. Deployment and catalog publication remain unauthorized.
 
 ## Coverage and compatibility
