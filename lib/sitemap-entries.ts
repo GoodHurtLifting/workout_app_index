@@ -8,7 +8,7 @@ const informationPaths = ["how-we-score", "editorial-standards", "corrections", 
 export function validSitemapDate(value: unknown): string | undefined {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined;
   const date = new Date(`${value}T00:00:00.000Z`);
-  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value && value <= new Date().toISOString().slice(0, 10)
     ? value
     : undefined;
 }
@@ -21,13 +21,16 @@ export function buildSitemapEntries(apps: AppRecord[]): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.4,
     })),
-    ...apps.map((app) => ({
-      url: `${baseUrl}/apps/${app.id}`,
-      ...(app.researchStatus === "Reviewed" && validSitemapDate(isFactual(app) ? latestFactDate(app) : app.legitAssessment?.checkedAt)
-        ? { lastModified: validSitemapDate(isFactual(app) ? latestFactDate(app) : app.legitAssessment?.checkedAt) }
-        : {}),
-      changeFrequency: "monthly" as const,
-      priority: 0.8,
-    })),
+    ...apps.filter((app, index) => /^[a-z0-9][a-z0-9-]{0,79}$/.test(app.id) && apps.findIndex(candidate => candidate.id === app.id) === index).map((app) => {
+      const lastModified = isFactual(app) && app.researchStatus === "Reviewed"
+        ? validSitemapDate(latestFactDate(app))
+        : undefined;
+      return {
+        url: `${baseUrl}/apps/${app.id}`,
+        ...(lastModified ? { lastModified } : {}),
+        changeFrequency: "monthly" as const,
+        priority: 0.8,
+      };
+    }),
   ];
 }

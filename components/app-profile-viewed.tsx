@@ -3,14 +3,17 @@
 import { useEffect, useRef } from "react";
 import { trackEvent } from "@/lib/analytics";
 
+import { searchAttribution, markSearchProfileViewed } from "@/lib/catalog-search-analytics";
+
 export function AppProfileViewed({ appSlug }: { appSlug: string }) {
   const sentFor = useRef<string | null>(null);
 
   useEffect(() => {
     const recordView = () => {
       if (sentFor.current === appSlug) return;
-      if (trackEvent("app_profile_viewed", { app_slug: appSlug })) {
+      if (trackEvent("app_profile_viewed", { app_slug: appSlug, ...searchAttribution(appSlug, "profile") })) {
         sentFor.current = appSlug;
+        markSearchProfileViewed(appSlug);
       }
     };
     window.addEventListener("wai:analytics-ready", recordView);

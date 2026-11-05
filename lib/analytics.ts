@@ -11,7 +11,18 @@ declare global {
 }
 
 export function isPublicAnalyticsPath(pathname: string) {
-  return pathname !== "/admin" && !pathname.startsWith("/admin/");
+  return !["/admin", "/api", "/preview"].some(path => pathname === path || pathname.startsWith(`${path}/`));
+}
+
+// Public route vocabulary only; unknown paths must not leak arbitrary identifiers.
+export function publicAnalyticsPagePath(pathname: string) {
+  if (/^\/apps\/[a-z0-9][a-z0-9-]{0,79}$/.test(pathname)) return pathname;
+  return ["/", "/apps", "/find", "/services", "/partnerships", "/submit-app", "/corrections", "/editorial-standards", "/how-we-score"].includes(pathname) ? pathname : undefined;
+}
+
+export function analyticsConsentGranted() {
+  if (typeof window === "undefined" || !isPublicAnalyticsPath(window.location.pathname)) return false;
+  try { return window.localStorage.getItem("wai-analytics-consent") === "granted"; } catch { return false; }
 }
 
 export function trackEvent(
@@ -21,7 +32,12 @@ export function trackEvent(
   if (typeof window === "undefined" || !isPublicAnalyticsPath(window.location.pathname)) return false;
   try {
     if (window.localStorage.getItem("wai-analytics-consent") !== "granted" || !window.gtag) return false;
-    window.gtag("event", name, parameters);
+    const pagePath = publicAnalyticsPagePath(window.location.pathname);
+    if (!pagePath) return false;
+    window.gtag("event", name, { ...parameters,
+      // Override automatic full-URL context for custom events. Commercial fixed paths remain compatible.
+      page_location: parameters.page_location ?? pagePath, page_referrer: "",
+      measurement_version: "facts-1", page_path: pagePath });
     return true;
   } catch {
     // Analytics must never interrupt a form submission or outbound navigation.

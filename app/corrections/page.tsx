@@ -1,3 +1,4 @@
+import { publicOpenGraph } from "@/lib/seo";
 import type { Metadata } from "next";
 import { EditorialRequestForm } from "@/components/editorial-request-form";
 import { PublicInformationLayout } from "@/components/public-information-layout";
@@ -8,6 +9,9 @@ export const metadata: Metadata = {
     "Send a sourced correction for a Workout App Index app profile or editorial page.",
   alternates: { canonical: "/corrections" },
 };
+
+// Keep social previews aligned with this page canonical.
+metadata.openGraph = publicOpenGraph(String(metadata.title), String(metadata.description), "/corrections");
 
 export default function CorrectionsPage() {
   return (

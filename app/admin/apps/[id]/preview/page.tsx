@@ -28,6 +28,6 @@ export default async function CatalogDraftPreview({ params }: { params: Promise<
 
   return <>
     <div className="admin-preview-banner"><strong>Private draft preview</strong><span>This shows saved draft facts, not unsaved form edits. It does not change the public listing.</span><Link href={"/admin/apps/" + id}>Back to editor</Link></div>
-    <AppProfileContent app={app} apps={apps} publicEvidence={publicEvidence} />
+    <AppProfileContent includeStructuredData={false} app={app} apps={apps} publicEvidence={publicEvidence} />
   </>;
 }

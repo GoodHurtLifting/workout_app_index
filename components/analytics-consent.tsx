@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { isPublicAnalyticsPath } from "@/lib/analytics";
 
+import { clearSearchAttribution } from "@/lib/catalog-search-analytics";
+
 const STORAGE_KEY = "wai-analytics-consent";
 type ConsentChoice = "granted" | "denied" | null;
 
@@ -16,7 +18,8 @@ export function AnalyticsConsent() {
 
   useEffect(() => {
     const restoreChoice = window.setTimeout(() => {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
+      let stored: string | null = null;
+      try { stored = window.localStorage.getItem(STORAGE_KEY); } catch { /* Fail closed. */ }
       setChoice(stored === "granted" || stored === "denied" ? stored : null);
       setReady(true);
     }, 0);
@@ -33,11 +36,25 @@ export function AnalyticsConsent() {
   }, []);
 
   const choose = (nextChoice: Exclude<ConsentChoice, null>) => {
-    const wasGranted = window.localStorage.getItem(STORAGE_KEY) === "granted";
-    window.localStorage.setItem(STORAGE_KEY, nextChoice);
-    window.gtag?.("consent", "update", {
-      analytics_storage: nextChoice,
-    });
+    let wasGranted = false;
+    try {
+      wasGranted = window.localStorage.getItem(STORAGE_KEY) === "granted";
+      window.localStorage.setItem(STORAGE_KEY, nextChoice);
+    } catch {
+      if (measurementId) (window as unknown as Record<string, unknown>)[`ga-disable-${measurementId}`] = true;
+      setChoice("denied");
+      clearSearchAttribution();
+      window.dispatchEvent(new Event("wai:analytics-revoked"));
+      try { window.gtag?.("consent", "update", { analytics_storage: "denied" }); } catch { /* The preference still applies. */ }
+      if (wasGranted) window.location.reload();
+      return;
+    }
+    if (measurementId) (window as unknown as Record<string, unknown>)[`ga-disable-${measurementId}`] = nextChoice === "denied";
+    if (nextChoice === "denied") {
+      clearSearchAttribution();
+      window.dispatchEvent(new Event("wai:analytics-revoked"));
+    }
+    try { window.gtag?.("consent", "update", { analytics_storage: nextChoice }); } catch { /* The preference still applies. */ }
     setChoice(nextChoice);
     if (wasGranted && nextChoice === "denied") window.location.reload();
   };
@@ -58,7 +75,9 @@ export function AnalyticsConsent() {
   const disableKey = 'ga-disable-${measurementId}';
   const setRouteGate = (url) => {
     const path = new URL(url || window.location.href, window.location.href).pathname;
-    window[disableKey] = path === '/admin' || path.startsWith('/admin/');
+    let consentGranted = false;
+    try { consentGranted = window.localStorage.getItem('wai-analytics-consent') === 'granted'; } catch {}
+    window[disableKey] = !consentGranted || ['/admin', '/api', '/preview'].some(prefix => path === prefix || path.startsWith(prefix + '/'));
   };
   setRouteGate();
   for (const method of ['pushState', 'replaceState']) {

@@ -1,3 +1,4 @@
+import { publicOpenGraph } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EditorialRequestForm } from "@/components/editorial-request-form";
@@ -9,6 +10,9 @@ export const metadata: Metadata = {
     "Submit a publicly available fitness app for editorial consideration by Workout App Index.",
   alternates: { canonical: "/submit-app" },
 };
+
+// Keep social previews aligned with this page canonical.
+metadata.openGraph = publicOpenGraph(String(metadata.title), String(metadata.description), "/submit-app");
 
 export default function SubmitAppPage() {
   return (

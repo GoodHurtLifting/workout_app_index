@@ -1,8 +1,12 @@
+import { publicOpenGraph } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { fitMethodologyVersion } from "@/lib/matching";
 import { PublicInformationLayout } from "@/components/public-information-layout";
 export const metadata:Metadata={title:"How Matching & Research Work | Workout App Index",description:"How WAI uses sourced product facts and your preferences to match workout apps, handles unknowns, and separates firsthand editorial coverage.",alternates:{canonical:"/how-we-score"}};
+// Keep social previews aligned with this page canonical.
+metadata.openGraph = publicOpenGraph(String(metadata.title), String(metadata.description), "/how-we-score");
+
 export default function MatchingMethodology(){return <PublicInformationLayout eyebrow="FACTS, FIT, AND FIRSTHAND EXPERIENCE" title="How matching works" introduction="A useful shortlist starts with what you need and what the product can support. A match percentage is not an overall quality rating.">
   <section><h2>Start with product facts</h2><p>We research official websites, current regional app-store listings, pricing and trial terms, privacy documents, and product help. Ordinary factual profiles do not require an exhaustive hands-on review or developer participation. When opening the app would clarify something useful, ordinary owner verification is zero to approximately ten minutes.</p><p>Profiles explain what an app offers, what it costs, what is free, where it runs, how it uses AI, and <strong>how this app expects you to train</strong>. Important facts retain their sources and check dates when recorded. Older references without recorded verification dates are identified as such.</p></section>
   <section><h2>Nine questions, one training relationship</h2><p>The <Link href="/find">finder</Link> asks about your platform, main goal, experience, preferred training approach, equipment, feature priority, optional adjacent features, comfort with AI, and budget.</p><p>The training-approach question covers both the job you want done and how much planning you want to own. You do not need to answer two versions of the same question. You can skip an answer when you are unsure.</p></section>

@@ -1,3 +1,4 @@
+import { publicOpenGraph } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicInformationLayout } from "@/components/public-information-layout";
@@ -8,6 +9,9 @@ export const metadata: Metadata = {
   description: "Discuss disclosed sponsorships, affiliate and referral arrangements, and factual fitness-software market research with WAI.",
   alternates: { canonical: "/partnerships" },
 };
+
+// Keep social previews aligned with this page canonical.
+metadata.openGraph = publicOpenGraph(String(metadata.title), String(metadata.description), "/partnerships");
 
 export default function PartnershipsPage() {
   return <PublicInformationLayout eyebrow="WORK WITH WAI" title="Commercial partnerships" introduction="Explore useful, clearly disclosed commercial work while keeping product research and recommendations independent.">

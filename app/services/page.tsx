@@ -1,3 +1,4 @@
+import { publicOpenGraph } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicInformationLayout } from "@/components/public-information-layout";
@@ -9,6 +10,9 @@ export const metadata: Metadata = {
   description: "Bounded private human testing and competitive product research for fitness software. Agree a scope before payment.",
   alternates: { canonical: "/services" },
 };
+
+// Keep social previews aligned with this page canonical.
+metadata.openGraph = publicOpenGraph(String(metadata.title), String(metadata.description), "/services");
 
 export default function ServicesPage() {
   return <PublicInformationLayout eyebrow="PRIVATE PRODUCT RESEARCH" title="Testing & Research Services" introduction="Understand where people encounter friction, how your product compares, and which questions need closer investigation.">

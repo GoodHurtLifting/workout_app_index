@@ -1,7 +1,11 @@
+import { publicOpenGraph } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicInformationLayout } from "@/components/public-information-layout";
 export const metadata:Metadata={title:"Research & Editorial Standards | Workout App Index",description:"How Workout App Index sources product facts, distinguishes firsthand observations from publisher claims, handles unknowns, and keeps commercial work separate.",alternates:{canonical:"/editorial-standards"}};
+// Keep social previews aligned with this page canonical.
+metadata.openGraph = publicOpenGraph(String(metadata.title), String(metadata.description), "/editorial-standards");
+
 export default function EditorialStandardsPage(){return <PublicInformationLayout eyebrow="OUR RESEARCH STANDARDS" title="Facts you can check" introduction="Understand what an app offers, where the information came from, and what remains unknown.">
   <section><h2>What a profile explains</h2><p>We research pricing, free access, trials, supported platforms, AI use, equipment, features, and how an app expects you to train. The goal is to help you compare products against your needs. We do not publish numerical quality or originality ratings.</p><p>A factual listing does not mean WAI has tested every feature or completed a hands-on review. A longer feature list is not automatically a better match.</p></section>
   <section><h2>Sources and verification dates</h2><p>Research starts with official websites, regional app-store listings, pricing pages, privacy documents, and product help. Important claims identify their source, check date, and relevant platform, country, version, or access tier when recorded.</p><p>We do not present an old reference as a newly checked source. When a verification date is missing, the profile says so. Products and offers can change between checks.</p></section>

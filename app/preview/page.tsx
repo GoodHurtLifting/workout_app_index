@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import WorkoutAppIndex from "@/components/workout-app-index";
 import { getPublicCatalog } from "@/lib/catalog-repository";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export const dynamic = "force-dynamic";
 

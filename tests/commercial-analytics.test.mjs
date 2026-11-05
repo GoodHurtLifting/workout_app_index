@@ -22,8 +22,8 @@ test("only confirmed saved inquiries count as commercial submissions", () => {
   trackCommercialSubmission("service", 201, true);
   trackCommercialSubmission("partnership", 201, true);
   assert.deepEqual(events, [
-    ["event", "scope_request_submitted", { page_location: "/services", page_referrer: "" }],
-    ["event", "partnership_inquiry_submitted", { page_location: "/partnerships", page_referrer: "" }],
+    ["event", "scope_request_submitted", { page_location: "/services", page_referrer: "", measurement_version: "facts-1", page_path: "/services" }],
+    ["event", "partnership_inquiry_submitted", { page_location: "/partnerships", page_referrer: "", measurement_version: "facts-1", page_path: "/services" }],
   ]);
   assert.equal(JSON.stringify(events).includes("private@example.test"), false);
 });
@@ -48,5 +48,5 @@ test("confirmed completion can wait for tag readiness without duplicating on rep
   window.gtag = (...args) => events.push(args);
   window.dispatchEvent(new Event("wai:analytics-ready"));
   window.dispatchEvent(new Event("wai:analytics-ready"));
-  assert.deepEqual(events, [["event", "scope_request_submitted", { page_location: "/services", page_referrer: "" }]]);
+  assert.deepEqual(events, [["event", "scope_request_submitted", { page_location: "/services", page_referrer: "", measurement_version: "facts-1", page_path: "/services" }]]);
 });

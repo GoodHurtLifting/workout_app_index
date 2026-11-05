@@ -2,21 +2,23 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { buildSitemapEntries, validSitemapDate } from "../lib/sitemap-entries.ts";
 
-test("sitemap dates are stable and use only valid reviewed assessment dates", () => {
-  const reviewed = { id: "reviewed", researchStatus: "Reviewed", legitAssessment: { checkedAt: "2026-10-22" } };
-  const preliminary = { id: "preliminary", researchStatus: "Researching", legitAssessment: { checkedAt: "2026-10-23" } };
-  const invalid = { id: "invalid", researchStatus: "Reviewed", legitAssessment: { checkedAt: "2026-02-30" } };
-  const first = buildSitemapEntries([reviewed, preliminary, invalid]);
-  const second = buildSitemapEntries([reviewed, preliminary, invalid]);
-  assert.deepEqual(second, first);
-  assert.equal(first.find(entry => entry.url.endsWith("/reviewed"))?.lastModified, "2026-10-22");
-  assert.equal(first.find(entry => entry.url.endsWith("/preliminary"))?.lastModified, undefined);
-  assert.equal(first.find(entry => entry.url.endsWith("/invalid"))?.lastModified, undefined);
-  assert.ok(first.filter(entry => !entry.url.includes("/apps/")).every(entry => entry.lastModified === undefined));
+test("public sitemap dates come from current facts, never historical scores or request time",()=>{
+  const factual={id:"factual",coverageMode:"factual",researchStatus:"Reviewed",platforms:["Android"],factClaims:[{field:"platforms",value:["Android"],checkedAt:"2026-10-22"}]};
+  const legacy={id:"legacy",researchStatus:"Reviewed",legitAssessment:{checkedAt:"2026-10-23"}};
+  const stale={...factual,id:"stale",platforms:["iOS"]};
+  const unreviewed={...factual,id:"unreviewed",researchStatus:"Researching"};
+  const first=buildSitemapEntries([factual,legacy,stale,unreviewed]);
+  assert.deepEqual(buildSitemapEntries([factual,legacy,stale,unreviewed]),first);
+  assert.equal(first.find(row=>row.url.endsWith("/factual")).lastModified,"2026-10-22");
+  assert.equal(first.find(row=>row.url.endsWith("/legacy")).lastModified,undefined);
+  assert.equal(first.find(row=>row.url.endsWith("/stale")).lastModified,undefined);
+  assert.equal(first.find(row=>row.url.endsWith("/unreviewed")).lastModified,undefined);
+  assert.ok(first.filter(row=>!row.url.includes("/apps/")).every(row=>row.lastModified===undefined));
 });
-
-test("invalid or imprecise assessment dates are omitted", () => {
-  for (const value of ["2026-02-30", "2026-1-2", "2026-10-22T00:00:00Z", "not a date", null]) {
-    assert.equal(validSitemapDate(value), undefined);
-  }
+test("sitemap rejects malformed/future dates, unsafe slugs and duplicate URLs",()=>{
+  for(const date of ["2026-02-30","2026-1-2","2026-10-22T00:00:00Z","9999-01-01",null]) assert.equal(validSitemapDate(date),undefined);
+  const rows=buildSitemapEntries([{id:"hevy"},{id:"hevy"},{id:"../admin"},{id:"hevy?q=x"}]);
+  assert.equal(rows.filter(row=>row.url.includes("/apps/")).length,1);
+  assert.ok(rows.every(row=>!/[?#]/.test(row.url)));
+  assert.ok(rows.every(row=>!row.url.includes("/admin")&&!row.url.includes("/preview")));
 });

@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin/", "/api/", "/preview"],
+      disallow: ["/admin", "/admin/", "/api/", "/preview"],
     },
     sitemap: "https://workoutappindex.com/sitemap.xml",
     host: "https://workoutappindex.com",

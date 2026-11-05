@@ -2,6 +2,8 @@
 
 import { trackEvent } from "@/lib/analytics";
 
+import { searchAttribution } from "@/lib/catalog-search-analytics";
+
 export function OutboundAppButton({ destinationType, appSlug, url }: {
   destinationType: "store" | "official_site";
   appSlug: string;
@@ -12,6 +14,7 @@ export function OutboundAppButton({ destinationType, appSlug, url }: {
       destination_type: destinationType,
       placement: "profile",
       app_slug: appSlug,
+      ...searchAttribution(appSlug, "outbound"),
     });
     window.open(url, "_blank", "noopener,noreferrer");
   }}>{destinationType === "store" ? "Open app store" : "Visit official site"}</button>;

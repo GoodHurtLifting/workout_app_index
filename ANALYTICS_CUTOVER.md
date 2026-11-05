@@ -6,27 +6,9 @@ Production rollout `rollout-2026-10-15-001` succeeded at **2026-10-15 00:50:08 U
 
 Exclude `/admin` and every path beginning `/admin/` from all public-performance metrics, including historical periods. This reporting filter does not delete or change BigQuery rows. In Looker Studio, apply an exclude filter to the page-path dimension using `^/admin(?:/|$)` to every public-performance chart and scorecard. Check that the same filter is present on any newly copied chart.
 
-For BigQuery, derive `page_path` from the GA4 `page_location` event parameter, then use the following predicate in the public-performance view. The `IS NOT NULL` condition conservatively excludes events that cannot be assigned to a public path.
+For bounded, public-only aggregate queries use reporting/ga4_executive.sql and reporting/ga4_inventory.sql. They require explicit dates and the verified WAI web stream, exclude private paths, and never select individual identifiers. The former unbounded SELECT * example has been retired. Do not create or replace a production view without reviewing SQL, scan scope and destination and obtaining approval.
 
-```sql
-WITH classified AS (
-  SELECT
-    event_date,
-    event_name,
-    event_params,
-    REGEXP_EXTRACT(
-      (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'page_location'),
-      r'^https?://[^/]+([^?#]*)'
-    ) AS page_path
-  FROM `PROJECT.DATASET.events_*`
-)
-SELECT *
-FROM classified
-WHERE page_path IS NOT NULL
-  AND NOT REGEXP_CONTAINS(page_path, r'^/admin(?:/|$)');
-```
-
-Replace `PROJECT.DATASET` with the actual GA4 export dataset; do not run this as a table rewrite. Review whether all desired custom events carry `page_location` before making this the authoritative reporting view.
+The facts-1 additive event schema and new catalog search contract are in MEASUREMENT_SPEC.md. Its release timestamp remains pending. Historical app_profile_viewed rows retain their original meaning; the statement above about its sole custom parameter describes the 2026-10-15 implementation, before facts-1.
 
 ## Production checklist requiring owner approval
 
@@ -37,4 +19,4 @@ Replace `PROJECT.DATASET` with the actual GA4 export dataset; do not run this as
 
 ## Commercial foundation — pending manual validation, November 4, 2026
 
-No production cutover has occurred. New coarse funnel events are documented in FACTS_FIRST_IMPLEMENTATION.md. Completion requires HTTP 201 with ok true; email selections are separate from saved inquiries. All custom event parameters use fixed relative page paths and contain no contact data or full URLs. Consent, admin exclusion, and nonblocking behavior use existing helpers. Verify Enhanced Measurement Form interactions and Outbound clicks are disabled before release as already required by CATALOG_REVIEW.md; current console settings were not checked or changed. Automatic pageviews are separate from the new fixed-parameter custom events.
+Historical preparation note, not a verified current production status. The November 5 audit did not establish the commercial release timestamp. New coarse funnel events are documented in FACTS_FIRST_IMPLEMENTATION.md. Completion requires HTTP 201 with ok true; email selections are separate from saved inquiries. All custom event parameters use fixed relative page paths and contain no contact data or full URLs. Consent, admin exclusion, and nonblocking behavior use existing helpers. Verify Enhanced Measurement Form interactions and Outbound clicks are disabled before release as already required by CATALOG_REVIEW.md; current console settings were not checked or changed. Automatic pageviews are separate from the new fixed-parameter custom events.
