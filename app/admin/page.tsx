@@ -29,7 +29,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     <form action={createFactualCatalogDraft} className="submission-decision"><h2>Start a factual profile</h2><p>Research a public product without developer participation. This creates a private Candidate with unknown facts and no rating.</p><label>App name<input name="name" required maxLength={120}/></label><button type="submit">Create private factual draft</button></form>
     <nav className="admin-section-nav" aria-label="Dashboard sections">
       <a href="#editorial-inbox">Requests <span>{newRequests} unseen on this page</span></a>
-      <a href="#app-evaluations">App evaluations <span>{apps.length}</span></a>
+      <a href="#app-evaluations">Catalog entries <span>{apps.length} total · {listed} public · {apps.length-listed} not public</span></a>
       <a href="#publication-history">Publication history</a>
     </nav>
     <section className="editorial-inbox" id="editorial-inbox">

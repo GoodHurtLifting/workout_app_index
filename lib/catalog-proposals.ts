@@ -4,7 +4,7 @@ import { calculateLegitScore, calculateOriginalityScore, type AppRecord } from "
 type ProposalField = { path: string; label: string; group: string };
 
 const fields: ProposalField[] = [
-  ...[["coverageMode", "Coverage mode"], ["factClaims", "Dated factual claims"], ["commercialDisclosure", "Commercial relationship disclosure"]].map(([path,label])=>({path,label,group:"Facts-first coverage"})),
+  ...[["coverageMode", "Coverage mode"], ["factClaims", "Dated factual claims"], ["commercialDisclosure", "Commercial relationship disclosure"], ["adjacentFeatureEvidence", "Adjacent feature evidence"]].map(([path,label])=>({path,label,group:"Facts-first coverage"})),
   ...[
     ["name", "Name"], ["initials", "Logo initials"], ["color", "Logo color"],
     ["type", "Product type"], ["bestFor", "Best for"], ["description", "Description"],

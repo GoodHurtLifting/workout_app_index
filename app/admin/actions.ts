@@ -10,6 +10,7 @@ import { isFactual, publicCatalogRecord } from "@/lib/catalog-facts";
 import { fitMethodologyVersion } from "@/lib/matching";
 import { canStartAnotherReview, canTransition, monthKey, normalizeAppSubmissionStatus, publicationDecision, reviewOutcomes, serviceStages, type ReviewOutcome, type ServiceStage } from "@/lib/submission-workflow";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
+import { getCatalogEntryProposal } from "@/lib/catalog-maintenance-proposals";
 import { applyCatalogProposal, catalogEntryProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
 import { reviewStageProblem } from "@/lib/catalog-review-stage";
 import { missingReviewProfileDetails } from "@/lib/catalog-review-readiness";
@@ -432,11 +433,7 @@ export async function applyCatalogProposalChanges(formData: FormData) {
   const user = await getCatalogAdminForAction();
   const id = field(formData, "id");
   if (!/^[a-z0-9-]{1,80}$/.test(id)) throw new Error("Invalid catalog record");
-  const draft = catalogResearchDrafts[id];
   try {
-    if (!draft || field(formData, "proposalFingerprint") !== catalogRecordFingerprint(draft)) {
-      throw new CatalogProposalReviewError("stale");
-    }
     const selected = formData.getAll("fields").map(value => String(value));
     const applyAll = field(formData, "applyAll") === "yes";
     if (applyAll && !checked(formData, "confirmAll")) throw new CatalogProposalReviewError("select");
@@ -448,6 +445,8 @@ export async function applyCatalogProposalChanges(formData: FormData) {
       const row = snapshot.data()!;
       const saved = { ...(row.record as AppRecord), researchStatus: row.publication_status as ResearchStatus };
       if (catalogRecordFingerprint(saved) !== savedFingerprint) throw new CatalogProposalReviewError("stale");
+      const draft = getCatalogEntryProposal(saved, catalogResearchDrafts[id]);
+      if (!draft || field(formData, "proposalFingerprint") !== catalogRecordFingerprint(draft)) throw new CatalogProposalReviewError("stale");
       const changes = catalogEntryProposalChanges(saved, draft);
       const acceptedPaths = applyAll ? changes.map(change => change.path) : selected;
       if (!acceptedPaths.length || acceptedPaths.some(path => !changes.some(change => change.path === path)) ||

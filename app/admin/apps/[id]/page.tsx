@@ -5,7 +5,8 @@ import { getCatalogWithdrawal,getPublicCatalog,listEvidence } from "@/lib/catalo
 import { withdrawCatalogListing } from "../../actions";
 import { CatalogReviewForm } from "@/components/catalog-review-form";
 import { CatalogProposalReview } from "@/components/catalog-proposal-review";
-import { catalogRecordFingerprint } from "@/lib/catalog-proposals";
+import { getCatalogEntryProposal } from "@/lib/catalog-maintenance-proposals";
+import { catalogEntryProposalChanges, catalogRecordFingerprint } from "@/lib/catalog-proposals";
 import { apps as bundledApps,type AppRecord,type ResearchStatus } from "@/lib/catalog";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
 import { getAdminFirestore } from "@/lib/firebase-admin";
@@ -23,6 +24,7 @@ export default async function CatalogAppPage({params,searchParams}:{params:Promi
  const evidence=await listEvidence(id);const withdrawal=await getCatalogWithdrawal(id);const catalog=await getPublicCatalog();
  const publicApp=catalog.apps.find(item=>item.id===id);
  const matchesPublic=Boolean(publicApp&&catalogRecordFingerprint(publicCatalogRecord({...app,researchStatus:publicApp.researchStatus}))===catalogRecordFingerprint(publicApp));
+ const proposed=saved?getCatalogEntryProposal(saved,catalogResearchDrafts[id]):undefined;
  const fingerprint=saved?catalogRecordFingerprint(saved):"unsaved";
  const hasSource=hasCatalogPublicSource(app,evidence);
  const problems=catalogListingProblems(app,hasSource);
@@ -33,7 +35,7 @@ export default async function CatalogAppPage({params,searchParams}:{params:Promi
  {visibility==="withdrawn"?<p className="catalog-proposal-notice" role="status">Listing hidden. The entry and its history are preserved.</p>:null}
  {proposal?<p className="catalog-proposal-notice" role={proposal==="applied"?"status":"alert"}>{proposal==="applied"?"Selected factual updates saved to the draft. The public listing has not changed.":proposal==="stale"?"The proposal changed. Reload and compare the latest values.":"Select valid factual updates before applying the proposal."}</p>:null}
  {problems.length?<details className="entry-readiness"><summary>Before updating the public listing: {problems.length} item{problems.length===1?"":"s"} to complete</summary><ul>{problems.map(problem=><li key={problem}>{problem}</li>)}</ul><p>You can save a draft at any time. Unknown optional capabilities do not prevent listing.</p></details>:null}
- {saved&&catalogResearchDrafts[id]?<details className="entry-readiness"><summary>Proposed factual updates</summary><CatalogProposalReview saved={saved} proposed={catalogResearchDrafts[id]}/></details>:null}
+ {saved&&proposed&&catalogEntryProposalChanges(saved,proposed).length?<details className="entry-readiness"><summary>Proposed factual updates</summary><CatalogProposalReview saved={saved} proposed={proposed}/></details>:null}
  <CatalogReviewForm key={fingerprint} app={app} savedFingerprint={fingerprint} publiclyListed={Boolean(publicApp)} sourceLog={<details className="saved-source-log"><summary>Earlier attached sources ({evidence.length})</summary><div>{evidence.map(item=><article key={item.id}><strong>{item.source_type}</strong><small>Checked {new Date(item.checked_at).toLocaleDateString("en-US")} · {item.public?"Public source":"Private note"}</small><p>{item.claim_supported}</p>{item.url?<a href={item.url} target="_blank" rel="noreferrer">Open source ↗</a>:null}{item.internal_note?<p className="editor-help">{item.internal_note}</p>:null}</article>)}</div></details>}/>
  {publicApp?<details className="catalog-visibility-control"><summary>Hide this listing</summary><p>Remove this app from public profiles, matching and the sitemap. Its saved entry and history remain intact.</p><form action={withdrawCatalogListing}><input type="hidden" name="id" value={id}/><label>Internal reason<textarea name="reason" required minLength={20} maxLength={500} rows={3}/></label><label><input type="checkbox" name="confirmWithdrawal" required/> Hide {app.name} from the public catalog.</label><button type="submit">Hide listing</button></form></details>:null}
  </main>;
