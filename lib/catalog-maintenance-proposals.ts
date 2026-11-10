@@ -4,9 +4,8 @@ import type { AdjacentFeatureAudit, AdjacentFeatureFinding } from "./adjacent-fe
 
 const checkedAt = "2026-11-10";
 const alphaGuide = "https://alphaprogression.com/en/blog/alpha-progression-guide";
+const alphaGlossary = "https://alphaprogression.com/en/glossary/alpha-progression";
 const alphaStore = "https://apps.apple.com/us/app/alpha-progression-gym-tracker/id1462277793";
-const gymsharkStore = "https://itunes.apple.com/lookup?id=1139151320&country=us";
-const gymsharkAvailability = "The former U.S. iOS listing is unavailable and a current Android listing could not be verified. Existing-install functionality has not been checked.";
 const alphaTraining: NonNullable<AppRecord["trainingRelationship"]> = {
   ...trainingRelationships["alpha-progression"],
   planningStyle: "Build it yourself",
@@ -84,9 +83,9 @@ const alphaAudit: AdjacentFeatureAudit = {
   ownerEdited: true,
   checkedAt,
   reviewScope: "Public product documentation. Health-platform syncing and a dedicated watch app are tracked separately.",
-  sourcesChecked: [alphaGuide],
+  sourcesChecked: [alphaGuide, alphaGlossary],
   features: {
-    Nutrition: { ...alphaFinding("Not available", "The publisher describes nutrition tracking as outside the app’s scope."), sourceUrls: ["https://alphaprogression.com/en/glossary/alpha-progression"] },
+    Nutrition: { ...alphaFinding("Not available", "The publisher describes nutrition tracking as outside the app’s scope."), sourceUrls: [alphaGlossary] },
     Recovery: alphaFinding("Not established", "The guide describes progression and training adjustments. Dedicated recovery tracking or coaching is not established."),
     Mindfulness: alphaFinding("Not established", "No mindfulness feature was identified in the product guide."),
     Cardio: alphaFinding("Documented", "Cardio exercises are included in the exercise library. Endurance coaching is outside the stated product scope."),
@@ -97,44 +96,81 @@ const alphaAudit: AdjacentFeatureAudit = {
 
 export function getCatalogEntryProposal(saved: AppRecord, researchDraft?: AppRecord): AppRecord | undefined {
   const price = Object.hasOwn(pricing, saved.id) ? pricing[saved.id] : undefined;
-  const gymshark = saved.id === "gymshark-training";
+  if (saved.id === "gymshark-training") return researchDraft;
   const alpha = saved.id === "alpha-progression";
   // Carry forward explicit per-app guidance, never the generic rendering fallback.
-  const bundledTraining = !gymshark && !saved.trainingRelationship && isLegacyPublicApp(saved.id)
+  const bundledTraining = !saved.trainingRelationship && isLegacyPublicApp(saved.id)
     ? trainingRelationships[saved.id]
     : undefined;
   const missingDisclosure = !saved.commercialDisclosure || saved.commercialDisclosure.status === "not-established";
   const addDisclosure = missingDisclosure && saved.id !== "lift-league" && (isLegacyPublicApp(saved.id) || saved.id === "aldo-coach");
-  if (!researchDraft && !price && !gymshark && !addDisclosure && !bundledTraining) return undefined;
+  if (!researchDraft && !price && !addDisclosure && !bundledTraining) return undefined;
 
   const proposed = { ...(researchDraft ?? saved) };
   const claims: FactClaim[] = [];
+  const savedClaims = saved.factClaims ?? [];
+  const hasClaim = (field: string) => savedClaims.some(claim => claim.field === field);
   if (addDisclosure) proposed.commercialDisclosure = { status: "none", statement: "" };
+  else if (saved.commercialDisclosure) proposed.commercialDisclosure = saved.commercialDisclosure;
+
   if (price) {
-    proposed.price = price.price;
-    proposed.monthlyPrice = price.monthlyPrice;
-    proposed.supportsOneTimePurchase = price.oneTime;
-    claims.push(
-      { field: "pricing", status: "App-store documented", value: { price: price.price, monthlyPrice: price.monthlyPrice }, statement: price.price, url: price.url, checkedAt, context: price.context },
-      { field: "supportsOneTimePurchase", status: price.oneTimeSource ? "Officially documented" : "App-store documented", value: price.oneTime, statement: price.oneTime ? "Marketplace programs can be purchased once. Athlete Pro is a separate subscription." : "No qualifying one-time unlock was identified in the checked listing.", url: price.oneTimeSource ?? price.url, checkedAt, context: price.context },
-    );
+    const savedSummary = saved.price?.trim();
+    proposed.price = savedSummary && !["Not established", "Not verified"].includes(savedSummary)
+      ? saved.price
+      : price.price;
+    proposed.monthlyPrice = saved.monthlyPrice ?? price.monthlyPrice;
+    proposed.supportsOneTimePurchase = saved.supportsOneTimePurchase ?? price.oneTime;
+    if (!hasClaim("pricing") && proposed.monthlyPrice === price.monthlyPrice) {
+      claims.push({
+        field: "pricing", status: "App-store documented",
+        value: { price: proposed.price, monthlyPrice: proposed.monthlyPrice },
+        statement: price.price, url: price.url, checkedAt, context: price.context,
+      });
+    }
+    if (!hasClaim("supportsOneTimePurchase") && proposed.supportsOneTimePurchase === price.oneTime) {
+      claims.push({
+        field: "supportsOneTimePurchase", status: price.oneTimeSource ? "Officially documented" : "App-store documented",
+        value: price.oneTime,
+        statement: price.oneTime ? "Marketplace programs can be purchased once. Athlete Pro is a separate subscription." : "No qualifying one-time unlock was identified in the checked listing.",
+        url: price.oneTimeSource ?? price.url, checkedAt, context: price.context,
+      });
+    }
   }
+
   if (bundledTraining && !researchDraft?.trainingRelationship) proposed.trainingRelationship = bundledTraining;
-  if (alpha) {
+  if (alpha && !saved.trainingRelationship) {
     proposed.trainingRelationship = alphaTraining;
-    proposed.adjacentFeatureEvidence = alphaAudit;
-    claims.push({ field: "trainingRelationship", status: "Officially documented", value: alphaTraining, statement: "Manual planning and logging are free. Pro adds plan generation and progression guidance.", url: alphaGuide, checkedAt, context: "Publisher product guide, iOS and Android." });
+    if (!hasClaim("trainingRelationship")) {
+      claims.push({ field: "trainingRelationship", status: "Officially documented", value: alphaTraining, statement: "Manual planning and logging are free. Pro adds plan generation and progression guidance.", url: alphaGuide, checkedAt, context: "Publisher product guide, iOS and Android." });
+    }
   }
-  if (gymshark) {
-    proposed.caveat = gymsharkAvailability;
-    proposed.supportsOneTimePurchase = false;
-    claims.push({ field: "platforms", status: "Not established", value: saved.platforms, statement: gymsharkAvailability, url: gymsharkStore, checkedAt, context: "U.S. Apple lookup returned zero results. No current Android training-app listing was verified." });
+
+  if (alpha) {
+    const savedAudit = saved.adjacentFeatureEvidence;
+    if (!savedAudit) {
+      proposed.adjacentFeatureEvidence = alphaAudit;
+    } else {
+      const features = { ...savedAudit.features };
+      let added = false;
+      for (const feature of Object.keys(alphaAudit.features) as Array<keyof typeof features>) {
+        const finding = alphaAudit.features[feature];
+        if (!features[feature] || (features[feature].status === "Not established" && finding.status !== "Not established")) {
+          features[feature] = finding;
+          added = true;
+        }
+      }
+      if (added) proposed.adjacentFeatureEvidence = {
+        ...savedAudit,
+        ownerEdited: true,
+        features,
+        sourcesChecked: [...new Set([...savedAudit.sourcesChecked, ...Object.values(features).flatMap(finding => finding.sourceUrls)])],
+      };
+    }
   }
   if (claims.length) {
-    const refreshed = new Set(claims.map(claim => claim.field));
     const existing = new Map((proposed.factClaims ?? []).map(claim => [claim.field, claim]));
-    for (const claim of saved.factClaims ?? []) existing.set(claim.field, claim);
-    proposed.factClaims = [...existing.values()].filter(claim => !refreshed.has(claim.field)).concat(claims);
+    for (const claim of [...savedClaims, ...claims]) existing.set(claim.field, claim);
+    proposed.factClaims = [...existing.values()];
   }
   return proposed;
 }
