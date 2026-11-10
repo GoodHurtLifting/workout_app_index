@@ -3,11 +3,15 @@ import { ChevronRight, LogOut } from "lucide-react";
 import { serviceOffers, partnershipTopics } from "@/lib/commercial-inquiries";
 import { catalogVersion } from "@/lib/catalog";
 import { requireCatalogAdmin } from "@/lib/admin-auth";
-import { listCatalogRecords, listPublications, getPublicCatalog } from "@/lib/catalog-repository";
+import { listCatalogRecords, listPublications, getPublicCatalog, listAllEvidence, type EvidenceRow } from "@/lib/catalog-repository";
 import { getEditorialCapacity, listEditorialRequests } from "@/lib/editorial-requests";
 import { canStartAnotherReview, normalizeAppSubmissionStatus, serviceStageLabels, statusLabels } from "@/lib/submission-workflow";
 import { CopyResearchBrief } from "@/components/copy-research-brief";
 import { createFactualCatalogDraft, acceptAppSubmissionForResearch, changeSubmissionReviewStage, completeSubmissionScreening, deleteAppSubmission, importPreliminaryCatalog, markEditorialRequestSeen, recordDeveloperServiceStage, recordSubmissionDecision, startAnotherReviewRound, startSubmissionScreening } from "./actions";
+import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
+import { getCatalogEntryProposal } from "@/lib/catalog-maintenance-proposals";
+import { catalogEntryProposalChanges } from "@/lib/catalog-proposals";
+import { catalogListingProblems, hasCatalogPublicSource } from "@/lib/catalog-entry-editing";
 import "./admin.css";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +19,14 @@ export const dynamic = "force-dynamic";
 export default async function AdminPage({ searchParams }: { searchParams: Promise<{ cursor?: string; workflow?: string }> }) {
   const user = await requireCatalogAdmin("/admin");
   const { cursor, workflow } = await searchParams;
-  const apps = await listCatalogRecords();
+  const [catalogEntries, evidence] = await Promise.all([listCatalogRecords(), listAllEvidence()]);
+  const apps = catalogEntries.map(entry => entry.app);
+  const evidenceByApp = new Map<string, EvidenceRow[]>();
+  for (const source of evidence) {
+    const sources = evidenceByApp.get(source.app_id) ?? [];
+    sources.push(source);
+    evidenceByApp.set(source.app_id, sources);
+  }
   const publications = await listPublications();
   const { requests: editorialRequests, nextCursor } = await listEditorialRequests(cursor);
   const capacity = await getEditorialCapacity();
@@ -164,7 +175,27 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       <nav className="submission-pagination" aria-label="Submission pages"><Link href="/admin#editorial-inbox">Newest</Link>{nextCursor ? <Link href={`/admin?cursor=${nextCursor}#editorial-inbox`}>Older submissions →</Link> : null}</nav>
     </section>
     <div className="admin-stats"><article><span>{apps.length}</span><p>Catalog entries</p></article><article><span>{listed}</span><p>Public listings</p></article><article><span>{apps.length-listed}</span><p>Not public</p></article></div>
-    <div className="admin-work" id="app-evaluations"><div className="admin-list"><div className="admin-list-head"><h2>Catalog entries</h2><span>Listing</span></div>{apps.map(app=><Link className="admin-row" href={`/admin/apps/${app.id}`} key={app.id}><span className="app-logo" style={{background:app.color}}>{app.initials}</span><span><strong>{app.name}</strong><small>{app.type}</small></span><i className={publicIds.has(app.id)?"reviewed":"researching"}>{publicIds.has(app.id)?"Public":"Not public"}</i><ChevronRight/></Link>)}</div><aside><p className="eyebrow">CATALOG EDITING</p><h2>Facts first. Edit each listing.</h2><p>Open an entry to edit its facts, sources, features and disclosure. Save a private draft, update that public listing, or hide it. No quality score or editorial review stage is required.</p><p>Public updates check identity, platforms, dated sources and disclosure. Optional capabilities can remain unknown. Other listings stay as they are.</p></aside></div>
+    <div className="admin-work" id="app-evaluations"><div className="admin-list"><div className="admin-list-head"><h2>Catalog entries</h2><span>Listing</span></div>{catalogEntries.map(({ app, saved }) => {
+      const record = saved?.record ?? app;
+      const proposed = saved ? getCatalogEntryProposal(saved.record, catalogResearchDrafts[app.id]) : undefined;
+      const hasEdits = Boolean(proposed && catalogEntryProposalChanges(record, proposed).length);
+      const hasSource = hasCatalogPublicSource(record, evidenceByApp.get(app.id) ?? []);
+      const missingContent = catalogListingProblems(record, hasSource).length > 0
+        || !record.trainingRelationship
+        || record.trainingRelationship.planningStyle === "Not assessed";
+      const isPublic = publicIds.has(app.id);
+      return <Link className="admin-row" href={`/admin/apps/${app.id}`} key={app.id}>
+        <span className="app-logo" style={{background:app.color}}>{app.initials}</span>
+        <span><strong>{app.name}</strong><small>{app.type}</small></span>
+        <span className="catalog-row-status">
+          <i className={isPublic ? "reviewed" : "researching"}>{isPublic ? "Public" : "Not public"}</i>
+          {hasEdits && <i className="researching">Edits to approve</i>}
+          {missingContent && <i className="candidate">Missing content</i>}
+          {saved?.reviewComplete && <i className="reviewed">Review complete</i>}
+        </span>
+        <ChevronRight />
+      </Link>;
+    })}</div><aside><p className="eyebrow">CATALOG EDITING</p><h2>Facts first. Edit each listing.</h2><p>Open an entry to edit its facts, sources, features and disclosure. Save a private draft, update that public listing, or hide it. No quality score or editorial review stage is required.</p><p>Public updates check identity, platforms, dated sources and disclosure. Optional capabilities can remain unknown. Other listings stay as they are.</p></aside></div>
     <section className="publication-history" id="publication-history"><div><p className="eyebrow">PUBLICATION HISTORY</p><h2>Versioned catalog snapshots</h2></div>{publications.length?<div>{publications.map(item=><article key={item.id}><strong>{item.catalog_version}</strong><span>{new Date(item.published_at).toLocaleString("en-US")}</span><small>Matching {item.fit_methodology_version}</small></article>)}</div>:<p>No catalog snapshots published yet.</p>}</section>
   </main>;
 }

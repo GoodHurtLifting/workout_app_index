@@ -576,6 +576,20 @@ export async function publishApprovedCatalog(_previous:PublishCatalogResult, _fo
   }
 }
 
+export async function setCatalogReviewComplete(formData: FormData) {
+  await getCatalogAdminForAction();
+  const id = field(formData, "id");
+  const complete = field(formData, "complete");
+  if (!/^[a-z0-9-]{1,80}$/.test(id) || (complete !== "yes" && complete !== "no")) {
+    throw new Error("Invalid catalog review update");
+  }
+  await getAdminFirestore().collection("catalogApps").doc(id).update({
+    catalog_review_complete: complete === "yes",
+  });
+  revalidatePath("/admin");
+  revalidatePath(`/admin/apps/${id}`);
+}
+
 export async function withdrawCatalogListing(formData:FormData){
   const user=await getCatalogAdminForAction();
   const id=field(formData,"id");
