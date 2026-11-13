@@ -3,7 +3,7 @@ import { trackEvent, trackEventWhenReady } from "./analytics.ts";
 type CommercialPage = "services" | "partnerships";
 type CommercialEvent = "services_page_viewed" | "scope_request_started" |
   "scope_request_submitted" | "partnerships_page_viewed" |
-  "partnership_inquiry_submitted" | "commercial_outbound_selected";
+  "partnership_inquiry_submitted" | "partnership_inquiry_started" | "commercial_outbound_selected";
 
 // Fixed, coarse values only. No input-derived parameters or URL/query strings.
 function parameters(page: CommercialPage) {

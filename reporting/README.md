@@ -1,6 +1,6 @@
-# WAI reporting setup — prepared, not executed
+# WAI reporting runbook
 
-Audit date: 2026-11-05. See ../MEASUREMENT_SPEC.md for event/parameter/privacy definitions and ../ANALYTICS_SEO_AUDIT.md for verified console findings. These files contain SELECT queries only. No BigQuery objects, settings, dashboard sources or report pages were changed.
+Current developer-funnel extension: November 13, 2026. The console observations below are explicitly the November 5 audit snapshot, not a current access/export check. See [measurement specification](../docs/MEASUREMENT_SPEC.md), [dated audit](../docs/archive/ANALYTICS_AUDIT_2026-11-05.md) and [deployment guide](../docs/DEPLOYMENT.md) for current contracts and verification boundaries. These files contain SELECT queries only. No BigQuery objects, settings, dashboard sources or report pages were changed.
 
 ## Sources and validation boundary
 
@@ -14,6 +14,7 @@ No production view creation is approved. Proposed logical destinations, subject 
 
 | File | Output / bounded scan |
 | --- | --- |
+| ga4_developer_cohorts.sql | Seven-calendar-day consented saved-request outcomes; maximum 31 cohort days plus bounded timezone padding; requires the verified numeric stream ID |
 | export_metadata.sql | Dataset/table options, current GA table names, Search Console schema, success dates within requested window; no event identifiers |
 | ga4_inventory.sql | Event counts, aggregate distinct devices and parameter names; required dates, web platform, exact stream, public paths |
 | ga4_executive.sql | Daily event totals and legacy/version separation, including confirmed commercial actions; same bounded source |
@@ -44,7 +45,7 @@ Add new BigQuery Custom Query sources from the SELECT files; do not replace ds0 
 | --- | --- |
 | WAI Executive Overview | Date control + previous equal period; GSC property clicks/impressions; SUM(event_count) filtered separately to catalog_search_completed, app_profile_viewed, complete_app_finder, add_to_comparison, outbound_app_click, submission_completed; commercial inquiries are scope_request_submitted plus partnership_inquiry_submitted. Keep starts separate. Bar chart event_name by event_count; daily trends event_date. Label comparison additions rather than completed comparisons. |
 | Facts Search Funnel | Scorecards SUM(searches), SUM(result_selections), SUM(profiles_from_search), SUM(outbound_from_search). Ratios recomputed as SUM(numerator)/SUM(denominator), with null for zero denominators. Zero rate SUM(zero_results)/SUM(searches); selection/search, profile/search, profile/selection, outbound/profile, outbound/search. Daily trend event_date; mode bar search_mode; filter usage fixed_filter_group from ga4_filter_usage.sql. Multigroup rows overlap and cannot be summed as a total. |
-| Organic Discovery | Property clicks/impressions/CTR/weighted position; query table query + clicks, impressions, CTR, position, brand_class; page table url/content_type + metrics; opportunity table impressions>=25 AND CTR<2%, position filter 8–30; gains/losses sort impression_change both directions. Query/page table query,url. Profiles versus other pages supported now; Article classification remains unavailable until genuine published articles exist. |
+| Organic Discovery | Property clicks/impressions/CTR/weighted position; query table query + clicks, impressions, CTR, position, brand_class; page table url/content_type + metrics; opportunity table impressions>=25 AND CTR<2%, position filter 8–30; gains/losses sort impression_change both directions. Query/page table query,url. Profiles versus other pages supported now; Sponsored articles now use `/sponsored/[slug]`; existing query classifications must be checked before claiming a separate article breakdown. A route alone does not establish organic article traffic. |
 | Commercial Performance | services_page_viewed and partnerships_page_viewed are consented page renders, not evidence of engaged sessions. scope_request_started, confirmed scope_request_submitted, confirmed partnership_inquiry_submitted, commercial_outbound_selected as separate metrics; daily events trend. Email selection is not a saved inquiry. External attributable revenue is unavailable: show unavailable, not zero. Add only an owner-approved aggregate revenue source with currency/date/referral definitions and no visitor identifiers. |
 
 Do not sum daily_approximate_devices or daily_searching_devices over periods or funnel stages. For period-wide devices, rerun a bounded aggregate without the daily dimension; keep mode/group overlap explicit. Until then show a daily devices trend only. Event ratios can exceed 100% and are not identity-matched visitor conversion; title charts accordingly. Preserve legacy_unversioned and facts-1 as separate report filters. Do not backfill or rename historical events. A release date is pending and must be recorded before post-pivot comparisons.
@@ -52,3 +53,8 @@ Do not sum daily_approximate_devices or daily_searching_devices over periods or 
 Branded rule: case-insensitive workout + optional space/dot/hyphen + app + optional space/dot/hyphen + index. Excludes ambiguous acronym WAI and product brands. Anonymous query impressions stay in property/page totals, not branded/query tables; label visible-query coverage. Average position is SUM(position numerator)/SUM(impressions)+1, never mean of averages. Property totals and URL totals can differ by aggregation; do not silently reconcile them by summing pages.
 
 Official references: [Search Console export schema](https://support.google.com/webmasters/answer/12917991?hl=en), [query guidelines](https://support.google.com/webmasters/answer/12917174?hl=en). These document schema expectations, not proof of the live tables.
+
+
+## Developer commerce extension, November 13, 2026
+
+`ga4_developer_cohorts.sql` adds seven-day consented request cohorts using the expressly approved opaque submission parameter. It returns dates and aggregate outcomes only. Parameters and bounds are documented in the file. Keep the existing portfolio/app reporting unchanged. No views or dashboard sources have been created or replaced. The authenticated admin report is authoritative for saved requests and reconciled payments; Firestore is not automatically available in BigQuery. Production bq metadata access was attempted again on November 13 and stopped because credentials require reauthentication. No production export arrival, new events, invoice totals or email delivery have been verified in this implementation run.

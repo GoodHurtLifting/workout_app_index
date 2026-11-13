@@ -3,7 +3,7 @@ import type { AppRecord } from "./catalog";
 import { isFactual, latestFactDate } from "./catalog-facts.ts";
 
 const baseUrl = "https://workoutappindex.com";
-const informationPaths = ["how-we-score", "editorial-standards", "corrections", "submit-app", "services", "partnerships", "apps", "find"];
+const informationPaths = ["how-we-score", "editorial-standards", "corrections", "submit-app", "services", "partnerships", "apps", "find", "terms", "privacy"];
 
 export function validSitemapDate(value: unknown): string | undefined {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined;

@@ -1,5 +1,7 @@
 "use client";
 
+import type { Engagement, DeveloperProduct } from "@/lib/developer-offers";
+import { developerProducts, commercialProducts } from "@/lib/developer-offers";
 import { useState } from "react";
 
 type SubmissionBrief = {
@@ -12,6 +14,11 @@ type SubmissionBrief = {
   availability: string;
   pricing: string;
   details: string;
+  helpWanted?: string;
+  competitors?: string;
+  differentiation?: string;
+  initiallyRequestedProducts?: DeveloperProduct[];
+  engagement?: Engagement;
 };
 
 export function CopyResearchBrief({ submission }: { submission: SubmissionBrief }) {
@@ -29,9 +36,14 @@ export function CopyResearchBrief({ submission }: { submission: SubmissionBrief 
       `Privacy policy: ${submission.privacyUrl}`,
       `Claimed availability: ${submission.availability}`,
       `Claimed pricing: ${submission.pricing}`,
+      `Requested services: ${(submission.initiallyRequestedProducts ?? []).map(product => developerProducts[product]).join(", ") || "Not supplied"}`,
+      `Agreed work: ${(submission.engagement?.agreedProducts ?? []).map(product => commercialProducts[product]).join(", ") || "Not agreed"}`,
+      `Developer goals: ${submission.helpWanted || "Not supplied"}`,
+      `Competitors and inspirations: ${submission.competitors || "Not supplied"}`,
+      `Intended improvements: ${submission.differentiation || "Not supplied"}`,
       "Developer description and claims:",
       submission.details,
-      "Research needed: check current primary sources for availability, pricing, features, privacy terms, fit, and tradeoffs. Keep official/app-store claims, developer reports, observations, conflicts, and unknowns distinct. Ordinary owner verification is zero to approximately ten minutes; do not invent scores to satisfy the current approval gate.",
+      "Research needed: check current primary sources for availability, pricing, features, privacy terms, fit, and tradeoffs. Keep official/app-store claims, developer reports, observations, conflicts, and unknowns distinct. Follow the agreed scope for testing duration, competitors, private findings and promotional deliverables. Do not invent scores or claim unperformed tests.",
     ].join("\n");
 
     try {

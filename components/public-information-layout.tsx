@@ -34,6 +34,8 @@ export function PublicInformationLayout({
           <Link href="/submit-app">Submit an app</Link>
           <Link href="/services">Testing &amp; Research</Link>
           <Link href="/partnerships">Partnerships</Link>
+          <Link href="/terms">Terms</Link>
+          <Link href="/privacy">Privacy</Link>
           <Link href="/apps">Browse app profiles</Link>
         </nav>
       </div>

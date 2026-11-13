@@ -1,27 +1,22 @@
-import { publicOpenGraph } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicInformationLayout } from "@/components/public-information-layout";
-import { CommercialInquiryForm } from "@/components/commercial-inquiry-form";
-import { serviceOffers } from "@/lib/commercial-inquiries";
-
+import { CommercialPageView } from "@/components/commercial-page-view";
+import { publicOpenGraph } from "@/lib/seo";
 export const metadata: Metadata = {
-  title: "Testing & Research Services | Workout App Index",
-  description: "Bounded private human testing and competitive product research for fitness software. Agree a scope before payment.",
+  title: "App Testing, Reviews & Competitive Research | Workout App Index",
+  description: "Find what holds users back, understand your competition, and help the right people discover your fitness app.",
   alternates: { canonical: "/services" },
+  openGraph: publicOpenGraph("Testing & Research | Workout App Index", "Practical product feedback and coverage for fitness apps.", "/services"),
 };
-
-// Keep social previews aligned with this page canonical.
-metadata.openGraph = publicOpenGraph(String(metadata.title), String(metadata.description), "/services");
-
 export default function ServicesPage() {
-  return <PublicInformationLayout eyebrow="PRIVATE PRODUCT RESEARCH" title="Testing & Research Services" introduction="Understand where people encounter friction, how your product compares, and which questions need closer investigation.">
-    <section><p>WAI offers bounded private testing and research for fitness software. These are initial validation prices; the final deliverable, access, timing, and fee are agreed before payment.</p><p><a href="#request-scope">Request a scope</a></p></section>
-    <section><h2>{serviceOffers.focused_test}</h2><ul><li>One platform and device.</li><li>One specified workflow, with up to approximately one hour of testing.</li><li>Reproducible problems and usability friction in the paths attempted.</li><li>Concise private findings, including what could not be verified.</li></ul></section>
-    <section><h2>{serviceOffers.launch_review}</h2><ul><li>Onboarding and account creation.</li><li>The main product journey and paywall or purchase experience.</li><li>Important navigation and trust issues.</li><li>Prioritized private findings with supporting images.</li><li>Approximately two to three hours of bounded testing.</li></ul></section>
-    <section><h2>{serviceOffers.competitive_audit}</h2><ul><li>Product experience review and comparison with up to three direct competitors.</li><li>Pricing, trial, paywall, positioning, audience, and differentiation analysis.</li><li>Written private report and a review call.</li></ul><p>The comparison set and depth are agreed in the scope. Documented competitor claims remain distinct from directly tested behavior.</p></section>
-    <section><h2>Agree the boundaries first</h2><p>Services do not include implementation, unlimited retesting, store approval, or guaranteed commercial results. Any additional workflow, device, or follow-up needs a separate agreement. We may decline a scope that we cannot represent responsibly.</p></section>
-    <section><h2>Private work and independent coverage</h2><p><Link href="/corrections">Factual corrections are free</Link>. Payment cannot purchase a listing, favorable finding, ranking, recommendation, finder placement, publication, or removal of legitimate criticism. Private findings do not automatically change public coverage. Material commercial relationships that inform public coverage will be disclosed. Developers do not approve WAI&apos;s conclusions.</p><p>Our <Link href="/editorial-standards">editorial standards</Link> apply to all public work. For sponsorships, referrals, or research partnerships, see <Link href="/partnerships">commercial partnerships</Link>.</p></section>
-    <CommercialInquiryForm kind="service" />
+  return <PublicInformationLayout eyebrow="FOR FITNESS APP DEVELOPERS" title="Build a better app. Reach the right users." introduction="Get a clear outside view of your product, practical recommendations and coverage that explains who your app helps.">
+    <CommercialPageView />
+    <section><h2>Human testing and follow-up</h2><p>See where people get stuck. We work through an agreed part of your app, identify friction and reproducible problems, and explain what would make the experience easier. Follow-up helps you understand the findings and prioritize your next steps.</p></section>
+    <section><h2>Experience review and promotional write-up</h2><p>Understand your app’s strengths, limitations and audience through a fuller experience review. You receive private recommendations and a clearly disclosed promotional write-up grounded in helping suitable users find your product.</p></section>
+    <section><h2>Product use and competitive comparison</h2><p>We use your app as its intended customers would, then compare it with relevant industry leaders. Your inspirations, target audience and intended improvements help shape the comparison. You receive private findings and a written comparison explaining where your approach stands out and where it could improve.</p><p>Before we start, we agree which competitors and product experiences to examine, how long to use the product, and what the written deliverables will cover.</p></section>
+    <section><h2>Service scope and limits</h2><p>We agree the work, access requirements, timing and price with you in a signed scope. A non-refundable 50% deposit starts the engagement. The final 50% is invoiced on completion. Additional platforms, competitors and follow-up can be added by agreement.</p><p>Services focus on product use, findings and writing. The scope sets revision and follow-up limits. Downloads, revenue and other commercial results are not guaranteed. Read our <Link href="/terms">service terms</Link>.</p></section>
+    <section><h2>Start with your app</h2><p>Tell us how your app works, what inspired it and where you would like help. On the next step, choose a $20 factual listing or a service you would like to discuss. We use the same details to prepare your proposal.</p><p><Link className="service-cta" href="/submit-app">Tell us about your app →</Link></p></section>
+    <section><h2>Clear findings and disclosed coverage</h2><p>Commissioned write-ups identify the commercial relationship. Findings reflect the evidence, and finder matching uses the same factual criteria for every app. <Link href="/corrections">Factual corrections</Link> remain free. For brand placements, sponsored content or market research, explore <Link href="/partnerships">partnerships</Link>.</p></section>
   </PublicInformationLayout>;
 }

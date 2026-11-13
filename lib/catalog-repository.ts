@@ -9,7 +9,7 @@ import { withPrivateLegacyScoreDraft } from "@/lib/legacy-score-drafts";
 import { filterWithdrawnCatalog, getLegacyPublicApps, mergePublishedCatalog } from "@/lib/legacy-public-catalog";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 
-type CatalogRow = { id:string; record:AppRecord; publication_status:ResearchStatus; updated_at:number; source_submission_id?:string; catalog_review_complete?:boolean };
+type CatalogRow = { id:string; record:AppRecord; publication_status:ResearchStatus; updated_at:number; source_submission_id?:string; catalog_review_state?:"not_started"|"reviewing"|"complete"; catalog_review_complete?:boolean };
 export type EvidenceRow = { id:string; source_type:string; url:string|null; claim_supported:string; checked_at:number; public:number; internal_note:string|null };
 export function isRecheckedEvidence(source: EvidenceRow): boolean {
   return !source.internal_note?.startsWith("Seeded from the source catalog");
@@ -33,13 +33,13 @@ const getWithdrawnCatalogIds=unstable_cache(async ():Promise<string[]>=>{
 
 export async function listCatalogRecords() {
   const snapshot = await getAdminFirestore().collection("catalogApps").orderBy("name").get();
-  const saved = new Map<string, { record: AppRecord; reviewComplete: boolean }>();
+  const saved = new Map<string, { record: AppRecord; reviewComplete: boolean; reviewState: "not_started"|"reviewing"|"complete" }>();
   const bundledById = new Map(apps.map(app => [app.id, app]));
   const records = new Map([...apps.map(app => withPrivateLegacyScoreDraft(app, app)), ...Object.values(catalogResearchDrafts)].map(app => [app.id, app]));
   for (const doc of snapshot.docs) {
     const row = doc.data() as CatalogRow;
     const record = {...row.record, researchStatus: row.publication_status};
-    saved.set(doc.id, { record, reviewComplete: row.catalog_review_complete ?? record.researchStatus === "Reviewed" });
+    saved.set(doc.id, { record, reviewComplete: row.catalog_review_complete ?? record.researchStatus === "Reviewed", reviewState: row.catalog_review_state ?? ((row.catalog_review_complete ?? record.researchStatus === "Reviewed") ? "complete" : record.researchStatus === "Researching" ? "reviewing" : "not_started") });
     const bundled = bundledById.get(doc.id);
     records.set(doc.id, bundled ? withPrivateLegacyScoreDraft(record, bundled) : getUnmodifiedPlaceholderResearchDraft(record, row.source_submission_id) ?? record);
   }

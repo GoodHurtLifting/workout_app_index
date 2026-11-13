@@ -132,7 +132,7 @@ The final owner closeout above controls current fit, scope and score interpretat
 
 # Aldo Coach: private initial assessment
 
-Rechecked October 19, 2026. This is a research draft for owner review, not an approved or public WAI listing. Developer claims are not evidence by themselves. The initial notes below cover two workouts; the October 21 consolidated update supersedes that scope and records three workouts, not a long-term reliability test. More owner workouts or a developer reply are not required for a properly qualified catalog listing. Scoring follows [the shared rubric](CATALOG_SCORING_RUBRIC.md).
+Rechecked October 19, 2026. This is a research draft for owner review, not an approved or public WAI listing. Developer claims are not evidence by themselves. The initial notes below cover two workouts; the October 21 consolidated update supersedes that scope and records three workouts, not a long-term reliability test. More owner workouts or a developer reply are not required for a properly qualified catalog listing. Scoring follows [the shared rubric](../archive/LEGACY_EDITORIAL_RECORD.md).
 
 The separate Google Doc, "Aldo Coach - First-run audit notes and audit opportunity," is the fuller internal testing and potential private-audit record. Keep it aligned when substantive owner observations change this local research draft. The admin card contains a concise editorial assessment, not the complete workout journal. The second-workout set-reference observation is recorded in both places; neither record is a developer-facing audit or an approved public listing.
 

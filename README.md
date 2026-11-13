@@ -1,63 +1,42 @@
 # Workout App Index
 
-Workout App Index helps people find and compare strength-training apps using explicit requirements, transparent App Fit scoring, and evidence-backed catalog research.
+WAI helps people choose workout apps through sourced factual profiles, an account-free finder and selected, clearly scoped firsthand coverage. This is the existing Next.js site and Firebase deployment, not a new Android or cloud project.
 
-## Business and editorial direction
+## Documentation
 
-See [WAI_BUSINESS_PLAN.md](./WAI_BUSINESS_PLAN.md) for the November 4, 2026 facts-first growth plan, [FACTS_FIRST_IMPLEMENTATION.md](./FACTS_FIRST_IMPLEMENTATION.md) for source findings, migration limits and manual validation, and [EDITORIAL_CONTENT_TEMPLATE.md](./EDITORIAL_CONTENT_TEMPLATE.md) for reusable dictated editorial source packs. [FACTUAL_PROFILE_MIGRATION.md](./FACTUAL_PROFILE_MIGRATION.md) documents the approved unrated-profile workflow, source binding, and manual checks. Changes use the existing site and Firebase projects.
+| Guide | Purpose |
+| --- | --- |
+| [Business plan](WAI_BUSINESS_PLAN.md) | Current strategy, products, independence and priorities |
+| [Site operations](docs/SITE_OPERATIONS.md) | Public routes, questionnaire, saved data, admin and reporting |
+| [Catalog workflow](docs/CATALOG_WORKFLOW.md) | Research cohorts, missing fields, local proposals, owner approval and publication |
+| [Editorial workflow](docs/EDITORIAL_WORKFLOW.md) | Dictated observations, source packs and developer message templates |
+| [Deployment and payments](docs/DEPLOYMENT.md) | Existing Firebase setup, Stripe, notifications, local checks and release boundaries |
+| [Commercial scope template](docs/COMMERCIAL_SCOPE_TEMPLATE.md) | Reusable larger-service agreement; completed client versions stay private |
+| [Measurement specification](docs/MEASUREMENT_SPEC.md) | Catalog and developer event contracts and privacy boundaries |
+| [Reporting runbook](reporting/README.md) | Bounded read-only SQL and dashboard preparation |
+| [Research records](docs/research/README.md) | Dated app evidence, distinct from current policy or saved catalog state |
+| [Implementation history](docs/archive/IMPLEMENTATION_HISTORY.md) | Earlier migration decisions and superseded guide map |
+| [Historical editorial records](docs/archive/LEGACY_EDITORIAL_RECORD.md) | Retired scoring method and historical correspondence guidance |
+| [Dated analytics audit](docs/archive/ANALYTICS_AUDIT_2026-11-05.md) | Console observations and access limits at the time of the audit |
 
-See [WAI_FRONTEND_REBUILD.md](./WAI_FRONTEND_REBUILD.md) for the actual homepage, catalog, profile, and questionnaire changes and local preview instructions.
-
-## Architecture
-
-- Next.js and React for the public finder and private catalog manager
-- Firebase Authentication for owner-only catalog access
-- Cloud Firestore for working catalog records, evidence, and versioned publications
-- Firebase App Hosting for development and production deployments
-- GitHub as the authoritative source repository
-
-The public finder does not require an account and does not store questionnaire answers. Firestore is accessed only by authenticated server code; direct browser reads and writes are denied.
-
-See [FIREBASE_SETUP.md](./FIREBASE_SETUP.md) for project creation, local setup, and deployment instructions.
+Use the current guides for new work. Historical research, scores and audit snapshots do not establish current product behavior, publication or live configuration. `AGENTS.md` is the single assistant instruction file; Next.js automatic `AGENTS.md`/`CLAUDE.md` generation is disabled.
 
 ## Local development
 
+Work in `C:\dev\projects\workout_app_index`, the folder opened in Android Studio. Use Node 24 (the production runtime); dependencies and the supported minimum are recorded in `package.json`. Install from `pnpm-lock.yaml` with `pnpm install --frozen-lockfile`. Copy `.env.example` to ignored `.env.local` only when it does not already exist, then supply the existing development Firebase web configuration and authorized owner email. Server access needs appropriate Application Default Credentials or local emulators; see the deployment guide.
+
 ```powershell
-corepack enable
-pnpm install
-Copy-Item .env.example .env.local
-pnpm dev
+npm.cmd run dev
 ```
 
-Fill `.env.local` with the development Firebase Web app settings before testing administrator sign-in. Never commit `.env.local` or service-account credentials.
+The default URL is `http://localhost:3000`; the private owner area is `/admin`. Do not replace an existing environment file or mix live and sandbox Stripe credentials.
 
-## Editorial requests
+## Validate and release
 
-The public `/submit-app` and `/corrections` forms save requests to a private
-Firestore review queue. The owner can read them and mark them reviewed at
-`/admin`. Submissions never enter the public catalog automatically. Browser
-access to Firestore remains denied by `firestore.rules`.
+```powershell
+npm.cmd test
+npm.cmd run lint
+npm.cmd run build
+```
 
-## AdSense activation
-
-The publisher ID and `public/ads.txt` are configured for publisher
-`pub-6124878930933444`. Ad serving is off until all of the following are done:
-
-1. Confirm `workoutappindex.com` appears as **Ready** under AdSense **Sites**.
-   An AdMob-linked payments account alone is not enough for website ads.
-2. Configure an AdSense or other Google-certified consent message for visitors
-   in the EEA, UK, and Switzerland. The site's Analytics choice is separate.
-3. Turn **Auto ads** off for this site; this project uses manual placements so
-   ads do not appear inside the finder or its result rankings.
-4. In AdSense **Ads → By ad unit**, create three responsive display units for
-   Home, Browse, and Profile. Set their numeric `data-ad-slot` values as
-   `NEXT_PUBLIC_ADSENSE_HOME_SLOT_ID`, `NEXT_PUBLIC_ADSENSE_BROWSE_SLOT_ID`, and
-   `NEXT_PUBLIC_ADSENSE_PROFILE_SLOT_ID` in the production App Hosting backend's
-   environment settings.
-5. Set `NEXT_PUBLIC_ADSENSE_ENABLED=true` for the production backend only, then
-   roll out a new build. These `NEXT_PUBLIC_` values must be present at build
-   time. Leave the development backend disabled.
-
-The manual placements are below the home starting choices, after six cards in
-Browse, and between profile details and related options. Ads are not shown in
-questionnaire steps, rankings, or comparison tables.
+Commerce integration checks have a separate guarded emulator setup in the deployment guide. Review all intended modified and new files, stage explicit paths and exclude `.idea/`, environment files, logs and temporary work. Commit and push only with owner authorization: pushing `main` is this project's deployment workflow. Do not run an additional deployment or wait for rollout status unless requested. Public release success is separate from a successful push.

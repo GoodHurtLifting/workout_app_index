@@ -11,7 +11,11 @@ import { createFactualCatalogDraft, acceptAppSubmissionForResearch, changeSubmis
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
 import { getCatalogEntryProposal } from "@/lib/catalog-maintenance-proposals";
 import { catalogEntryProposalChanges } from "@/lib/catalog-proposals";
-import { catalogListingProblems, hasCatalogPublicSource } from "@/lib/catalog-entry-editing";
+import { catalogMissingItems, hasCatalogPublicSource } from "@/lib/catalog-entry-editing";
+import { CommercialRequestAdmin } from "@/components/commercial-request-admin";
+import { getAdminFirestore } from "@/lib/firebase-admin";
+import { commercialProducts, type CommercialProduct } from "@/lib/developer-offers";
+import { PartnerPlacementAdmin } from "@/components/partner-placement-admin";
 import "./admin.css";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +36,16 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const capacity = await getEditorialCapacity();
   const newRequests = editorialRequests.filter(request => !request.seenAt).length;
   const publicIds=new Set((await getPublicCatalog()).apps.map(app=>app.id));
+  const purchasedByApp = new Map<string, Set<string>>();
+  const commerceRows = await getAdminFirestore().collection("editorialRequests").select("candidateAppId", "commercialCatalogAppId", "engagement", "listingPurchasedAt", "listingPaymentStatus").get();
+  for (const row of commerceRows.docs) {
+    const data = row.data(); const appId = data.commercialCatalogAppId || data.candidateAppId;
+    if (!appId) continue;
+    const purchased = purchasedByApp.get(appId) ?? new Set<string>();
+    if (data.listingPurchasedAt && data.listingPaymentStatus !== "refunded") purchased.add("Get listed");
+    for (const product of (data.engagement?.purchasedProducts ?? []) as CommercialProduct[]) if (commercialProducts[product]) purchased.add(commercialProducts[product]);
+    purchasedByApp.set(appId, purchased);
+  }
   const listed=apps.filter(app=>publicIds.has(app.id)).length;
 
   return <main className="admin-page standalone-admin">
@@ -47,7 +61,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       {workflow === "decision" ? <p className="admin-action-message" role="status">Owner decision saved. The catalog has not been published.</p> : null}
       {workflow === "round" ? <p className="admin-action-message" role="status">New review round started. Earlier findings remain in the history.</p> : null}
       {workflow === "service" ? <p className="admin-action-message" role="status">Private-work stage saved. No contract, payment, or message was created.</p> : null}
-      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>Submissions, corrections, and private inquiries</h2><p className="editor-help">Submissions are unverified research leads. The stages below track intake and review rounds. A completed evaluation needs an owner decision; selecting an app for listing still requires an approved card and a separate catalog publication. Commercial inquiries are private, carry no editorial stage controls, and cannot change that decision. No commercial inquiry triggers a notification, contract, or payment.</p>
+      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>Submissions, corrections, and private inquiries</h2><p className="editor-help">Submissions are unverified research leads. The stages below track intake and review rounds. A completed evaluation needs an owner decision; selecting an app for listing still requires an approved card and a separate catalog publication. Commercial inquiries are private, carry no editorial stage controls, and cannot change that decision. Partnership requests trigger an internal notification. Agreements and payments are recorded separately.</p>
       <p className="editor-help">This month: {capacity.screenings} screens · {capacity.acceptances} research acceptances. Active research rounds: {capacity.activeReviews}. No developer stage emails are sent.</p></div>
       {editorialRequests.length ? editorialRequests.map((request) => (
         <article id={`submission-${request.id}`} key={request.id}>
@@ -73,10 +87,11 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
             <div className="editorial-inbox-details">
               <span>Company or product: {request.organization}</span>
               <span>Interest: {request.kind === "service" ? serviceOffers[request.topic] : partnershipTopics[request.topic]}</span>
-              <span>Inquiry only. No agreement, payment, or editorial decision.</span>
+              <span>Initial inquiry. See Work and payments for the current agreement and payment status.</span>
             </div>
           )}
           {request.kind === "app" ? <CopyResearchBrief submission={request} /> : null}
+          {request.kind !== "correction" && <CommercialRequestAdmin request={request} notificationState={request.notification?.state} catalogOptions={apps.map(app => ({id:app.id,name:app.name}))} />}
           {request.kind === "app" ? <div className="submission-meta">
             <span>Received {new Date(request.createdAt).toLocaleDateString("en-US")}</span>
             <span>Seen {request.seenAt ? new Date(request.seenAt).toLocaleDateString("en-US") : "pending"}</span>
@@ -90,7 +105,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           </div> : null}
           <div className="editorial-actions">
             {!request.seenAt ? <form action={markEditorialRequestSeen}><input type="hidden" name="id" value={request.id}/><button type="submit">Mark seen</button></form> : null}
-            {request.kind === "app" && ["received", "waitlisted_unassessed", "not_scheduled"].includes(normalizeAppSubmissionStatus(request.status)) ? <form action={startSubmissionScreening}><input type="hidden" name="id" value={request.id}/><button type="submit">Start 10–15 minute screen</button></form> : null}
+            {request.kind === "app" && ["received", "waitlisted_unassessed", "not_scheduled"].includes(normalizeAppSubmissionStatus(request.status)) ? <form action={startSubmissionScreening}><input type="hidden" name="id" value={request.id}/><button type="submit">Begin eligibility check after reviewing work choices</button></form> : null}
             {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "waitlisted_eligible" ? <form action={acceptAppSubmissionForResearch}><input type="hidden" name="id" value={request.id}/><button className="accept-candidate" type="submit">Accept for research</button></form> : null}
             {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "accepted_for_research" ? <form action={changeSubmissionReviewStage}><input type="hidden" name="id" value={request.id}/><input type="hidden" name="target" value="active_review"/><button type="submit">Start catalog research</button></form> : null}
             {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "active_review" ? <form action={changeSubmissionReviewStage}><input type="hidden" name="id" value={request.id}/><input type="hidden" name="target" value="research_ready"/><button type="submit">Research ready for owner</button></form> : null}
@@ -115,7 +130,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
             <input type="hidden" name="id" value={request.id}/>
             {cursor ? <input type="hidden" name="cursor" value={cursor}/> : null}
             <h3>Start another review round</h3>
-            <p>Prior findings stay in the history below. This does not change an existing public listing. Further hands-on work is selected according to consumer usefulness and capacity. The retained paid-follow-up control is for prior agreements, not a new editorial-priority offer.</p>
+            <p>Prior findings stay in the history below. This does not change an existing public listing. Further hands-on work is selected according to consumer usefulness and capacity. Agreed paid work is tracked separately with its scope and payment records.</p>
             <label>Why reopen this app? <input name="note" required maxLength={500} placeholder="Released changes and scope to check"/></label>
             <div className="editorial-actions">
               <button name="basis" value="free_reassessment" type="submit">Start free reassessment</button>
@@ -178,24 +193,28 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     <div className="admin-work" id="app-evaluations"><div className="admin-list"><div className="admin-list-head"><h2>Catalog entries</h2><span>Listing</span></div>{catalogEntries.map(({ app, saved }) => {
       const record = saved?.record ?? app;
       const proposed = saved ? getCatalogEntryProposal(saved.record, catalogResearchDrafts[app.id]) : undefined;
-      const hasEdits = Boolean(proposed && catalogEntryProposalChanges(record, proposed).length);
+      const editCount = proposed ? catalogEntryProposalChanges(record, proposed).length : 0;
       const hasSource = hasCatalogPublicSource(record, evidenceByApp.get(app.id) ?? []);
-      const missingContent = catalogListingProblems(record, hasSource).length > 0
-        || !record.trainingRelationship
-        || record.trainingRelationship.planningStyle === "Not assessed";
+      const missingItems = catalogMissingItems(record, hasSource);
+      const reviewState = saved?.reviewState ?? "not_started";
+      const purchased = [...(purchasedByApp.get(app.id) ?? [])];
       const isPublic = publicIds.has(app.id);
-      return <Link className="admin-row" href={`/admin/apps/${app.id}`} key={app.id}>
+      return <div key={app.id}><Link className="admin-row catalog-entry-row" href={`/admin/apps/${app.id}`} key={app.id}>
         <span className="app-logo" style={{background:app.color}}>{app.initials}</span>
         <span><strong>{app.name}</strong><small>{app.type}</small></span>
         <span className="catalog-row-status">
           <i className={isPublic ? "reviewed" : "researching"}>{isPublic ? "Public" : "Not public"}</i>
-          {hasEdits && <i className="researching">Edits to approve</i>}
-          {missingContent && <i className="candidate">Missing content</i>}
-          {saved?.reviewComplete && <i className="reviewed">Review complete</i>}
+          {editCount > 0 && <i className="researching">{editCount} edits to approve</i>}
+          {missingItems.length > 0 && <i className="candidate">Missing content ({missingItems.length})</i>}
+          <i className={reviewState === "complete" ? "reviewed" : "researching"}>{reviewState === "complete" ? "Review complete" : reviewState === "reviewing" ? "Reviewing" : "Not started"}</i>
+          {purchased.length > 0 && <i className="reviewed" title={purchased.join(", ")}>Services purchased ({purchased.length})</i>}
         </span>
         <ChevronRight />
-      </Link>;
-    })}</div><aside><p className="eyebrow">CATALOG EDITING</p><h2>Facts first. Edit each listing.</h2><p>Open an entry to edit its facts, sources, features and disclosure. Save a private draft, update that public listing, or hide it. No quality score or editorial review stage is required.</p><p>Public updates check identity, platforms, dated sources and disclosure. Optional capabilities can remain unknown. Other listings stay as they are.</p></aside></div>
+      </Link>{missingItems.length > 0 && <details className="catalog-missing-items"><summary>View missing items for {app.name}</summary><ul>{missingItems.map(item => <li key={item}>{item}</li>)}</ul></details>}
+      {purchased.length > 0 && <p className="editor-help">Purchased: {purchased.join(", ")}</p>}</div>;
+    })}</div><aside><p className="eyebrow">CATALOG EDITING</p><h2>Facts first. Edit each listing.</h2><p>Open an entry to edit its facts, sources, features and disclosure. Save a private draft, update that public listing, or hide it. Use the review status to track your own checks.</p><p>Public updates check identity, platforms, dated sources and disclosure. Optional capabilities can remain unknown. Other listings stay as they are.</p></aside></div>
+    <section className="publication-history"><h2>Developer funnel reporting</h2><p>Saved requests and reconciled payments, grouped by the date app details were saved. Test submissions are excluded. Conversion window: seven days.</p><form action="/admin/reports" method="get"><label>From<input name="start" type="date" required /></label><label>Through<input name="end" type="date" required /></label><button type="submit">Open aggregate report</button></form></section>
+    <PartnerPlacementAdmin />
     <section className="publication-history" id="publication-history"><div><p className="eyebrow">PUBLICATION HISTORY</p><h2>Versioned catalog snapshots</h2></div>{publications.length?<div>{publications.map(item=><article key={item.id}><strong>{item.catalog_version}</strong><span>{new Date(item.published_at).toLocaleString("en-US")}</span><small>Matching {item.fit_methodology_version}</small></article>)}</div>:<p>No catalog snapshots published yet.</p>}</section>
   </main>;
 }

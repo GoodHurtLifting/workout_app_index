@@ -12,19 +12,22 @@
     "lint": "eslint . --ignore-pattern .next --ignore-pattern dist",
     "test:catalog": "node --experimental-strip-types --test tests/public-catalog.test.mjs tests/submission-workflow.test.mjs tests/catalog-review-stage.test.mjs",
     "test:analytics": "node --experimental-strip-types --test tests/analytics.test.mjs",
-    "firebase:emulators": "firebase emulators:start --only auth,firestore"
+    "firebase:emulators": "firebase emulators:start --only auth,firestore",
+    "test": "node --experimental-strip-types --test \"tests/*.test.mjs\"",
+    "test:commerce": "node --experimental-strip-types --test tests/commerce-emulator.integration.mjs tests/developer-http.integration.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@hookform/resolvers": "^5.7.1",
     "@shadcn/react": "^0.3.0",
+    "@stripe/stripe-js": "^10.2.1",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.4.0",
+    "embla-carousel-react": "^8.6.0",
     "firebase": "^12.3.0",
     "firebase-admin": "^13.5.0",
-    "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^1.31.0",
     "next": "16.3.4",
@@ -37,6 +40,7 @@
     "react-resizable-panels": "^4.12.2",
     "recharts": "^3.8.0",
     "sonner": "^2.0.8",
+    "stripe": "^23.1.0",
     "tailwind-merge": "3.6.0",
     "vaul": "^1.1.2",
     "zod": "^3.25.76"

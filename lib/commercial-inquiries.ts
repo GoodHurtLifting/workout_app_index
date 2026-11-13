@@ -1,18 +1,18 @@
 import { z } from "zod";
 
 export const serviceOffers = {
-  focused_test: "Focused Human Test — $95",
-  launch_review: "Launch Experience Review — $225",
-  competitive_audit: "Competitive Product Audit — starting at $350",
+  focused_test: "Human testing and follow-up",
+  launch_review: "Experience review and promotional write-up",
+  competitive_audit: "Product use and competitive comparison",
   custom_research: "Custom research scope",
 } as const;
 
 export const partnershipTopics = {
   affiliate_referral: "Affiliate, referral, or qualified-lead arrangement",
-  sponsorship: "Sponsorship, founder spotlight, or advertising",
+  sponsorship: "Paid placement or sponsored content",
   research_report: "Market-research report or custom intelligence brief",
-  monitoring: "Competitive-intelligence monitoring",
-  licensed_data: "Future licensed data or structured access",
+  monitoring: "Ongoing competitor research",
+  licensed_data: "Custom aggregate research brief",
 } as const;
 
 const contact = {

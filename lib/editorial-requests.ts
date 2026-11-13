@@ -8,6 +8,7 @@ import { getAdminFirestore } from "@/lib/firebase-admin";
 import type { ReviewOutcome, ServiceStage, SubmissionStatus } from "@/lib/submission-workflow";
 import { monthKey } from "@/lib/submission-workflow";
 
+import type { DeveloperProduct, Engagement } from "@/lib/developer-offers";
 import { serviceInquirySchema, partnershipInquirySchema } from "@/lib/commercial-inquiries";
 
 const text = (max: number) => z.string().trim().min(1).max(max);
@@ -38,6 +39,9 @@ const requestSchema = z.discriminatedUnion("kind", [
     availability: text(300),
     pricing: text(300),
     details: z.string().trim().min(40).max(4000),
+    helpWanted: z.string().trim().max(1500).optional(),
+    competitors: z.string().trim().max(1000).optional(),
+    differentiation: z.string().trim().max(1500).optional(),
   }),
   z.object({
     kind: z.literal("correction"),
@@ -58,6 +62,20 @@ export type EditorialRequest = z.infer<typeof requestSchema> & {
   createdAt: number;
   status: SubmissionStatus;
   candidateAppId?: string;
+  commercialCatalogAppId?: string;
+  submissionVersion?: "developer-1";
+  testData?: boolean;
+  commercialRevision?: number;
+  pageOneCompletedAt?: number;
+  initiallyRequestedProducts?: DeveloperProduct[];
+  serviceInquiryAt?: number;
+  checkoutStartedAt?: number;
+  listingPurchasedAt?: number;
+  listingPaymentStatus?: string;
+  listingRefundPending?: boolean;
+  listingRefundFailed?: boolean;
+  engagement?: Engagement;
+  notification?: { id: string; state: string };
   seenAt?: number;
   screeningStartedAt?: number;
   screeningCompletedAt?: number;
@@ -93,61 +111,50 @@ type NotificationJob = {
   message: { subject: string; text: string };
 };
 
-async function resendFailure(response: Response): Promise<Error> {
-  const fallback = `Resend returned HTTP ${response.status}`;
-  try {
-    const body: unknown = await response.json();
-    if (!body || typeof body !== "object") return new Error(fallback);
-    const details = body as Record<string, unknown>;
-    const name = typeof details.name === "string" ? details.name.slice(0, 100) : "";
-    const message = typeof details.message === "string" ? details.message.slice(0, 500) : "";
-    const reason = [name, message].filter(Boolean).join(": ");
-    return new Error(reason ? `${fallback}: ${reason}` : fallback);
-  } catch {
-    return new Error(fallback);
-  }
+export async function deliverSubmissionAlert(ref: DocumentReference, _job: NotificationJob): Promise<void> {
+  void _job; // Always retry the immutable saved payload.
+  // Delivery errors must never turn a saved inquiry into a failed submission.
+  try { await sendSubmissionAlert(ref); } catch { console.error("Internal notification needs reconciliation"); }
 }
 
-async function deliverSubmissionAlert(ref: DocumentReference, job: NotificationJob): Promise<void> {
+async function sendSubmissionAlert(ref: DocumentReference): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const from = process.env.SUBMISSION_NOTIFICATION_FROM?.trim();
-  if (!apiKey || !from) return;
-
+  const claimed = await ref.firestore.runTransaction(async transaction => {
+    const snapshot = await transaction.get(ref);
+    const data = snapshot.data();
+    const delivery = data?.delivery;
+    if (!data || delivery?.state === "SUCCESS" || (delivery?.state === "SENDING" && delivery.attemptedAt > Date.now() - 60000)) return null;
+    if (!apiKey || !from) {
+      transaction.update(ref, { delivery: { ...delivery, state: "ERROR", error: "Notification provider is not configured", attemptedAt: Date.now() } });
+      return null;
+    }
+    // Resend retains idempotency keys for 24h. An uncertain late retry needs an owner check.
+    if (data.firstProviderAttemptAt && data.firstProviderAttemptAt < Date.now() - 23 * 60 * 60 * 1000) {
+      transaction.update(ref, { delivery: { ...delivery, state: "CHECK_PROVIDER", error: "Check Resend delivery history before retrying outside its idempotency window" } });
+      return null;
+    }
+    const payload = data.providerPayload ?? { from, to: [data.to], subject: data.message.subject, text: data.message.text };
+    transaction.update(ref, { providerPayload: payload, firstProviderAttemptAt: data.firstProviderAttemptAt ?? Date.now(), delivery: { state: "SENDING", attemptedAt: Date.now() } });
+    return payload;
+  });
+  if (!claimed) return;
   try {
     const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "Idempotency-Key": ref.id,
-      },
-      body: JSON.stringify({ from, to: [job.to], subject: job.message.subject, text: job.message.text }),
-      signal: AbortSignal.timeout(8000),
+      method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "Idempotency-Key": ref.id },
+      body: JSON.stringify(claimed), signal: AbortSignal.timeout(8000),
     });
-    if (!response.ok) throw await resendFailure(response);
+    if (!response.ok) throw new Error("Delivery provider rejected the request");
     const result = await response.json() as { id?: string };
-    await ref.update({ delivery: {
-      state: "SUCCESS",
-      provider: "resend",
-      providerMessageId: result.id ?? null,
-      attemptedAt: Date.now(),
-    } });
-  } catch (error) {
-    console.error("Submission alert delivery failed", error);
-    try {
-      await ref.update({ delivery: {
-        state: "ERROR",
-        provider: "resend",
-        error: error instanceof Error ? error.message : "Unknown delivery error",
-        attemptedAt: Date.now(),
-      } });
-    } catch (updateError) {
-      console.error("Could not record submission alert delivery failure", updateError);
-    }
+    if (!result.id) throw new Error("Missing provider receipt");
+    await ref.update({ delivery: { state: "SUCCESS", provider: "resend", providerMessageId: result.id, attemptedAt: Date.now() } });
+  } catch {
+    console.error("Submission alert delivery failed");
+    await ref.update({ delivery: { state: "ERROR", provider: "resend", error: "Delivery uncertain. Check provider history and retry.", attemptedAt: Date.now() } });
   }
 }
 
-export async function saveEditorialRequest(input: unknown): Promise<boolean> {
+export async function saveEditorialRequest(input: unknown, developer?: { accessHash: string }): Promise<string | false> {
   const request = requestSchema.parse(input);
   if (request.companyWebsite) return false;
 
@@ -160,12 +167,12 @@ export async function saveEditorialRequest(input: unknown): Promise<boolean> {
   const limitRef = db.collection("editorialRequestLimits").doc(`${day}-${emailHash}`);
   const dailyRef = db.collection("editorialRequestLimits").doc(`${day}-site-total`);
   const entryRef = db.collection("editorialRequests").doc();
-  const notificationRef = db.collection("editorialNotifications").doc(`app-${entryRef.id}`);
+  const notificationRef = db.collection("editorialNotifications").doc(`${request.kind}-${entryRef.id}`);
   const notificationJob: NotificationJob = {
     to: notificationEmail ?? "",
     message: {
-      subject: "New Workout App Index app submission",
-      text: `A new app submission for ${request.kind === "app" ? request.appName : ""} is waiting for review.\n\nOpen the editorial inbox: https://workoutappindex.com/admin\n\nSubmission ID: ${entryRef.id}`,
+      subject: request.kind === "partnership" ? "New Workout App Index partnership inquiry" : "New Workout App Index app submission",
+      text: `A new ${request.kind === "partnership" ? "partnership inquiry" : "app submission"} ${request.kind === "app" ? request.appName : ""} is waiting for review.\n\nOpen the editorial inbox: https://workoutappindex.com/admin\n\nSubmission ID: ${entryRef.id}`,
     },
   };
 
@@ -188,18 +195,18 @@ export async function saveEditorialRequest(input: unknown): Promise<boolean> {
     });
     const { companyWebsite: _honeypot, ...content } = request;
     void _honeypot;
-    transaction.create(entryRef, { ...content, createdAt: now, status: "received", classification: request.kind === "service" || request.kind === "partnership" ? "private commercial inquiry" : "unverified research lead" });
-    if (request.kind === "app" && notificationEmail) {
+    transaction.create(entryRef, { ...content, ...(developer ? { developerAccessHash: developer.accessHash, developerAccessExpiresAt: now + 30 * 86400000, submissionVersion: "developer-1", pageOneCompletedAt: now, testData: process.env.NODE_ENV !== "production" || process.env.WAI_TEST_SUBMISSIONS === "true", initiallyRequestedProducts: [], listingPaymentStatus: "unpaid" } : {}), createdAt: now, status: "received", classification: request.kind === "service" || request.kind === "partnership" ? "private commercial inquiry" : "unverified research lead" });
+    if ((request.kind === "app" || request.kind === "partnership") && notificationEmail) {
       transaction.create(notificationRef, { ...notificationJob, delivery: { state: "PENDING" }, createdAt: now });
     }
   });
-  if (request.kind === "app" && notificationEmail) {
+  if ((request.kind === "app" || request.kind === "partnership") && notificationEmail) {
     await deliverSubmissionAlert(notificationRef, notificationJob);
   }
-  if (request.kind === "app" && !notificationEmail) {
+  if ((request.kind === "app" || request.kind === "partnership") && !notificationEmail) {
     console.error("App submission saved without notification: no notification email is configured");
   }
-  return true;
+  return entryRef.id;
 }
 
 export async function listEditorialRequests(cursor?: string): Promise<{ requests: EditorialRequest[]; nextCursor: string | null }> {
@@ -211,8 +218,11 @@ export async function listEditorialRequests(cursor?: string): Promise<{ requests
   }
   const snapshot = await query.get();
   const page = snapshot.docs.slice(0, 30);
+  const notificationRefs = page.filter(doc => ["app", "partnership"].includes(doc.data().kind)).map(doc => getAdminFirestore().collection("editorialNotifications").doc(`${doc.data().kind}-${doc.id}`));
+  const notifications = notificationRefs.length ? await getAdminFirestore().getAll(...notificationRefs) : [];
+  const notificationById = new Map(notifications.filter(doc => doc.exists).map(doc => [doc.id, doc.data()?.delivery?.state as string]));
   return {
-    requests: page.map((document) => ({ id: document.id, ...document.data() }) as EditorialRequest),
+    requests: page.map((document) => ({ id: document.id, ...document.data(), notification: { id: `${document.data().kind}-${document.id}`, state: notificationById.get(`${document.data().kind}-${document.id}`) ?? "NOT_QUEUED" } }) as EditorialRequest),
     nextCursor: snapshot.docs.length > 30 ? page[page.length - 1].id : null,
   };
 }

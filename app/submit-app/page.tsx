@@ -1,13 +1,13 @@
 import { publicOpenGraph } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { EditorialRequestForm } from "@/components/editorial-request-form";
+import { DeveloperSubmissionFunnel } from "@/components/developer-submission-funnel";
 import { PublicInformationLayout } from "@/components/public-information-layout";
 
 export const metadata: Metadata = {
   title: "Submit a Fitness App | Workout App Index",
   description:
-    "Submit a publicly available fitness app for editorial consideration by Workout App Index.",
+    "Get a factual app listing for $20, or request human testing, a promotional review or a competitive comparison.",
   alternates: { canonical: "/submit-app" },
 };
 
@@ -19,7 +19,7 @@ export default function SubmitAppPage() {
     <PublicInformationLayout
       eyebrow="FOR APP DEVELOPERS"
       title="Submit your app"
-      introduction="Tell us about your product so we can decide whether it belongs in the index and research it under the same standards as every other app."
+      introduction="Help the right users discover your app, improve the experience, or understand how it compares. Tell us about your product, then choose the support you need."
     >
       <section>
         <h2>Requirements before we can consider it</h2>
@@ -50,18 +50,16 @@ export default function SubmitAppPage() {
           </li>
         </ol>
         <p>
-          Submission is free. We may screen, waitlist, or decline an app
-          according to fit, evidence, access, and editorial capacity. Submission
-          does not guarantee testing, scoring, listing, publication, a timeline,
-          or a favorable conclusion. Factual corrections are free. Ordinary
-          catalog research begins with public primary sources; hands-on
-          editorial testing is selected separately. Developer participation is
-          not required for a factual profile. See our
-          <Link href="/editorial-standards"> editorial standards</Link> for how we
-          handle later product changes.
+          A factual listing costs $20 and includes expedited assessment,
+          source checks and profile preparation for eligible apps. We assess
+          complete, accessible submissions within five business days. If an app
+          is ineligible or we cannot deliver, we refund the listing fee in full.
+          Additional testing, promotional writing and comparison services are
+          available by agreement. <Link href="/terms">Read the terms</Link>.
+          <Link href="/corrections"> Factual corrections remain free</Link>.
         </p>
       </section>
-      <EditorialRequestForm kind="app" />
+      <DeveloperSubmissionFunnel />
     </PublicInformationLayout>
   );
 }

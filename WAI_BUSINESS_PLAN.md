@@ -1,428 +1,76 @@
-# Workout App Index Facts-First Growth Plan
+# Workout App Index business plan
 
-**Planning date:** November 4, 2026  
-**Owner:** Turf King LLC  
-**Financial objective:** Build toward at least $20,000 in annual external revenue  
-**Operating target:** Establish a credible path toward a $1,667 monthly revenue run rate
+Updated November 13, 2026. This is the current operating plan for the existing WAI website. It replaces the November 4 plan's obsolete scoring, free developer submission, fixed public service-package and speculative subscription language. Historical agreements and evidence remain historical records; do not silently reinterpret them.
 
-## 1. Executive Summary
+**Financial objective:** Build toward at least $20,000 in annual external WAI revenue, with a repeatable $1,667 monthly run rate. These are targets, not verified receipts. Owner-funded and sandbox transactions do not count as external revenue; track The Lift League, Caliper Cal and other Turf King revenue separately.
 
-Workout App Index will become an independent fitness-app intelligence and decision platform.
+## Purpose and audience
 
-Its scalable foundation will be a broad, current, sourced catalog of fitness apps. WAI will collect and normalize information about pricing, trials, platforms, training approaches, AI use, features, privacy, support, target users, and important limitations.
+Help people choose a workout app that fits how they train, the guidance they want, their equipment, platform, access budget and useful adjacent features. Start with broad, sourced product coverage. Add deeper firsthand work where it resolves a meaningful consumer question or meets an agreed client scope.
 
-WAI will not conduct exhaustive unpaid testing for every submitted app. Ordinary factual profiles should require no more than approximately ten minutes of owner verification when firsthand inspection is useful.
+The catalog provides practical facts and clear uncertainty. It does not present Legit, Originality or other subjective quality scores. Finder fit measures compatibility with stated preferences, not product quality or paid placement. Independent editorial observations can explain a meaningful difference without inventing a score or claiming universal superiority.
 
-Hands-on testing will remain important but will be selected according to consumer interest, search demand, comparison value, commercial scope, or a clearly defined editorial purpose. Ryan’s dictated testing notes will support original reviews, comparisons, articles, podcast episodes, and videos.
+## Consumer product
 
-WAI will maintain several independent revenue lanes rather than relying on one uncertain offer.
+The homepage introduces WAI and rotates curated app examples, including The Lift League alongside Boostcamp, Hevy and StrongLifts. Visitors can browse the alphabetical catalog, search and filter facts, compare up to four apps, or complete the nine-question finder. Public browsing and the finder require no account.
 
-## 2. Positioning
+The questionnaire covers platform, goal, experience, preferred training guidance, equipment, a main feature priority, optional adjacent features, AI preference and budget. Adjacent features include nutrition, recovery, mindfulness, cardio, body composition and wearable integration. Health-platform syncing and a dedicated watch app are different capabilities. Unknown, conflicting, platform-specific and paid-tier information must remain visible in the evidence and cannot be promoted into verified availability.
 
-Workout App Index helps people understand:
+Profiles explain what an app does, its training approach, decisions it removes, choices the user retains, supported platforms, price/access limits, relevant features, dated sources and commercial relationships. Training approach describes the user's relationship with the product, rather than reducing every app to an AI/manual label. The current matching contract lives in `lib/matching.ts` and is explained at `/how-we-score`.
 
-- What an app actually offers
-- How the app expects them to train
-- What it costs
-- What is free
-- What happens after a trial
-- Which platforms it supports
-- Whether and how it uses AI
-- Who it appears designed for
-- What information remains unverified
-- Which alternatives deserve consideration
+## Catalog growth and ownership
 
-WAI’s defensible asset is not merely a collection of public claims. It is a normalized, dated, sourced, comparable, and continuously improved fitness-app dataset connected to consumer decision tools and selective firsthand experience.
+Most app profiles begin with local public-source research, usually in cohorts of about five. Check current official sites, stores, pricing and documentation. Prepare concise entries and claim-specific dated evidence in the existing structured catalog fields. Discuss unresolved discrepancies with Ryan before release. Do not require exhaustive hands-on testing for an ordinary factual profile.
 
-## 3. Core Products
+Internet discovery and developer submissions feed the same owner-controlled research process. A submission is a lead, not independent verification; an inquiry or payment is not a published app. Inbox request counts and public catalog counts measure different things. WAI may independently research and list apps without a developer purchase or participation. Free sourced factual corrections remain available.
 
-### Factual App Catalog
+Local proposals, saved private records, review decisions and public snapshots are separate. Deploying a local proposal does not overwrite a saved owner edit. The owner accepts proposed changes field by field, reviews the saved result and separately updates the public listing. Missing content, pending proposals, review completion and public visibility remain distinct indicators. See [Catalog workflow](docs/CATALOG_WORKFLOW.md).
 
-The catalog provides structured, sourced profiles that can be produced efficiently.
+## Developer products and revenue
 
-Important information should be classified as:
+| Product | What is purchased | Commercial terms |
+| --- | --- | --- |
+| Get listed | Expedited factual assessment and profile preparation, subject to eligibility, source checks and owner publication approval | $20 USD; assessment within five business days after payment, complete information and required access; full refund if ineligible or WAI cannot deliver |
+| Human testing and follow-up | Agreed user journeys, private findings, reproducible issues and a bounded follow-up | Individually scoped and quoted |
+| Experience review and promotional write-up | Fuller product use, private recommendations and agreed disclosed commissioned writing | Individually scoped and quoted |
+| Product use and competitive comparison | Use over an agreed duration, comparison with named relevant leaders, private findings and a written comparison | Individually scoped and quoted; no implied demo video |
 
-- Officially documented
-- App-store documented
-- Developer-reported
-- Independently observed
-- Conflicting
-- Not established
+The developer first saves app details, then selects one product. Listing payment uses embedded Stripe Checkout; higher services save an inquiry on the same request. Returning, retrying or changing the choice should not require re-entering contact details. Previously requested products remain in history, and an owner-agreed scope may combine products even though each new customer selection is singular.
 
-Each profile should identify when important information was last verified.
+The $20 fee buys earlier defined work, not a favorable recommendation, finder position, traffic or revenue. Missing information or access pauses the delivery clock. Record the reason and communicate any revised schedule. If the app is ineligible or WAI cannot deliver, refund in full. Payment alone never publishes a listing.
 
-The user-facing language should remain straightforward. “How this app expects you to train” is the preferred explanation of the app’s training approach. The implementation should use the existing project model rather than assuming a particular internal field name.
+Internal reference amounts of $95, $225 and $350 help scope the three larger services; they are not public fixed-price offers. Larger engagements require a signed scope, a non-refundable 50% deposit before work, then a final 50% invoice on completion. Record verified Stripe invoices separately from work status. Agree exact deliverables, duration, competitors, revision/follow-up limits, cancellation beyond the deposit, WAI non-delivery remedies, confidentiality, publication and reuse rights for each engagement. Use the [scope template](docs/COMMERCIAL_SCOPE_TEMPLATE.md); do not invent blanket terms from an inquiry.
 
-### Personalized App Matching
+Partnerships can include manually managed paid links on `/partnerships`, disclosed sponsored articles at `/sponsored/[slug]`, affiliate/referral arrangements, and scoped market research or aggregate insights when sufficient evidence exists. These are inquiries and negotiated work, not a built subscription, API or data-feed product. Do not promise audience scale, impressions, leads or a recurring intelligence product without evidence and an explicit agreement. No individual visitor, developer, contact, health or questionnaire data is sold.
 
-WAI’s Fit system should help users identify products aligned with their needs without declaring one app universally superior.
+## Deferred opportunities and validation gates
 
-Matching should rely primarily on normalized product information and user preferences.
+The longer-term plan can test factual pricing/free-tier reports, onboarding/paywall comparisons, feature/AI maps, competitor-change monitoring and professional-software guidance for coaches or gyms. Start with a bounded sample brief and credible buyer interest, not a new subscription platform. Recurring intelligence, data licensing, digital products, newsletters, podcast/video sponsorships and additional ad placements remain opportunities rather than currently implemented products. Do not build intelligence subscription infrastructure before at least three organizations show credible willingness to pay; any price or contract requires a new decision. Research-based referrals remain based on buyer needs regardless of commissions.
 
-### Search-Led Editorial Content
+Retain the original December 4, 2026 business checkpoint: meaningful external WAI revenue, an actual purchase validating an offer, a trackable commercial partnership and substantially faster factual catalog production. Initial success signals also include one external paid service, one viable referral/affiliate arrangement, three meaningful intelligence conversations and one credible report/monitoring buyer. Record evidence, not assumed completion. At that checkpoint, choose the one or two strongest revenue lanes for the next 60 days and postpone lanes without qualified demand. Outbound commercial messages still require explicit owner authorization.
 
-WAI will selectively produce:
+## Independence and disclosure
 
-- Hands-on reviews
-- App-versus-app comparisons
-- Pricing and free-tier comparisons
-- Alternative pages
-- Best-app articles for defined needs
-- Onboarding and paywall comparisons
-- First-workout experience articles
-- Podcast episodes
-- Videos and short clips
+All paid work must retain independent findings and honest scope limits. Paid links and sponsored writing are visibly identified, and commercial links use the appropriate sponsored relationship. Client factual corrections do not confer editorial approval. Commissioned publication requires the agreed scope, permissions, disclosure and owner approval.
 
-Ryan will test selected products and dictate natural observations. Those notes will be converted into useful editorial content while distinguishing documented facts, firsthand observations, comparative analysis, and untested areas.
+Use the structured commercial disclosure for each profile. Record a known absence of a material WAI relationship as `none`; use `material` with a plain statement when relevant, and `not-established` until resolved. The Lift League's shared Turf King ownership with WAI is material and must be disclosed. Free factual corrections do not require a commercial arrangement.
 
-### Professional Fitness-Software Guidance
+Historical private scores and review rounds remain for provenance and compatibility. They do not reappear publicly or influence current finder results. Dated firsthand observations belong to the platform, version, tier and journey actually assessed; documentation is not a hands-on test.
 
-WAI may expand into software decisions made by:
+## Acquisition and measurement
 
-- Personal trainers
-- Online coaches
-- Small gyms
-- Studios
-- Strength and conditioning facilities
+Grow useful catalog coverage and consumer-led comparisons/pricing/alternatives content from real questions and verified demand. Reuse evidence across formats without widening the tested scope. Selected writing, podcast or video work is an editorial opportunity, not a promise that a general article/video publishing system is already built.
 
-This may include professional-software comparisons, a dedicated finder, and qualified referrals to coaching or gym platforms.
+Measure meaningful catalog searches, result selections, profile views, outbound actions and finder completions with consent. Measure saved developer requests, product choices, service inquiries and confirmed payments separately. The private operational report uses saved requests and reconciled provider payments; consented GA events are supporting funnel evidence, not accounting totals. Seven-day conversion cohorts are separate from the five-business-day delivery promise. Refunds reduce net receipts but do not erase a historical conversion. Gross/refund/net amounts exclude provider fees and are not profit.
 
-The professional finder should not be built until viable commercial partnerships or demonstrated buyer demand exist.
+Protect contact details, free text, answers and credentials. The only approved new analytics identifier is the opaque request reference on the six developer-funnel events documented in the [measurement specification](docs/MEASUREMENT_SPEC.md). Do not infer export arrival, revenue, unique people or live delivery from configured dashboards.
 
-## 4. Revenue Model
+## Operating priorities
 
-### Paid Private Testing
+1. Keep the current site and payment flow accurate, understandable and usable; verify provider behavior without unsolicited real charges or messages.
+2. Fill existing catalog gaps with dated sources, preserve owner edits and surface unresolved human checks. Avoid roster counts that become stale.
+3. Process purchased listing work and agreed engagements within their actual scope; track access, approval, money and delivery separately.
+4. Expand factual coverage in manageable cohorts and publish selected evidence-backed consumer content.
+5. Reconcile payments and verify consented event/export arrival before drawing commercial conclusions or expanding reporting products.
 
-WAI may offer bounded private human testing.
-
-**Focused Human Test — $95**
-
-- One platform and device
-- One specified workflow
-- Up to approximately one hour
-- Reproducible problems and usability friction
-- Concise private findings
-
-**Launch Experience Review — $225**
-
-- Onboarding and account creation
-- Main product journey
-- Paywall or purchase experience
-- Important navigation and trust issues
-- Prioritized private findings with supporting images
-- Approximately two to three hours of bounded testing
-
-### Private Competitive Product Audits
-
-**Competitive Product Audit — starting at $350**
-
-Possible scope:
-
-- Product experience review
-- Comparison with up to three direct competitors
-- Pricing, trial, paywall, and positioning analysis
-- Audience and differentiation analysis
-- Written private report
-- Review call
-
-These are initial validation prices and may change after actual delivery time and demand are established.
-
-### Affiliate Revenue
-
-WAI may earn commissions when a user follows a clearly disclosed commercial link and purchases a product.
-
-Requirements:
-
-- Commercial relationships must be disclosed near the relevant link.
-- Compensation cannot determine scores, conclusions, rankings, or finder results.
-- Products without affiliate programs remain eligible for equal editorial consideration.
-- WAI should prioritize useful matches rather than the highest available commission.
-
-### Qualified Leads and Referrals
-
-WAI may connect trainers, coaches, gyms, or consumers with suitable software providers.
-
-Possible compensation includes:
-
-- Per-qualified-lead fees
-- Per-sale referral fees
-- Recurring subscription commissions
-- Negotiated partnership arrangements
-
-Recommendations must remain based on buyer needs. Commercial participation cannot purchase preferential matching.
-
-### Paid Sponsorships
-
-Possible sponsorship products include:
-
-- Podcast sponsorships
-- Newsletter sponsorships
-- Category-page sponsorships
-- Clearly labeled sponsored educational content
-- Clearly labeled founder spotlights
-- Sponsored videos
-- Paid profile enhancements that do not affect editorial conclusions
-- Site advertising
-
-WAI will not promise audience reach that current traffic cannot support. Sponsorship prices will be based on demonstrated impressions, clicks, downloads, or engagement.
-
-### Market-Research and Intelligence Products
-
-WAI may sell factual research products such as:
-
-- Fitness-app pricing reports
-- Trial and free-tier comparisons
-- Paywall and onboarding reports
-- AI-use maps
-- Feature and category maps
-- Competitor-change monitoring
-- New-product and closure tracking
-- Quarterly fitness-app market reports
-- Custom factual research
-- Professional-software pricing benchmarks
-
-The initial test will be a sample Fitness App Competitive Intelligence Brief offered to established companies rather than cash-constrained independent developers.
-
-### Intelligence Subscriptions
-
-If recurring demand is demonstrated, WAI may offer a monthly or quarterly subscription covering:
-
-- Pricing changes
-- Trial changes
-- Notable product releases
-- Category movement
-- New competitors
-- Important positioning changes
-- Emerging consumer questions
-
-A possible founding price is approximately $79 per month. No subscription infrastructure should be built before at least three organizations express credible willingness to pay.
-
-### Data Licensing and Access
-
-Future products may include:
-
-- Licensed datasets
-- Structured exports
-- Research dashboards
-- Custom category feeds
-- Limited API access
-- Buyer-intent information that respects consent and privacy
-
-These products should be developed only after manual demand is established.
-
-### Digital Products
-
-Possible low-cost products include:
-
-- Google Play business-account launch guide
-- App-launch checklists
-- Testing templates
-- Store-listing preparation guides
-- Fitness-app market maps
-- Comparison worksheets
-
-Digital products should be validated through preorders before substantial production work.
-
-### Supporting Portfolio Revenue
-
-Revenue from The Lift League, Caliper Cal, podcast advertising, and other Turf King properties will remain separately measured.
-
-## 5. Editorial and Commercial Separation
-
-The following rules are permanent:
-
-- Factual corrections are free.
-- Payment cannot purchase a listing.
-- Payment cannot purchase a favorable conclusion.
-- Payment cannot purchase a higher score or finder position.
-- Payment cannot remove legitimate criticism.
-- Private testing does not automatically change public coverage.
-- A material commercial relationship that informs public coverage must be disclosed.
-- Developer claims remain claims until supported by appropriate evidence.
-- WAI may publish factual profiles without developer participation.
-- WAI may decline an app, service engagement, sponsorship, or partnership.
-- Existing ownership relationships involving Turf King products remain disclosed.
-
-## 6. Profile and Research Workflow
-
-For an ordinary profile:
-
-1. AI collects information from official websites, app stores, pricing pages, privacy documents, and other appropriate primary sources.
-2. Information is mapped to the project’s existing catalog model.
-3. Missing, conflicting, and potentially outdated information is flagged.
-4. Ryan spends zero to approximately ten minutes verifying information that benefits from opening the product.
-5. Anything not independently confirmed retains the correct evidence classification.
-6. The profile is published without waiting for developer participation.
-7. Developers may submit sourced factual corrections.
-8. Important information receives a verification date.
-
-The system must not invent facts, infer unavailable features, or present developer marketing claims as firsthand findings.
-
-## 7. Hands-On Editorial Workflow
-
-Apps should receive deeper testing when supported by:
-
-- Search demand
-- Existing impressions
-- Comparison opportunities
-- High consumer uncertainty
-- Commercial significance
-- A selected editorial theme
-- A defined paid private scope
-
-Ryan will dictate observations during or after testing. Those notes become the primary firsthand evidence.
-
-Each resulting article should identify:
-
-- Tested platform
-- Relevant app version
-- Testing date
-- Workflows attempted
-- What was directly observed
-- What was not tested
-- Public claims used for context
-- Important comparison limitations
-
-One testing session should be reused across profiles, articles, comparisons, podcast material, and video wherever appropriate.
-
-## 8. Customer Acquisition
-
-Primary channels:
-
-- High-intent Google searches
-- Comparison and alternative pages
-- Pricing and cost pages
-- Internal links between related profiles
-- YouTube demonstrations and reviews
-- Podcast episodes with one tracked action
-- Appropriate Reddit and community participation
-- Email or newsletter updates
-- Direct outreach to established commercial partners
-- Professional-software buyer resources
-- Cross-promotion from Turf King products
-
-WAI should not rely on generic social posting or paid advertising before its conversion paths are established.
-
-## 9. Measurement
-
-Track weekly:
-
-### Audience
-
-- Search impressions
-- Search clicks
-- Top queries
-- Top landing pages
-- Profile views
-- Comparison use
-- Finder completions
-- Outbound product clicks
-- Return visitors
-- Podcast and video engagement
-
-### Production
-
-- Profiles created or refreshed
-- Owner verification time
-- Submission-to-profile time
-- Hands-on testing hours
-- Articles published
-- Profiles with dated sources
-- Conflicting or missing fields
-
-### Revenue
-
-- Service inquiries
-- Paid tests
-- Paid audits
-- Delivery time
-- Affiliate clicks
-- Affiliate sales
-- Qualified leads
-- Referral revenue
-- Sponsor inquiries
-- Sponsorship revenue
-- Intelligence inquiries
-- Report sales
-- Subscription revenue
-- Digital-product sales
-
-Owner-funded transactions must remain separate from external revenue.
-
-## 10. Condensed Implementation Timeline
-
-### Days 1–3: Preserve and Define
-
-- Create and push a GitHub checkpoint of the current WAI state.
-- Save this plan in the WAI repository.
-- Audit the existing catalog schema, scoring system, profile UI, review workflow, analytics, and public policies.
-- Identify what can support the facts-first workflow without a major data migration.
-- Do not delete or mass-rewrite existing scores.
-
-### Days 4–7: Establish the Commercial Foundation
-
-- Publish a Testing & Research Services page.
-- Publish a commercial-partnership page covering sponsorships, referrals, affiliate relationships, and market research.
-- Update editorial standards and developer-facing language.
-- Add clear commercial-independence disclosures.
-- Add bounded, consent-respecting analytics for service and partnership inquiries.
-- Add a reusable dictated-editorial template.
-
-### Days 8–14: Pilot the Facts-First Workflow
-
-- Process or refresh five to ten profiles using the new workflow.
-- Measure owner time.
-- Confirm ordinary profiles can be completed with no more than approximately ten minutes of hands-on verification.
-- Select two high-intent editorial topics from actual search evidence.
-- Produce at least one article from dictated firsthand notes.
-- Document any catalog-model limitations before changing the schema.
-
-### Days 15–21: Validate Revenue Lanes
-
-- Contact relevant affiliate or partnership programs.
-- Contact established coaching and gym-software vendors about referral arrangements.
-- Present a sample intelligence brief to established fitness-app companies.
-- Make paid testing services publicly available.
-- Invite qualified service conversations without connecting payment to editorial selection.
-- Identify potential sponsors but do not sell unsupported reach.
-
-### Days 22–30: Measure and Choose
-
-Success signals include:
-
-- At least one external paid service
-- At least one viable affiliate or referral arrangement
-- At least three meaningful market-intelligence conversations
-- At least one credible report or monitoring buyer
-- Reduced catalog production time
-- Increased search coverage from factual profiles
-- Evidence identifying the most promising revenue lane
-
-At day 30, select the one or two strongest revenue lanes for the next 60-day investment. Stop or postpone lanes that produce no qualified interest.
-
-## 11. Near-Term Financial Gates
-
-**By December 4, 2026:**
-
-- Generate the first meaningful external WAI revenue.
-- Validate at least one commercial offer with an actual purchase.
-- Establish at least one trackable commercial partnership.
-- Demonstrate that factual catalog production is substantially faster than the former deep-review process.
-
-**Next objective:**
-
-Build toward a repeatable $1,667 monthly external revenue run rate without compromising editorial independence.
-
-## 12. Strategic Commitment
-
-WAI will prioritize:
-
-- Factual breadth
-- Source quality
-- Search usefulness
-- Efficient publication
-- Selective firsthand depth
-- Transparent commercial relationships
-- Multiple testable revenue lanes
-- Actual purchasing behavior over verbal enthusiasm
-- Revenue evidence over feature expansion
+Work in the existing repository and Firebase projects. Validate all intended files before the owner-authorized commit/push that triggers deployment. Do not introduce new projects, an additional deployment process or rollout monitoring. See [Site operations](docs/SITE_OPERATIONS.md) and [Deployment and payments](docs/DEPLOYMENT.md) for implementation and verification boundaries.

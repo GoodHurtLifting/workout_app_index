@@ -23,9 +23,9 @@ export function CommercialInquiryForm({ kind }: { kind: CommercialInquiryKind })
 
   function recordStart(event: FormEvent<HTMLFormElement>) {
     const target = event.target;
-    if (kind !== "service" || started.current || !(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) || target.name === "companyWebsite" || !target.value.trim()) return;
+    if (started.current || !(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) || target.name === "companyWebsite" || !target.value.trim()) return;
     started.current = true;
-    trackCommercialEvent("scope_request_started", page);
+    trackCommercialEvent(kind === "service" ? "scope_request_started" : "partnership_inquiry_started", page);
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -58,7 +58,7 @@ export function CommercialInquiryForm({ kind }: { kind: CommercialInquiryKind })
 
   return <section className="editorial-request-section" id="request-scope">
     <h2>{kind === "service" ? "Request a scope" : "Discuss a partnership"}</h2>
-    <p>We store your contact details and message privately to consider and respond to this inquiry. Please do not include passwords, health information, or confidential customer data. An inquiry does not affect catalog inclusion or editorial selection.</p>
+    <p>We store your contact details and message privately to consider and respond to this inquiry. Please keep passwords, health information and confidential customer data out of your answers.</p>
     <form className="editorial-request-form" onSubmit={submit} onInputCapture={recordStart} onChangeCapture={recordStart}>
       <div className="editorial-form-pair">
         <label>Your name <input name="name" required maxLength={100} autoComplete="name" /></label>
@@ -72,7 +72,7 @@ export function CommercialInquiryForm({ kind }: { kind: CommercialInquiryKind })
           {Object.entries(kind === "service" ? serviceOffers : partnershipTopics).map(([value, label]) => <option value={value} key={value}>{label}</option>)}
         </select>
       </label>
-      <label>{kind === "service" ? "What would you like checked? Include the platform, workflow, and intended timing." : "What arrangement or research question would you like to discuss?"}
+      <label>{kind === "service" ? "What would you like checked? Include the platform, workflow, and intended timing." : "What would you like to promote or learn? Include your audience, goals and preferred timing."}
         <textarea name="details" required minLength={20} maxLength={4000} rows={6} />
       </label>
       <button type="submit" disabled={status === "sending"}>{status === "sending" ? "Sending…" : kind === "service" ? "Request a scope" : "Send inquiry"}</button>

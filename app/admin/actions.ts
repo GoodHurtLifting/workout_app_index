@@ -115,6 +115,7 @@ export async function startSubmissionScreening(formData: FormData) {
     if (!request.exists || data?.kind !== "app") throw new Error("App submission not found");
     const status = normalizeAppSubmissionStatus(data.status);
     if (!canTransition(status, "screening") && !canTransition(status, "waitlisted_unassessed")) throw new Error("This submission cannot enter screening");
+    if (data.submissionVersion === "developer-1" && !data.engagement?.agreedProducts?.length) throw new Error("Choose the agreed work before beginning eligibility checks");
     const count = Number(capacity.data()?.screenings ?? 0);
     transaction.set(capacityRef, { screenings: count + 1 }, { merge: true });
     transaction.update(ref, { status: "screening", screeningStartedAt: now, screeningMonth: month,
@@ -580,11 +581,12 @@ export async function setCatalogReviewComplete(formData: FormData) {
   await getCatalogAdminForAction();
   const id = field(formData, "id");
   const complete = field(formData, "complete");
-  if (!/^[a-z0-9-]{1,80}$/.test(id) || (complete !== "yes" && complete !== "no")) {
+  const state = field(formData, "reviewState") || (complete === "yes" ? "complete" : complete === "no" ? "reviewing" : "");
+  if (!/^[a-z0-9-]{1,80}$/.test(id) || !["not_started", "reviewing", "complete"].includes(state)) {
     throw new Error("Invalid catalog review update");
   }
   await getAdminFirestore().collection("catalogApps").doc(id).update({
-    catalog_review_complete: complete === "yes",
+    catalog_review_complete: state === "complete", catalog_review_state: state,
   });
   revalidatePath("/admin");
   revalidatePath(`/admin/apps/${id}`);

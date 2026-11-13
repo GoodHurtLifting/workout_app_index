@@ -34,7 +34,7 @@ export function EditorialRequestForm({ kind }: { kind: "app" | "correction" }) {
       if (response.status !== 201 || result.ok !== true) throw new Error(result.message || "We could not send your request.");
       form.reset();
       setStatus("sent");
-      setMessage(kind === "app" ? "We received your submission. Submission is free and does not guarantee testing, review, listing, or a timeline." : "We received your correction request.");
+      setMessage(kind === "app" ? "We received your app details. Listing work requires a confirmed payment and an eligibility check. See the developer submission page for current options." : "We received your correction request.");
       if (kind === "app") trackEventWhenReady("submission_completed");
     } catch (error) {
       setStatus("error");

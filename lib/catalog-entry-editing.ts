@@ -58,6 +58,15 @@ export function catalogListingProblems(record:AppRecord,hasDatedSource:boolean):
  if(!hasDatedSource)problems.push("At least one dated public source");
  return problems;
 }
+export function catalogMissingItems(record:AppRecord,hasSource:boolean):string[] {
+ const items=catalogListingProblems(record,hasSource);
+ const audit=publicCatalogRecord(record).adjacentFeatureEvidence;
+ if(!audit) items.push("Adjacent feature evidence");
+ else for(const feature of adjacentFeatureOptions) if(audit.features[feature].status==="Not established" || !currentAdjacentFinding(audit,feature)) items.push(`${feature}: not established or needs rechecking`);
+ if(!record.trainingRelationship || record.trainingRelationship.planningStyle==="Not assessed") items.push("Training approach");
+ for(const key of ["deliversCompleteProgram","programLibrary","adaptiveProgramming","supportsOneTimePurchase","hasUsableFreeTier"] as const) if(record[key]===null||record[key]===undefined) items.push({deliversCompleteProgram:"Complete program availability",programLibrary:"Program library",adaptiveProgramming:"Adaptive programming",supportsOneTimePurchase:"One-time purchase availability",hasUsableFreeTier:"Usable free tier"}[key]);
+ return items;
+}
 // Snapshots retain every unrelated entry, including listings absent from the private editor.
 export function replacePublicCatalogEntry(snapshot:AppRecord[],record:AppRecord):AppRecord[] {
  const entry=publicCatalogRecord({...record,researchStatus:"Reviewed"});

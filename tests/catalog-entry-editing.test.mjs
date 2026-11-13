@@ -7,7 +7,7 @@ import { adjacentFeatureResearch } from "../lib/adjacent-feature-research.ts";
 import { adjacentFeatureOptions } from "../lib/adjacent-features.ts";
 import { matchedAdjacentFeatures } from "../lib/matching.ts";
 import { catalogRecordFingerprint,catalogEntryProposalChanges } from "../lib/catalog-proposals.ts";
-import { buildCatalogEntryUpdate,catalogListingProblems,catalogEditIsCurrent,replacePublicCatalogEntry,hasCatalogPublicSource } from "../lib/catalog-entry-editing.ts";
+import { buildCatalogEntryUpdate,catalogListingProblems,catalogMissingItems,catalogEditIsCurrent,replacePublicCatalogEntry,hasCatalogPublicSource } from "../lib/catalog-entry-editing.ts";
 
 function editForm(app){
  const form=new FormData();
@@ -82,4 +82,10 @@ test("undated imports, private notes and future dates do not pass the publicatio
 test("dated feature research counts as a public source without duplicate manual entry",()=>{
  assert.equal(hasCatalogPublicSource(apps.find(app=>app.id==="strong"),[]),true);
  assert.equal(hasCatalogPublicSource(apps.find(app=>app.id==="gymshark-training"),[]),false);
+});
+
+test("missing content stays visible independently of completed review or public status",()=>{
+ const app={...factualFixture(),researchStatus:"Reviewed",trainingRelationship:undefined,hasUsableFreeTier:null};
+ const before=JSON.stringify(app);const missing=catalogMissingItems(app,true);
+ assert.ok(missing.includes("Training approach"));assert.ok(missing.includes("Usable free tier"));assert.equal(JSON.stringify(app),before);assert.equal(app.researchStatus,"Reviewed");
 });

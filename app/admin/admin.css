@@ -87,4 +87,15 @@
 
 .simplified-entry{max-width:1150px;margin:0 auto}.simplified-entry .record-form{display:grid;gap:20px}.entry-editor-section{border:1px solid var(--line);background:var(--card);min-width:0}.entry-editor-section>summary,.adjacent-admin-feature>summary{padding:18px 20px;font-weight:800;cursor:pointer}.entry-editor-section>summary small,.adjacent-admin-feature>summary small{display:block;margin-top:5px;font-weight:400;color:var(--muted);line-height:1.45}.entry-editor-section>div,.adjacent-admin-feature>div{padding:0 20px 20px;display:grid;gap:16px}.entry-editor-section summary:focus-visible{outline:2px solid #315f91;outline-offset:3px}.record-form .entry-editor-section section{padding:0;border:0}.adjacent-admin-feature{border:1px solid var(--line);min-width:0}.entry-save-bar{position:sticky;bottom:0;z-index:8;display:flex;flex-wrap:wrap;gap:12px;padding:16px;background:var(--paper);border:1px solid var(--line)}.entry-save-bar>button:first-child{background:#e8edf3}.entry-readiness{padding:16px 20px;border:1px solid var(--line);margin:16px 0}.entry-readiness>summary{font-weight:800;cursor:pointer}.entry-readiness li,.entry-readiness p{line-height:1.6}.saved-source-log{margin-top:24px}.saved-source-log article{padding:16px 0;border-bottom:1px solid var(--line)}.saved-source-log small{display:block;color:var(--muted);margin-top:6px}.saved-source-log p{line-height:1.55}.simplified-entry .record-form label{min-width:0}.simplified-entry .record-form input,.simplified-entry .record-form textarea,.simplified-entry .record-form select{max-width:100%}
 
-.catalog-row-status{display:flex;flex-direction:column;gap:4px;min-width:0}.catalog-row-status i{line-height:1.2}
+.catalog-entry-row{grid-template-columns:44px minmax(0,1fr) minmax(0,1.5fr) 20px}
+.catalog-row-status{display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px;min-width:0}
+.catalog-row-status i{line-height:1.2;white-space:nowrap}
+@media(max-width:620px){.catalog-entry-row{grid-template-columns:38px minmax(0,1fr)}.catalog-row-status{grid-column:2;justify-content:flex-start}}
+
+.catalog-missing-items { margin:0 1rem 1rem 4rem; font-size:.85rem; }
+.submission-private-work form { display:grid;gap:.75rem;margin:1rem 0; }
+.submission-private-work label { display:grid;gap:.3rem; }
+.submission-private-work fieldset label { display:flex;gap:.5rem;align-items:center; }
+
+.admin-page table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.85rem; }
+.admin-page th,.admin-page td { padding:.65rem;text-align:left;border-bottom:1px solid #ddd; }

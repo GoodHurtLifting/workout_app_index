@@ -7,3 +7,36 @@ env:
     secret: wai_resend_api_key
     availability:
       - RUNTIME
+  - variable: STRIPE_SECRET_KEY
+    secret: WAI_STRIPE_SECRET_KEY@1
+    availability:
+      - RUNTIME
+  - variable: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    secret: WAI_STRIPE_PUBLISHABLE_KEY@1
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: STRIPE_WEBHOOK_SECRET
+    secret: WAI_STRIPE_WEBHOOK_SECRET@1
+    availability:
+      - RUNTIME
+  - variable: WAI_SITE_URL
+    value: https://workoutappindex.com
+    availability:
+      - RUNTIME
+  - variable: WAI_CHECKOUT_ENABLED
+    value: "true"
+    availability:
+      - RUNTIME
+  - variable: WAI_STRIPE_LIVE_APPROVED
+    value: "true"
+    availability:
+      - RUNTIME
+  - variable: WAI_LISTING_TERMS_APPROVED
+    value: "true"
+    availability:
+      - RUNTIME
+  - variable: WAI_TEST_SUBMISSIONS
+    value: "false"
+    availability:
+      - RUNTIME

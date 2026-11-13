@@ -1,6 +1,6 @@
 # Stark: private initial assessment
 
-Checked October 9, 2026. This is a research draft for owner review, not an approved or public WAI listing. Developer claims are not evidence by themselves. Scoring follows [the shared rubric](CATALOG_SCORING_RUBRIC.md).
+Checked October 9, 2026. This is a research draft for owner review, not an approved or public WAI listing. Developer claims are not evidence by themselves. Scoring follows [the shared rubric](../archive/LEGACY_EDITORIAL_RECORD.md).
 
 - Provisional Legit Score **68/100**, Low confidence: core execution 70, usability 70, reliability 60, value 75, support/privacy 65.
 - Provisional Originality & Identity **63/100**, Clear identity: original mechanics 62, product point of view 68, visual identity 70, meaningful differentiation 60, defensibility 55.

@@ -1,0 +1,16 @@
+import { publicOpenGraph } from "@/lib/seo";
+import type { Metadata } from "next";
+import { AnalyticsPreferencesButton } from "@/components/analytics-preferences-button";
+import Link from "next/link";
+import { PublicInformationLayout } from "@/components/public-information-layout";
+export const metadata: Metadata = { title: "Privacy | Workout App Index", description: "How WAI handles developer requests, payment records and optional analytics.", alternates: { canonical: "/privacy" } };
+metadata.openGraph = publicOpenGraph(String(metadata.title), String(metadata.description), "/privacy");
+export default function PrivacyPage() {
+ return <PublicInformationLayout eyebrow="PRIVACY" title="Your information at WAI" introduction="Turf King LLC uses the information you provide to respond to requests, deliver agreed work and operate Workout App Index.">
+  <section><h2>Submissions and commercial requests</h2><p>We store your contact details, app information, goals and requested services privately. Staff use these details to assess your product, agree work and contact you. We send internal notifications through Resend to WAI’s configured inbox. We keep request and payment history for delivery, billing, corrections and legitimate recordkeeping.</p></section>
+  <section><h2>Saved progress and payments</h2><p>Your browser keeps a tab-local draft while you complete the form. A secure session cookie allows this browser to resume the saved request for up to 30 days. Stripe handles card details. WAI stores Stripe references, amounts, invoice and refund status. Keep passwords and private health information out of submitted text.</p></section>
+  <section><h2>Optional analytics and aggregate research</h2><p>Google Analytics runs with your consent. We measure broad actions and use an opaque submission reference to understand how developers move from app details to a listing purchase or service inquiry. We keep names, email addresses and form answers out of analytics. Operational request and payment records provide separate fulfillment totals.</p><p>Market research may include aggregate usage findings when enough data is available. Personal visitor and submission information is excluded from products sold to partners.</p></section>
+  <section><h2>Browsing and advertising</h2><p>You can browse and use the finder without an account. Finder answers run in your browser and are not sent individually to Google Analytics. Consented analytics may include device, browser, approximate-location and usage information processed by Google.</p><p>Google AdSense may display labeled advertisements. Google and its partners may use cookies for ad delivery and measurement. Advertising has its own consent choices where required; the analytics preference controls analytics. Ads do not determine finder matching or independent findings.</p></section>
+  <section><h2>Your choices</h2><AnalyticsPreferencesButton /><p>Use the site’s analytics preferences to change consent. To request access, correction or deletion of submitted information, <a href="mailto:ryan@workoutappindex.com">contact WAI</a>. Some payment and accounting records may need to be retained to meet legal obligations. <Link href="/terms">Service terms</Link> explain billing and delivery.</p></section>
+ </PublicInformationLayout>;
+}

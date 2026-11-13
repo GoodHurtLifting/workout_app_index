@@ -17,7 +17,7 @@ export function isPublicAnalyticsPath(pathname: string) {
 // Public route vocabulary only; unknown paths must not leak arbitrary identifiers.
 export function publicAnalyticsPagePath(pathname: string) {
   if (/^\/apps\/[a-z0-9][a-z0-9-]{0,79}$/.test(pathname)) return pathname;
-  return ["/", "/apps", "/find", "/services", "/partnerships", "/submit-app", "/corrections", "/editorial-standards", "/how-we-score"].includes(pathname) ? pathname : undefined;
+  return ["/", "/apps", "/find", "/services", "/partnerships", "/submit-app", "/corrections", "/editorial-standards", "/how-we-score", "/terms", "/privacy"].includes(pathname) ? pathname : undefined;
 }
 
 export function analyticsConsentGranted() {

@@ -1,6 +1,6 @@
-# WAI measurement specification — facts-1
+# WAI measurement specification — facts-1 and developer-1
 
-Prepared 2026-11-05 before event implementation. Source baseline: main b436f2e. This version is not a deployment record; record the actual release timestamp after Ryan deploys. Remote checkpoint wai-pre-facts-first-pivot-2026-11-04 resolves to 25faf4dad7911977f63abf0f030fe3314ecae2a9.
+Current event contract updated November 13, 2026. Implementation and live export verification are separate; see [Deployment](DEPLOYMENT.md) for the verified boundary. Historical audit findings are retained in [the dated audit](archive/ANALYTICS_AUDIT_2026-11-05.md).
 
 ## Existing inventory and retained meanings
 
@@ -43,7 +43,7 @@ All retained and new custom events receive measurement_version=facts-1 and a que
 | destination_type | Existing store / official_site only; never destination URL |
 | page_location/page_referrer | Fixed relative public path and empty referrer for custom events; legacy commercial service/partnership paths retained for compatibility. No full URL or query |
 
-No raw terms, names, emails, phone numbers, form content, health data, account/submission/session IDs, full URLs, free-form values, or custom pseudo-identifiers. Standard GA automatic parameters/settings require separate live review; this custom-event contract is not a claim about Enhanced Measurement privacy.
+No raw terms, names, emails, phone numbers, form content, health data, account/session IDs, full URLs, free-form values or custom pseudo-identifiers. Submission IDs are prohibited except for the six expressly approved developer-1 events below. Standard GA automatic parameters/settings require separate live review; this custom-event contract is not a claim about Enhanced Measurement privacy.
 
 ## Attribution and deduplication
 
@@ -53,4 +53,28 @@ The funnel uses stage event ratios, not identity-joined sessions. Multiple selec
 
 ## Release boundaries
 
-No live GA settings, views, dashboards, exports, IAM or billing changes are included. Enhanced Measurement site search, outbound click, form interactions, query-string page locations and history-pageview behavior need an owner-reviewed check. Automatic form_submit is never a successful inquiry. Keep full test/build validation manual in this task. See ANALYTICS_SEO_AUDIT.md and reporting/README.md for evidence, SQL setup, dashboard instructions and release checks.
+No live GA settings, views, dashboards, exports, IAM or billing changes are included. Enhanced Measurement site search, outbound click, form interactions, query-string page locations and history-pageview behavior need an owner-reviewed check. Automatic form_submit is never a successful inquiry. See [the dated audit](archive/ANALYTICS_AUDIT_2026-11-05.md), [reporting runbook](../reporting/README.md) and [deployment guide](DEPLOYMENT.md) for evidence, SQL setup, dashboard instructions and release checks.
+
+
+## Developer funnel extension: developer-1 (November 13, 2026)
+
+This owner-approved extension permits ONE new opaque reference: `submission_id`, the random 20-character Firestore submission document ID. It identifies a request, not a person or GA user. It is explicitly exempt from the earlier blanket prohibition on submission IDs for these six new events only. Never send the capability cookie, its secret/hash, Stripe client secrets, names, emails, answers, URLs from form fields, invoice IDs or signed-scope references. Do not register this high-cardinality value as a GA reporting dimension; use the exported parameter only for bounded aggregate cohorts. Consent and private-route exclusions remain in force. No individual-request or visitor drilldown is a public data product.
+
+| Event | Confirmed trigger | Parameters beyond existing facts-1 context |
+| --- | --- | --- |
+| submission_started | Existing first nonempty input; unchanged | none |
+| submission_completed | Existing HTTP 201 plus ok=true save contract, now when Next saves app details; once per request/tab | none; this does not mean payment or completed listing |
+| submission_page_one_completed | App details saved successfully | submission_id, funnel_version=developer-1 |
+| submission_offer_viewed | Saved request's offers actually displayed | submission_id, funnel_version |
+| submission_service_selected | User selects a service, or selects Continue to payment | submission_id, funnel_version, service allowlisted to listing/focused_test/launch_review/competitive_audit |
+| service_inquiry_saved | HTTP 201 and ok=true after chosen services are saved | submission_id, funnel_version |
+| listing_checkout_started | Server creates/resumes Checkout and embedded checkout mounts | submission_id, funnel_version |
+| listing_purchase_confirmed | Authenticated server reconciliation confirms paid; URL alone never qualifies | submission_id, funnel_version |
+| partnership_inquiry_started | First nonempty partnership field, excluding honeypot | existing fixed partnership context |
+| partnership_inquiry_submitted | Existing HTTP 201 and ok=true inquiry save; delivery success irrelevant | existing fixed partnership context |
+
+Confirmed new steps can wait for tag readiness only if consent already exists. No replay of pre-consent actions. Per-request/tab ledgers reduce repeats, but blocked storage, cross-tab activity, consent changes and blockers mean browser events are never accounting totals. Selection events may repeat intentionally. Existing services_page_viewed stays on the Services page after removing its form. The previous standalone scope_request_started/submitted events retain their historical meaning; the unified developer funnel uses service_inquiry_saved rather than silently renaming historical rows. No change to historical GA rows or the existing catalog/search measurement version.
+
+Operational report: authenticated `/api/admin/developer-report?start=YYYY-MM-DD&end=YYYY-MM-DD`, maximum 90 inclusive UTC cohort days. Each cohort starts at the saved pageOneCompletedAt. Seven calendar days is the defined analysis window (not the five-business-day delivery promise). Mutually exclusive outcomes: purchase only, inquiry only, both, neither still pending, neither after window. CheckoutUnconverted is separate and may overlap an inquiry; it means checkout started but no purchase within seven days, counted only after maturity. It does not prove intent to abandon. Late conversions do not rewrite the seven-day outcome. Subsequent inquiry-to-service-sale is counted independently through reconciled invoice references; it can occur after the seven-day window. Amounts are current reconciled gross/refund/net values for the selected cohorts, not cashflow by transaction date. A refunded purchase remains a historical conversion. Test requests and test-mode money are excluded by default; includeTest=true is private owner testing only.
+
+The operational endpoint reads saved editorialRequests/listingOrders, including nonconsenting developers. It emits aggregate dates/counts/amounts only. It does not export individual rows or contact data. Refresh linked invoices/orders in admin after provider outages; report asOf describes query time, not a promise every Stripe record was freshly polled. BigQuery remains consented browser analysis. No Firestore-to-BigQuery export is installed or assumed. Use reporting/ga4_developer_cohorts.sql for browser cohorts; exact service sales remain operational, not inferred from an inquiry event. Production arrival and rollout date are unverified.
