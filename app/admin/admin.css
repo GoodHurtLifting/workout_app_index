@@ -99,3 +99,52 @@
 
 .admin-page table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.85rem; }
 .admin-page th,.admin-page td { padding:.65rem;text-align:left;border-bottom:1px solid #ddd; }
+
+/* Desktop work and payment editor; keep its styles within this component. */
+.commercial-work > summary { padding:4px 0; }
+.commercial-work .commercial-context { margin:16px 0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 24px; }
+.commercial-work .commercial-context p { margin:0; max-width:none; overflow-wrap:anywhere; }
+.commercial-work .commercial-context strong { color:var(--ink); }
+.commercial-work .commercial-payment-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:18px 0 10px; }
+.commercial-payment-summary > div { padding:16px; border:1px solid var(--line); background:var(--paper); }
+.commercial-payment-summary dt { font-size:.8rem; color:var(--muted); }
+.commercial-payment-summary dd { margin:6px 0 0; font-size:1.35rem; font-weight:900; color:var(--ink); }
+.commercial-work .commercial-payment-status { display:flex; flex-wrap:wrap; gap:12px 28px; }
+.commercial-work .commercial-payment-status p { margin:0; }
+.commercial-work form.commercial-work-form { display:grid; justify-items:stretch; gap:18px; margin:20px 0; }
+.commercial-work .commercial-products { margin:0; padding:16px; border:1px solid var(--line); min-width:0; }
+.commercial-work .commercial-products legend { padding:0 6px; font-weight:900; }
+.commercial-work .commercial-product-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.commercial-work .commercial-products label { align-items:flex-start; padding:12px; border:1px solid var(--line); background:var(--paper); line-height:1.4; cursor:pointer; min-width:0; }
+.commercial-work .commercial-products label:has(input:checked) { border-color:var(--ink); background:#e8edf3; }
+.commercial-work .commercial-products input[type=checkbox],.commercial-work .commercial-checkbox input[type=checkbox] { width:16px; height:16px; flex:0 0 16px; margin:2px 0 0; padding:0; accent-color:var(--ink); }
+.commercial-work .commercial-work-columns { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; align-items:start; }
+.commercial-work .commercial-work-panel { display:grid; gap:16px; padding:20px; min-width:0; border:1px solid var(--line); background:var(--paper); }
+.commercial-work-panel h3,.commercial-work-panel h4 { margin:0; }
+.commercial-work-panel h3 { font-size:1.05rem; }
+.commercial-work-panel h4 { font-size:.85rem; }
+.commercial-work .commercial-field-pair { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+.commercial-work .commercial-work-panel label { min-width:0; }
+.commercial-work .commercial-work-panel input,.commercial-work .commercial-work-panel select,.commercial-work .commercial-work-panel textarea { box-sizing:border-box; width:100%; min-width:0; padding:10px; border:1px solid var(--ink); background:var(--card); color:var(--ink); font:inherit; }
+.commercial-work .commercial-work-panel textarea { resize:vertical; line-height:1.5; }
+.commercial-work-panel small { color:var(--muted); font-weight:400; line-height:1.45; }
+.commercial-work .commercial-help { margin:0; max-width:none; font-size:.85rem; line-height:1.5; }
+.commercial-work .commercial-invoices { display:grid; gap:10px; }
+.commercial-work .commercial-invoices article { padding:14px; min-width:0; border:1px solid var(--line); background:var(--card); }
+.commercial-invoice-heading { display:flex; justify-content:space-between; gap:12px; margin-bottom:8px; font-size:.85rem; }
+.commercial-invoice-heading span { color:var(--muted); overflow-wrap:anywhere; }
+.commercial-invoices code { display:block; font-size:.8rem; overflow-wrap:anywhere; }
+.commercial-work .commercial-invoices p { margin:8px 0; font-size:.85rem; }
+.commercial-work .commercial-work-panel > button { justify-self:start; }
+.commercial-work .commercial-save-bar { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:16px 20px; background:#e8edf3; border:1px solid var(--line); }
+.commercial-work .commercial-save-bar p { margin:0; font-size:.85rem; line-height:1.5; }
+.commercial-work .commercial-save-bar button { flex-shrink:0; background:var(--ink); color:white; }
+.commercial-work form.commercial-refresh-form { display:none; }
+.commercial-work .commercial-utility { margin-top:12px; padding:14px 18px; border:1px solid var(--line); }
+.commercial-work .commercial-utility summary { font-size:.85rem; }
+.commercial-work .commercial-utility form { margin-bottom:0; justify-items:start; }
+.commercial-work .commercial-checkbox { display:flex; align-items:flex-start; gap:8px; }
+.commercial-work .commercial-refund { border-color:#9a2424; }
+.commercial-work .commercial-refund > summary { color:#9a2424; }
+.commercial-work .commercial-refund form button { background:#9a2424; border-color:#9a2424; color:white; }
+.commercial-work button:disabled { opacity:.45; cursor:not-allowed; }
