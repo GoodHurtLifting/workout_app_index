@@ -16,6 +16,7 @@ export async function authorizedDeveloper() {
   const hash = saved.data()?.developerAccessHash;
   const actual = createHash("sha256").update(secret).digest();
   if (typeof hash !== "string" || !/^[a-f0-9]{64}$/.test(hash) || !timingSafeEqual(Buffer.from(hash, "hex"), actual)) return null;
+  if (saved.data()?.deletedAt) return null;
   if (saved.data()?.submissionVersion !== "developer-1" || !(saved.data()?.developerAccessExpiresAt > Date.now())) return null;
   return { id, ref, data: saved.data()! };
 }

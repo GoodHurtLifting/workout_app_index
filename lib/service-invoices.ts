@@ -20,7 +20,7 @@ export async function reconcileInvoice(invoiceId?: string, chargeId?: string) {
   }
   if (!invoiceId || !/^in_[A-Za-z0-9]+$/.test(invoiceId)) return;
   const links = await db.collection("invoiceLinks").doc(invoiceId).get();
-  if (!links.exists) return;
+  if (!links.exists || links.data()?.retiredAt) return;
   const id = links.data()!.submissionId as string;
   const invoice = await stripe.invoices.retrieve(invoiceId);
   if (invoice.livemode !== stripeModeIsLive()) throw new Error("Invoice mode mismatch");

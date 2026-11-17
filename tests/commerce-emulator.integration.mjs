@@ -89,3 +89,74 @@ test("only succeeded refunds reduce receipts",async()=>{
  globalThis.__waiTestStripe={refunds:{list:()=>({async *[Symbol.asyncIterator](){yield {status:"pending",amount:100};yield {status:"failed",amount:200};yield {status:"succeeded",amount:300};}})}};
  assert.deepEqual(await confirmedRefunds("pi_refund_test"),{refundedCents:300,pending:true,failed:true});
 });
+
+test("inbox factual paths preserve independent eligibility, notes, catalog and deletion history", async()=>{
+ const {saveInboxAction}=await import("../app/admin/inbox-actions.ts");
+ globalThis.__waiTestAdmin=true;
+ const submit=async(id,intent,values={})=>{const row=(await db.collection("editorialRequests").doc(id).get()).data();const form=new FormData();for(const [key,value]of Object.entries({id,intent,inboxRevision:String(row.inboxRevision??0),revision:String(row.commercialRevision??0),...values}))form.set(key,value);return saveInboxAction(form);};
+ for(const paid of [true,false]){
+  const id=await saveEditorialRequest({...app,email:`inbox-${paid}-${nonce}@example.invalid`,appName:`Isolated Inbox ${paid} ${nonce}`},paid?{accessHash:"2".repeat(64)}:undefined);
+  const ref=db.collection("editorialRequests").doc(id);
+  if(paid)await ref.update({listingPurchasedAt:Date.now(),listingPaymentStatus:"paid",selectedProduct:"listing"});
+  let result=await submit(id,"eligibility",{result:"eligible",liveProduct:"pass",substantiveTraining:"pass",workingListing:"pass",privacyPolicy:"pass",pricingAndPlatforms:"pass",reviewAccess:"pass",note:""});assert.equal(result.error,undefined);
+  let row=(await ref.get()).data();assert.equal(row.eligibility.result,"eligible");assert.equal(row.status,"received");assert.equal(row.engagement,undefined);
+  result=await submit(id,"note",{kind:"public_source",findings:"Public sources reviewed; hands-on behavior remains untested.",used:"https://example.invalid"});assert.equal(result.error,undefined);
+  assert.equal((await ref.collection("researchNotes").get()).size,1);
+  result=await submit(id,"create");assert.equal(result.error,undefined);
+  row=(await ref.get()).data();assert.equal(row.candidateAppId,row.commercialCatalogAppId);const catalogRef=db.collection("catalogApps").doc(row.candidateAppId);const catalogBefore=(await catalogRef.get()).data();assert.equal(catalogBefore.publication_status,"Candidate");assert.equal(row.reviewRounds,undefined);
+  assert.match((await submit(id,"create")).error,/connected/);
+  result=await submit(id,"commercial",{saveSection:"work",workStatus:"in_progress",catalogAppId:row.candidateAppId,note:"Factual listing preparation"});assert.equal(result.error,undefined);
+  result=await submit(id,"commercial",{saveSection:"work",workStatus:"on_hold",catalogAppId:row.candidateAppId,note:""});assert.equal(result.error,undefined);
+  row=(await ref.get()).data();assert.equal(row.eligibility.result,"eligible");assert.equal(row.engagement.workStatus,"on_hold");assert.equal(row.engagement.note,"");assert.equal(row.listingPurchasedAt>0,paid);
+  assert.match((await submit(id,"note",{kind:"hands_on",findings:"Missing date"})).error,/observation date/);
+  const {getDeveloperReport}=await import("../lib/developer-report-repository.ts");const today=new Date().toISOString().slice(0,10);const reportBefore=(await getDeveloperReport(today,today,true)).cohorts;
+  const beforePublications=(await db.collection("catalogPublications").get()).size;
+  result=await submit(id,"delete",{confirmDelete:"on"});assert.equal(result.error,undefined);assert.ok((await ref.get()).data().deletedAt);assert.deepEqual((await catalogRef.get()).data(),catalogBefore);assert.equal((await ref.collection("researchNotes").get()).size,1);assert.equal((await db.collection("catalogPublications").get()).size,beforePublications);assert.deepEqual((await getDeveloperReport(today,today,true)).cohorts,reportBefore);
+  result=await submit(id,"restore");assert.equal(result.error,undefined);assert.equal((await ref.get()).data().deletedAt,null);
+ }
+ globalThis.__waiTestAdmin=false;assert.match((await saveInboxAction(new FormData())).error,/Not authorized/);
+});
+
+test("commercial sections and invoice replacement preserve provider history and ownership",async()=>{
+ const {saveInboxAction}=await import("../app/admin/inbox-actions.ts");globalThis.__waiTestAdmin=true;
+ const id=await saveEditorialRequest({...app,email:`replace-${nonce}@example.invalid`},{accessHash:"3".repeat(64)});const ref=db.collection("editorialRequests").doc(id);
+ await ref.update({selectedProduct:"focused_test"});
+ const save=async(section,values={})=>{const row=(await ref.get()).data();const f=new FormData();for(const[k,v]of Object.entries({id,intent:"commercial",saveSection:section,revision:String(row.commercialRevision??0),...values}))f.set(k,v);return saveInboxAction(f);};
+ assert.match((await save("work",{workStatus:"in_progress"})).error,/Agree/);
+ assert.equal((await save("work",{workStatus:"not_started",products:"focused_test",note:"Inquiry only"})).error,undefined);
+ assert.equal((await ref.get()).data().engagement.purchasedProducts.length,0);
+ assert.equal((await save("scope",{total:"100",signedScopeReference:"Isolated signed scope",signedScopeDate:"2026-11-13"})).error,undefined);
+ const oldId=`in_old${nonce}`,newId=`in_new${nonce}`;let oldPaid=0;
+ globalThis.__waiTestStripe={invoices:{retrieve:async(invoice)=>({livemode:false,currency:"usd",metadata:{submission_id:id},customer_email:`replace-${nonce}@example.invalid`,total:5000,status:invoice===oldId?"void":"paid",amount_paid:invoice===oldId?oldPaid:5000,status_transitions:{paid_at:1700000000},due_date:null})},invoicePayments:{list:()=>({async *[Symbol.asyncIterator](){}})}};
+ assert.equal((await save("invoices",{depositInvoice:oldId})).error,undefined);
+ assert.equal((await save("work",{workStatus:"on_hold",products:"focused_test",note:"",depositInvoice:"not-an-invoice",total:"not-a-price"})).error,undefined);
+ assert.equal((await save("invoices",{depositInvoice:newId})).error,undefined);
+ let row=(await ref.get()).data();assert.deepEqual(row.engagement.invoiceRefs.map(i=>i.id),[newId]);assert.equal(row.invoiceReferenceHistory[0].id,oldId);assert.ok((await db.collection("invoiceLinks").doc(oldId).get()).data().retiredAt);
+ assert.equal((await save("work",{workStatus:"in_progress",products:"focused_test"})).error,undefined);
+ assert.match((await save("invoices",{})).error,/paid|history/i);
+ const conflict=`in_conflict${nonce}`;await db.collection("invoiceLinks").doc(conflict).set({submissionId:"another-request",stage:"balance"});assert.match((await save("invoices",{depositInvoice:newId,balanceInvoice:conflict})).error,/another request/);
+ const f=new FormData();for(const[k,v]of Object.entries({id,intent:"commercial",saveSection:"work",revision:"0",workStatus:"on_hold"}))f.set(k,v);assert.match((await saveInboxAction(f)).error,/changed/);
+ globalThis.__waiTestAdmin=false;
+});
+
+test("inbox pagination skips deleted records and retains separate audit/note history",async()=>{
+ const {listEditorialRequests}=await import("../lib/editorial-requests.ts");
+ const batch=db.batch(),ids=[];const top=Date.now()+100000;
+ for(let i=0;i<64;i++){const ref=db.collection("editorialRequests").doc();ids.push(ref.id);batch.create(ref,{...app,status:"received",createdAt:top+i,testData:true,...(i%2?{deletedAt:top}:{}),researchNotes:[{id:"legacy-note",findings:"Preserved embedded note"}]});}
+ await batch.commit();
+ const ref=db.collection("editorialRequests").doc(ids[63]);await ref.collection("researchNotes").doc("new-note").set({id:"new-note",at:top,findings:"Preserved dated note"});await db.collection("editorialWorkflowEvents").doc().set({requestId:ref.id,type:"legacy-test",at:top});
+ for(const deleted of [false,true]){
+  const first=await listEditorialRequests(undefined,deleted);assert.equal(first.requests.length,30);assert.ok(first.nextCursor);assert.ok(first.requests.every(r=>ids.includes(r.id)&&!!r.deletedAt===deleted));
+  const second=await listEditorialRequests(first.nextCursor,deleted);assert.ok(second.requests.slice(0,2).every(r=>ids.includes(r.id)));assert.equal(second.requests.some(r=>first.requests.some(previous=>previous.id===r.id)),false);
+ }
+ const archived=await listEditorialRequests(undefined,true);const retained=archived.requests.find(r=>r.id===ref.id);assert.equal(retained.researchNotes.length,2);assert.equal(retained.workflowHistory[0].type,"legacy-test");
+});
+
+test("deleted submissions cannot resume developer access but retain provider reconciliation records",async()=>{
+ const {newDeveloperAccess,authorizedDeveloper}=await import("../lib/developer-session.ts");
+ const {saveInboxAction}=await import("../app/admin/inbox-actions.ts");
+ const access=newDeveloperAccess();const id=await saveEditorialRequest({...app,email:`deleted-access-${nonce}@example.invalid`},{accessHash:access.hash});
+ globalThis.__waiTestDeveloperCookie=`${id}.${access.secret}`;globalThis.__waiTestAdmin=true;
+ assert.equal((await authorizedDeveloper()).id,id);const form=new FormData();form.set("id",id);form.set("intent","delete");form.set("confirmDelete","on");assert.equal((await saveInboxAction(form)).error,undefined);assert.equal(await authorizedDeveloper(),null);assert.ok((await db.collection("editorialRequests").doc(id).get()).exists);
+ delete globalThis.__waiTestDeveloperCookie;globalThis.__waiTestAdmin=false;
+});

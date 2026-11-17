@@ -5,6 +5,7 @@ import { z } from "zod";
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { emptyEngagement, commercialProductIds, workStates, servicePaymentStatus, type Engagement, type InvoiceReference } from "@/lib/developer-offers";
+import { serviceStartProblem } from "@/lib/inbox-workflow";
 import { deliverSubmissionAlert } from "@/lib/editorial-requests";
 import { reconcileInvoice } from "@/lib/service-invoices";
 import { stripeClient, stripeModeIsLive } from "@/lib/stripe-client";
@@ -17,64 +18,82 @@ const submissionId = (form: FormData) => z.string().regex(/^[A-Za-z0-9]{20}$/).p
 export async function saveCommercialWork(form: FormData) {
   const user = await getCatalogAdminForAction();
   const id = submissionId(form);
-  const catalogAppId = text(form, "catalogAppId");
-  if (catalogAppId && (!/^[a-z0-9-]{1,80}$/.test(catalogAppId) || !(await getCatalogRecord(catalogAppId)))) throw new Error("Use an existing catalog entry ID");
-  const products = z.array(z.enum(commercialProductIds)).max(8).parse(form.getAll("products"));
-  const workStatus = z.enum(workStates).parse(text(form, "workStatus"));
-  const totalText = text(form, "total");
-  if (totalText && !/^\d{1,6}(\.\d{1,2})?$/.test(totalText)) throw new Error("Enter the agreed total in USD");
-  const totalCents = totalText ? Math.round(Number(totalText) * 100) : null;
-  const signedScopeReference = z.string().max(1500).parse(text(form, "signedScopeReference"));
-  const signedDate = text(form, "signedScopeDate");
-  const signedScopeAt = signedDate ? Date.parse(`${signedDate}T00:00:00Z`) : null;
-  if (signedDate && (!/^\d{4}-\d{2}-\d{2}$/.test(signedDate) || !Number.isFinite(signedScopeAt) || new Date(signedScopeAt!).toISOString().slice(0,10) !== signedDate || signedScopeAt! > Date.now())) throw new Error("Check the signed scope date");
-  const depositId = text(form, "depositInvoice");
-  const balanceId = text(form, "balanceInvoice");
-  const invoiceIds = [{ id: depositId, stage: "deposit" as const }, { id: balanceId, stage: "balance" as const }].filter(invoice => invoice.id);
-  if (invoiceIds.some(invoice => !/^in_[A-Za-z0-9]+$/.test(invoice.id)) || (depositId && depositId === balanceId)) throw new Error("Use distinct Stripe invoice IDs");
-  if (invoiceIds.length && (!signedScopeReference || !signedScopeAt || !totalCents || !products.some(product => product !== "listing"))) throw new Error("Save the signed scope, products and agreed total before linking invoices");
+  const mode = text(form, "saveSection") || "all";
+  if (!["work", "scope", "invoices", "all"].includes(mode)) throw new Error("Invalid save section");
   const ref = getAdminFirestore().collection("editorialRequests").doc(id);
   const saved = await ref.get();
   if (!saved.exists || saved.data()?.kind === "correction") throw new Error("Commercial request not found");
   const previous = { ...emptyEngagement, ...saved.data()?.engagement } as Engagement;
-  const invoices: InvoiceReference[] = [...previous.invoiceRefs];
-  for (const invoice of invoiceIds) {
-    if (previous.invoiceRefs.some(row => row.id === invoice.id && row.stage === invoice.stage)) continue;
-    const verified = await stripeClient().invoices.retrieve(invoice.id);
-    if (verified.livemode !== stripeModeIsLive() || verified.currency !== "usd") throw new Error("Invoice mode or currency differs from the engagement");
-    if (verified.customer_email?.toLowerCase() !== saved.data()?.email?.toLowerCase()) throw new Error("Invoice email must match this request");
-    const expected = invoice.stage === "deposit" ? Math.ceil(totalCents! / 2) : Math.floor(totalCents! / 2);
-    if (verified.total !== expected) throw new Error("The invoice must match the agreed 50% amount");
-    invoices.push({ id: invoice.id, stage: invoice.stage, status: verified.status ?? "draft", amountPaid: 0, refunded: 0, currency: "usd", verifiedAt: 0, dueAt: null, livemode: verified.livemode });
+  const editsWork = mode === "work" || mode === "all", editsScope = mode === "scope" || mode === "all", editsInvoices = mode === "invoices" || mode === "all";
+  const products = editsWork ? [...new Set(z.array(z.enum(commercialProductIds)).max(8).parse(form.getAll("products")))] : previous.agreedProducts;
+  const workStatus = editsWork ? z.enum(workStates).parse(text(form, "workStatus")) : previous.workStatus;
+  const catalogAppId = editsWork ? text(form, "catalogAppId") : saved.data()?.commercialCatalogAppId || saved.data()?.candidateAppId || "";
+  if (editsWork && catalogAppId && (!/^[a-z0-9-]{1,80}$/.test(catalogAppId) || !(await getCatalogRecord(catalogAppId)))) throw new Error("Use an existing catalog entry ID");
+  let totalCents = previous.totalCents, signedScopeReference = previous.signedScopeReference, signedScopeAt = previous.signedScopeAt;
+  if (editsScope) {
+    const totalText = text(form, "total");
+    if (totalText && !/^\d{1,6}(\.\d{1,2})?$/.test(totalText)) throw new Error("Enter the agreed total in USD");
+    totalCents = totalText ? Math.round(Number(totalText) * 100) : null;
+    signedScopeReference = z.string().max(1500).parse(text(form, "signedScopeReference"));
+    const signedDate = text(form, "signedScopeDate");
+    signedScopeAt = signedDate ? Date.parse(`${signedDate}T00:00:00Z`) : null;
+    if (signedDate && (!/^\d{4}-\d{2}-\d{2}$/.test(signedDate) || !Number.isFinite(signedScopeAt) || new Date(signedScopeAt!).toISOString().slice(0,10) !== signedDate || signedScopeAt! > Date.now())) throw new Error("Check the signed scope date");
+  }
+  const invoiceIds = editsInvoices ? [{ id: text(form, "depositInvoice"), stage: "deposit" as const }, { id: text(form, "balanceInvoice"), stage: "balance" as const }].filter(invoice => invoice.id) : previous.invoiceRefs;
+  if (invoiceIds.some(invoice => !/^in_[A-Za-z0-9]+$/.test(invoice.id)) || new Set(invoiceIds.map(row => row.id)).size !== invoiceIds.length) throw new Error("Use distinct Stripe invoice IDs");
+  if (editsInvoices && invoiceIds.length && (!signedScopeReference || !signedScopeAt || !totalCents || !products.some(product => product !== "listing"))) throw new Error("Save the signed scope, products and agreed total before linking invoices");
+  const newInvoices: InvoiceReference[] = [];
+  if (editsInvoices) {
+    for (const invoice of invoiceIds) {
+      const old = previous.invoiceRefs.find(row => row.id === invoice.id);
+      if (old && old.stage !== invoice.stage) throw new Error("An existing invoice cannot change between deposit and balance");
+      if (old) continue;
+      const verified = await stripeClient().invoices.retrieve(invoice.id);
+      if (verified.livemode !== stripeModeIsLive() || verified.currency !== "usd") throw new Error("Invoice mode or currency differs from the engagement");
+      if (verified.customer_email?.toLowerCase() !== saved.data()?.email?.toLowerCase() || (verified.metadata?.submission_id && verified.metadata.submission_id !== id)) throw new Error("Invoice must belong to this request and contact");
+      const expected = invoice.stage === "deposit" ? Math.ceil(totalCents! / 2) : Math.floor(totalCents! / 2);
+      if (verified.total !== expected) throw new Error("The invoice must match the agreed 50% amount");
+      newInvoices.push({ id: invoice.id, stage: invoice.stage, status: verified.status ?? "draft", amountPaid: 0, refunded: 0, currency: "usd", verifiedAt: 0, dueAt: null, livemode: verified.livemode });
+    }
+    // Check canonical state before replacing: retain paid/refunded invoices and their ownership forever.
+    for (const old of previous.invoiceRefs.filter(row => !invoiceIds.some(next => next.id === row.id))) {
+      await reconcileInvoice(old.id);
+      const canonical = await stripeClient().invoices.retrieve(old.id);
+      if (canonical.amount_paid > 0 || !["void", "draft"].includes(canonical.status ?? "")) throw new Error("Only unpaid draft or void invoices can be replaced. Void an open invoice in Stripe first; paid/refunded history must remain linked.");
+    }
   }
   await ref.firestore.runTransaction(async transaction => {
     const current = await transaction.get(ref);
     if (Number(current.data()?.commercialRevision ?? 0) !== Number(text(form, "revision") || 0)) throw new Error("This request changed. Reload before saving.");
-    const links = await Promise.all(invoiceIds.map(invoice => transaction.get(ref.firestore.collection("invoiceLinks").doc(invoice.id))));
-    if (links.some(link => link.exists && link.data()?.submissionId !== id)) throw new Error("An invoice is already linked to another request");
     const currentEngagement = { ...emptyEngagement, ...current.data()?.engagement } as Engagement;
-    // Preserve verified payment state if a webhook arrived while this form was being submitted.
-    const mergedInvoices = invoices.map(invoice => currentEngagement.invoiceRefs.find(row => row.id === invoice.id) ?? invoice);
-    if (products.some(product => product !== "listing") && ["in_progress", "complete"].includes(workStatus)) {
-      const depositPaid = mergedInvoices.filter(invoice => invoice.stage === "deposit").reduce((sum,invoice)=>sum+invoice.amountPaid-invoice.refunded,0);
-      if (!signedScopeReference || !signedScopeAt || !totalCents || depositPaid < Math.ceil(totalCents / 2)) throw new Error("A signed scope and verified 50% deposit are required before service work starts");
+    const links = editsInvoices ? await Promise.all(invoiceIds.map(invoice => transaction.get(ref.firestore.collection("invoiceLinks").doc(invoice.id)))) : [];
+    if (links.some(link => link.data()?.retiredAt)) throw new Error("A retired invoice association cannot be reused. Use a new invoice reference.");
+    if (links.some(link => link.exists && link.data()?.submissionId !== id)) throw new Error("An invoice is already linked to another request");
+    if (links.some((link, index) => link.exists && link.data()?.stage !== invoiceIds[index].stage)) throw new Error("Invoice stage conflicts with its original association");
+    const removed = editsInvoices ? currentEngagement.invoiceRefs.filter(row => !invoiceIds.some(next => next.id === row.id)) : [];
+    if (removed.some(row => row.amountPaid > 0 || row.refunded > 0 || row.refundPending)) throw new Error("Verified payment/refund history cannot be removed");
+    const invoices = editsInvoices ? invoiceIds.map(invoice => currentEngagement.invoiceRefs.find(row => row.id === invoice.id) ?? newInvoices.find(row => row.id === invoice.id)!) : currentEngagement.invoiceRefs;
+    const next = { ...currentEngagement, agreedProducts: products, workStatus, totalCents, signedScopeReference, signedScopeAt, invoiceRefs: invoices,
+      scopeRevision: currentEngagement.scopeRevision + (editsScope ? 1 : 0),
+      note: editsWork ? z.string().max(2000).parse(text(form, "note")) : currentEngagement.note,
+      paymentStatus: servicePaymentStatus(totalCents, invoices) };
+    // Independent notes remain editable; starting service work or changing its agreement still validates the gate.
+    if ((editsWork && (workStatus !== currentEngagement.workStatus || JSON.stringify(products) !== JSON.stringify(currentEngagement.agreedProducts))) || editsScope) {
+      if (["in_progress", "complete"].includes(workStatus) && !products.length && !current.data()?.listingPurchasedAt && (current.data()?.kind === "service" || (current.data()?.selectedProduct && current.data()?.selectedProduct !== "listing"))) throw new Error("Agree the service products and signed scope before starting service work");
+      const problem = serviceStartProblem(next); if (problem) throw new Error(problem);
     }
-    transaction.update(ref, {
-      commercialCatalogAppId: catalogAppId || null,
-      engagement: { ...currentEngagement, agreedProducts: [...new Set(products)], workStatus, totalCents,
-        signedScopeReference, signedScopeAt, scopeRevision: currentEngagement.scopeRevision + 1,
-        invoiceRefs: mergedInvoices, paymentStatus: servicePaymentStatus(totalCents, mergedInvoices), note: z.string().max(2000).parse(text(form, "note")),
-      },
-      hasLinkedInvoices: mergedInvoices.length > 0, commercialRevision: Number(current.data()?.commercialRevision ?? 0) + 1,
-      commercialUpdatedAt: Date.now(), commercialUpdatedBy: user.userId,
-    });
-    for (const [index, invoice] of invoiceIds.entries()) {
-      if (!links[index].exists) transaction.create(ref.firestore.collection("invoiceLinks").doc(invoice.id), { submissionId: id, stage: invoice.stage, products: products.filter(product => product !== "listing"), totalCents, signedScopeReference });
+    transaction.update(ref, { ...(editsWork ? { candidateAppId: catalogAppId || null, commercialCatalogAppId: catalogAppId || null } : {}), engagement: next,
+      ...(removed.length ? { invoiceReferenceHistory: [...(current.data()?.invoiceReferenceHistory ?? []), ...removed.map(invoice => ({ ...invoice, replacedAt: Date.now(), replacedBy: user.userId }))] } : {}),
+      hasLinkedInvoices: invoices.length > 0, commercialRevision: Number(current.data()?.commercialRevision ?? 0) + 1, commercialUpdatedAt: Date.now(), commercialUpdatedBy: user.userId });
+    if (editsWork && (current.data()?.candidateAppId !== catalogAppId || current.data()?.commercialCatalogAppId !== catalogAppId)) {
+      transaction.create(ref.collection("history").doc(), { kind: "catalog_connection", before: { candidateAppId: current.data()?.candidateAppId ?? null, commercialCatalogAppId: current.data()?.commercialCatalogAppId ?? null }, after: catalogAppId || null, at: Date.now(), by: user.userId });
     }
+    for (const [index, invoice] of invoiceIds.entries()) if (editsInvoices && !links[index].exists) transaction.create(ref.firestore.collection("invoiceLinks").doc(invoice.id), { submissionId: id, stage: invoice.stage, products: products.filter(product => product !== "listing"), totalCents, signedScopeReference });
+    for (const invoice of removed) transaction.set(ref.firestore.collection("invoiceLinks").doc(invoice.id), { submissionId: id, stage: invoice.stage, retiredAt: Date.now() }, { merge: true });
   });
-  for (const invoice of invoices) await reconcileInvoice(invoice.id);
+  if (editsInvoices) for (const invoice of invoiceIds) await reconcileInvoice(invoice.id);
   revalidatePath("/admin");
-  redirect(`/admin#submission-${id}`);
+  if (!text(form, "saveSection")) redirect(`/admin#submission-${id}`);
 }
 
 export async function refreshCommercialPayment(form: FormData) {
@@ -86,7 +105,6 @@ export async function refreshCommercialPayment(form: FormData) {
   const order = await listingOrderRef(id).get();
   if (order.data()?.sessionId) await reconcileListingSession(order.data()!.sessionId);
   revalidatePath("/admin");
-  redirect(`/admin#submission-${id}`);
 }
 
 export async function retryInternalNotification(form: FormData) {

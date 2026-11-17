@@ -61,7 +61,7 @@ export function canTransition(from: AppSubmissionStatus, to: AppSubmissionStatus
     waitlisted_eligible: ["accepted_for_research", "not_scheduled", "declined"],
     accepted_for_research: ["active_review", "not_scheduled"],
     active_review: ["research_ready", "not_scheduled"],
-    research_ready: ["selected_for_listing", "not_selected", "review_deferred"],
+    research_ready: ["selected_for_listing", "not_selected", "review_deferred", "not_scheduled"],
     not_scheduled: ["screening", "waitlisted_eligible", "accepted_for_research", "declined"],
     declined: [],
     selected_for_listing: ["active_review"],

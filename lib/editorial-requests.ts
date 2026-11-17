@@ -61,6 +61,15 @@ export type EditorialRequest = z.infer<typeof requestSchema> & {
   id: string;
   createdAt: number;
   status: SubmissionStatus;
+  correctionStatus?: string;
+  correctionNote?: string;
+  invoiceReferenceHistory?: unknown[];
+  workflowHistory?: unknown[];
+  selectedProduct?: DeveloperProduct;
+  deletedAt?: number;
+  eligibility?: import("./inbox-workflow").Eligibility;
+  researchNotes?: import("./inbox-workflow").ResearchNote[];
+  inboxRevision?: number;
   candidateAppId?: string;
   commercialCatalogAppId?: string;
   submissionVersion?: "developer-1";
@@ -209,21 +218,38 @@ export async function saveEditorialRequest(input: unknown, developer?: { accessH
   return entryRef.id;
 }
 
-export async function listEditorialRequests(cursor?: string): Promise<{ requests: EditorialRequest[]; nextCursor: string | null }> {
+export async function listEditorialRequests(cursor?: string, deleted = false): Promise<{ requests: EditorialRequest[]; nextCursor: string | null }> {
   const collection = getAdminFirestore().collection("editorialRequests");
-  let query = collection.orderBy("createdAt", "desc").limit(31);
+  let boundary;
   if (cursor && /^[A-Za-z0-9]{20}$/.test(cursor)) {
     const previous = await collection.doc(cursor).get();
-    if (previous.exists) query = query.startAfter(previous);
+    if (previous.exists) boundary = previous;
   }
-  const snapshot = await query.get();
-  const page = snapshot.docs.slice(0, 30);
+  // Old records lack a deleted flag. Scan past the other view without requiring a migration/index.
+  const matched: FirebaseFirestore.QueryDocumentSnapshot[] = [];
+  while (matched.length < 31) {
+    let query = collection.orderBy("createdAt", "desc").limit(100);
+    if (boundary) query = query.startAfter(boundary);
+    const batch = await query.get();
+    for (const document of batch.docs) {
+      if (Boolean(document.data().deletedAt) === deleted) matched.push(document);
+      if (matched.length === 31) break;
+    }
+    if (batch.size < 100 || matched.length === 31) break;
+    boundary = batch.docs[batch.docs.length - 1];
+  }
+  const page = matched.slice(0, 30);
+  const [histories, notePages, legacyEvents] = await Promise.all([
+    Promise.all(page.map(doc => doc.ref.collection("history").orderBy("at", "desc").limit(100).get())),
+    Promise.all(page.map(doc => doc.ref.collection("researchNotes").orderBy("at", "desc").get())),
+    Promise.all(page.map(doc => getAdminFirestore().collection("editorialWorkflowEvents").where("requestId", "==", doc.id).limit(100).get())),
+  ]);
   const notificationRefs = page.filter(doc => ["app", "partnership"].includes(doc.data().kind)).map(doc => getAdminFirestore().collection("editorialNotifications").doc(`${doc.data().kind}-${doc.id}`));
   const notifications = notificationRefs.length ? await getAdminFirestore().getAll(...notificationRefs) : [];
   const notificationById = new Map(notifications.filter(doc => doc.exists).map(doc => [doc.id, doc.data()?.delivery?.state as string]));
   return {
-    requests: page.map((document) => ({ id: document.id, ...document.data(), notification: { id: `${document.data().kind}-${document.id}`, state: notificationById.get(`${document.data().kind}-${document.id}`) ?? "NOT_QUEUED" } }) as EditorialRequest),
-    nextCursor: snapshot.docs.length > 30 ? page[page.length - 1].id : null,
+    requests: page.filter(document => Boolean(document.data().deletedAt) === deleted).map((document) => ({ id: document.id, ...document.data(), researchNotes: [...(document.data().researchNotes ?? []), ...notePages[page.indexOf(document)].docs.map(note => note.data())], workflowHistory: [...histories[page.indexOf(document)].docs, ...legacyEvents[page.indexOf(document)].docs].map(event => event.data()).sort((a,b) => (b.at ?? 0) - (a.at ?? 0)), notification: { id: `${document.data().kind}-${document.id}`, state: notificationById.get(`${document.data().kind}-${document.id}`) ?? "NOT_QUEUED" } }) as EditorialRequest),
+    nextCursor: matched.length > 30 ? page[page.length - 1].id : null,
   };
 }
 

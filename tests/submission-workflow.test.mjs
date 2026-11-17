@@ -12,20 +12,21 @@ test("legacy submission states remain research leads, not approved catalog entri
   assert.equal(normalizeAppSubmissionStatus("reviewed"), "accepted_for_research");
 });
 
-test("screening and research stages cannot skip the editorial gates", () => {
+test("historical screening and review-round transitions remain compatible", () => {
   assert.equal(canTransition("received", "accepted_for_research"), false);
   assert.equal(canTransition("screening", "waitlisted_eligible"), true);
   assert.equal(canTransition("waitlisted_eligible", "accepted_for_research"), true);
   assert.equal(canTransition("accepted_for_research", "active_review"), true);
   assert.equal(canTransition("active_review", "research_ready"), true);
   assert.equal(canTransition("research_ready", "accepted_for_research"), false);
+  assert.equal(canTransition("research_ready", "not_scheduled"), true);
   assert.equal(canTransition("research_ready", "not_selected"), true);
   assert.equal(canTransition("research_ready", "selected_for_listing"), true);
   assert.equal(canTransition("not_selected", "active_review"), true);
   assert.equal(canTransition("screening", "selected_for_listing"), false);
 });
 
-test("a later review preserves the prior outcome and new submissions need selection before publication", () => {
+test("historical review-round publication decisions retain their original meaning", () => {
   assert.equal(canStartAnotherReview("not_selected"), true);
   assert.equal(canStartAnotherReview("research_ready"), false);
   assert.equal(publicationDecision("research_ready", false), "hold");

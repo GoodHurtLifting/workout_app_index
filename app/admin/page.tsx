@@ -1,18 +1,15 @@
 import Link from "next/link";
 import { ChevronRight, LogOut } from "lucide-react";
-import { serviceOffers, partnershipTopics } from "@/lib/commercial-inquiries";
+import { SubmissionInboxCard } from "@/components/submission-inbox-card";
 import { catalogVersion } from "@/lib/catalog";
 import { requireCatalogAdmin } from "@/lib/admin-auth";
 import { listCatalogRecords, listPublications, getPublicCatalog, listAllEvidence, type EvidenceRow } from "@/lib/catalog-repository";
-import { getEditorialCapacity, listEditorialRequests } from "@/lib/editorial-requests";
-import { canStartAnotherReview, normalizeAppSubmissionStatus, serviceStageLabels, statusLabels } from "@/lib/submission-workflow";
-import { CopyResearchBrief } from "@/components/copy-research-brief";
-import { createFactualCatalogDraft, acceptAppSubmissionForResearch, changeSubmissionReviewStage, completeSubmissionScreening, deleteAppSubmission, importPreliminaryCatalog, markEditorialRequestSeen, recordDeveloperServiceStage, recordSubmissionDecision, startAnotherReviewRound, startSubmissionScreening } from "./actions";
+import { listEditorialRequests } from "@/lib/editorial-requests";
+import { createFactualCatalogDraft, importPreliminaryCatalog } from "./actions";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
 import { getCatalogEntryProposal } from "@/lib/catalog-maintenance-proposals";
 import { catalogEntryProposalChanges } from "@/lib/catalog-proposals";
 import { catalogMissingItems, hasCatalogPublicSource } from "@/lib/catalog-entry-editing";
-import { CommercialRequestAdmin } from "@/components/commercial-request-admin";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import { commercialProducts, type CommercialProduct } from "@/lib/developer-offers";
 import { PartnerPlacementAdmin } from "@/components/partner-placement-admin";
@@ -20,9 +17,9 @@ import "./admin.css";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminPage({ searchParams }: { searchParams: Promise<{ cursor?: string; workflow?: string }> }) {
+export default async function AdminPage({ searchParams }: { searchParams: Promise<{ cursor?: string; workflow?: string; deleted?: string }> }) {
   const user = await requireCatalogAdmin("/admin");
-  const { cursor, workflow } = await searchParams;
+  const { cursor, workflow, deleted } = await searchParams;
   const [catalogEntries, evidence] = await Promise.all([listCatalogRecords(), listAllEvidence()]);
   const apps = catalogEntries.map(entry => entry.app);
   const evidenceByApp = new Map<string, EvidenceRow[]>();
@@ -32,9 +29,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     evidenceByApp.set(source.app_id, sources);
   }
   const publications = await listPublications();
-  const { requests: editorialRequests, nextCursor } = await listEditorialRequests(cursor);
-  const capacity = await getEditorialCapacity();
-  const newRequests = editorialRequests.filter(request => !request.seenAt).length;
+  const { requests: editorialRequests, nextCursor } = await listEditorialRequests(cursor, deleted === "1");
   const publicIds=new Set((await getPublicCatalog()).apps.map(app=>app.id));
   const purchasedByApp = new Map<string, Set<string>>();
   const commerceRows = await getAdminFirestore().collection("editorialRequests").select("candidateAppId", "commercialCatalogAppId", "engagement", "listingPurchasedAt", "listingPaymentStatus").get();
@@ -53,7 +48,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     <div className="admin-head"><div><p className="eyebrow">INTERNAL CATALOG · {catalogVersion}</p><h1>Research dashboard</h1><p>The operating surface for building a trustworthy public index.</p></div><form action={importPreliminaryCatalog}><button className="admin-primary" type="submit">Import missing preliminary apps</button></form></div>
     <form action={createFactualCatalogDraft} className="submission-decision"><h2>Start a factual profile</h2><p>Research a public product without developer participation. This creates a private Candidate with unknown facts and no rating.</p><label>App name<input name="name" required maxLength={120}/></label><button type="submit">Create private factual draft</button></form>
     <nav className="admin-section-nav" aria-label="Dashboard sections">
-      <a href="#editorial-inbox">Requests <span>{newRequests} unseen on this page</span></a>
+      <a href="#editorial-inbox">Requests <span>{editorialRequests.length} on this page</span></a>
       <a href="#app-evaluations">Catalog entries <span>{apps.length} total · {listed} public · {apps.length-listed} not public</span></a>
       <a href="#publication-history">Publication history</a>
     </nav>
@@ -61,133 +56,10 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       {workflow === "decision" ? <p className="admin-action-message" role="status">Owner decision saved. The catalog has not been published.</p> : null}
       {workflow === "round" ? <p className="admin-action-message" role="status">New review round started. Earlier findings remain in the history.</p> : null}
       {workflow === "service" ? <p className="admin-action-message" role="status">Private-work stage saved. No contract, payment, or message was created.</p> : null}
-      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>Submissions, corrections, and private inquiries</h2><p className="editor-help">Submissions are unverified research leads. The stages below track intake and review rounds. A completed evaluation needs an owner decision; selecting an app for listing still requires an approved card and a separate catalog publication. Commercial inquiries are private, carry no editorial stage controls, and cannot change that decision. Partnership requests trigger an internal notification. Agreements and payments are recorded separately.</p>
-      <p className="editor-help">This month: {capacity.screenings} screens · {capacity.acceptances} research acceptances. Active research rounds: {capacity.activeReviews}. No developer stage emails are sent.</p></div>
-      {editorialRequests.length ? editorialRequests.map((request) => (
-        <article id={`submission-${request.id}`} key={request.id}>
-          <div className="editorial-inbox-heading">
-            <strong>{request.kind === "app" ? `App submission: ${request.appName}` : request.kind === "correction" ? "Correction request" : request.kind === "service" ? "Private service scope request" : "Private partnership inquiry"}</strong>
-            <span>{request.kind === "app" ? statusLabels[normalizeAppSubmissionStatus(request.status)] : request.seenAt ? "Seen" : "Received"} · {new Date(request.createdAt).toLocaleDateString("en-US")}</span>
-          </div>
-          <p>From {request.name} · <a href={`mailto:${request.email}`}>{request.email}</a></p>
-          <p>{request.details}</p>
-          {request.kind === "app" ? (
-            <div className="editorial-inbox-details">
-              <span>Price: {request.pricing}</span><span>Availability: {request.availability}</span>
-              <a href={request.websiteUrl} target="_blank" rel="noopener noreferrer">Website</a>
-              {request.storeUrl ? <a href={request.storeUrl} target="_blank" rel="noopener noreferrer">Store listing</a> : null}
-              <a href={request.privacyUrl} target="_blank" rel="noopener noreferrer">Privacy policy</a>
-            </div>
-          ) : request.kind === "correction" ? (
-            <div className="editorial-inbox-details">
-              <a href={request.pageUrl} target="_blank" rel="noopener noreferrer">Page to correct</a>
-              <a href={request.sourceUrl} target="_blank" rel="noopener noreferrer">Source</a>
-            </div>
-          ) : (
-            <div className="editorial-inbox-details">
-              <span>Company or product: {request.organization}</span>
-              <span>Interest: {request.kind === "service" ? serviceOffers[request.topic] : partnershipTopics[request.topic]}</span>
-              <span>Initial inquiry. See Work and payments for the current agreement and payment status.</span>
-            </div>
-          )}
-          {request.kind === "app" ? <CopyResearchBrief submission={request} /> : null}
-          {request.kind !== "correction" && <CommercialRequestAdmin request={request} notificationState={request.notification?.state} catalogOptions={apps.map(app => ({id:app.id,name:app.name}))} />}
-          {request.kind === "app" ? <div className="submission-meta">
-            <span>Received {new Date(request.createdAt).toLocaleDateString("en-US")}</span>
-            <span>Seen {request.seenAt ? new Date(request.seenAt).toLocaleDateString("en-US") : "pending"}</span>
-            <span>Screened {request.screeningCompletedAt ? new Date(request.screeningCompletedAt).toLocaleDateString("en-US") : "pending"}</span>
-            <span>Accepted {request.acceptedAt ? new Date(request.acceptedAt).toLocaleDateString("en-US") : "pending"}</span>
-            {request.screeningNote ? <span>Screening note: {request.screeningNote}</span> : null}
-            {request.statusNote ? <span>Status note: {request.statusNote}</span> : null}
-            {request.candidateAppId ? <span>Linked evaluation: {request.candidateAppId}</span> : null}
-            {request.reviewRound ? <span>Review round {request.reviewRound}</span> : null}
-            {request.serviceStage && request.serviceStage !== "none" ? <span>Private work: {serviceStageLabels[request.serviceStage]}</span> : null}
-          </div> : null}
-          <div className="editorial-actions">
-            {!request.seenAt ? <form action={markEditorialRequestSeen}><input type="hidden" name="id" value={request.id}/><button type="submit">Mark seen</button></form> : null}
-            {request.kind === "app" && ["received", "waitlisted_unassessed", "not_scheduled"].includes(normalizeAppSubmissionStatus(request.status)) ? <form action={startSubmissionScreening}><input type="hidden" name="id" value={request.id}/><button type="submit">Begin eligibility check after reviewing work choices</button></form> : null}
-            {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "waitlisted_eligible" ? <form action={acceptAppSubmissionForResearch}><input type="hidden" name="id" value={request.id}/><button className="accept-candidate" type="submit">Accept for research</button></form> : null}
-            {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "accepted_for_research" ? <form action={changeSubmissionReviewStage}><input type="hidden" name="id" value={request.id}/><input type="hidden" name="target" value="active_review"/><button type="submit">Start catalog research</button></form> : null}
-            {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "active_review" ? <form action={changeSubmissionReviewStage}><input type="hidden" name="id" value={request.id}/><input type="hidden" name="target" value="research_ready"/><button type="submit">Research ready for owner</button></form> : null}
-            {request.kind === "app" && ["waitlisted_eligible", "accepted_for_research", "active_review", "research_ready"].includes(normalizeAppSubmissionStatus(request.status)) ? <form className="submission-defer" action={changeSubmissionReviewStage}><input type="hidden" name="id" value={request.id}/><input type="hidden" name="target" value="not_scheduled"/><input name="note" required maxLength={500} aria-label="Reason not scheduled" placeholder="Brief reason"/><button type="submit">Not currently scheduled</button></form> : null}
-            {request.kind === "app" && request.candidateAppId ? <Link href={`/admin/apps/${request.candidateAppId}`}>Open catalog evaluation →</Link> : null}
-          </div>
-          {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "research_ready" ? <form className="submission-decision" action={recordSubmissionDecision}>
-            <input type="hidden" name="id" value={request.id}/>
-            {cursor ? <input type="hidden" name="cursor" value={cursor}/> : null}
-            <h3>Record owner decision</h3>
-            <p>This closes the current review round. It does not publish an app or contact its developer.</p>
-            <label>Tested scope and date <input name="testedScope" required maxLength={500} placeholder="Example: Android, basic tier, October 22–23; workout and nutrition paths"/></label>
-            <label>Private reason <textarea name="note" required maxLength={1000} rows={3} placeholder="Main findings and any important limit"/></label>
-            <div className="editorial-actions">
-              <button name="outcome" value="selected_for_listing" type="submit" disabled={apps.find(app => app.id === request.candidateAppId)?.researchStatus !== "Reviewed"}>Select for listing</button>
-              <button name="outcome" value="not_selected" type="submit">Not selected</button>
-              <button name="outcome" value="review_deferred" type="submit">Defer decision</button>
-            </div>
-            {apps.find(app => app.id === request.candidateAppId)?.researchStatus !== "Reviewed" ? <p>Approve the saved catalog card before selecting this app for listing.</p> : null}
-          </form> : null}
-          {request.kind === "app" && canStartAnotherReview(normalizeAppSubmissionStatus(request.status)) ? <form className="submission-decision" action={startAnotherReviewRound}>
-            <input type="hidden" name="id" value={request.id}/>
-            {cursor ? <input type="hidden" name="cursor" value={cursor}/> : null}
-            <h3>Start another review round</h3>
-            <p>Prior findings stay in the history below. This does not change an existing public listing. Further hands-on work is selected according to consumer usefulness and capacity. Agreed paid work is tracked separately with its scope and payment records.</p>
-            <label>Why reopen this app? <input name="note" required maxLength={500} placeholder="Released changes and scope to check"/></label>
-            <div className="editorial-actions">
-              <button name="basis" value="free_reassessment" type="submit">Start free reassessment</button>
-              <button name="basis" value="paid_followup" type="submit" disabled={request.serviceStage !== "followup_agreed"}>Start agreed paid follow-up</button>
-            </div>
-          </form> : null}
-          {request.kind === "app" && request.candidateAppId ? <details className="submission-private-work">
-            <summary>Private work: {serviceStageLabels[request.serviceStage ?? "none"]}</summary>
-            <p>Record a developer request or a separately agreed service. This does not create a contract, charge anyone, send a message, or change editorial scoring. Future automation can use these dated changes after it is configured.</p>
-            <form action={recordDeveloperServiceStage}>
-              <input type="hidden" name="id" value={request.id}/>
-              {cursor ? <input type="hidden" name="cursor" value={cursor}/> : null}
-              <label>Stage <select name="stage" defaultValue={request.serviceStage ?? "none"}>
-                {Object.entries(serviceStageLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-              </select></label>
-              <label>Private note <input name="note" required maxLength={500} placeholder="What the developer requested or what was agreed"/></label>
-              <button type="submit">Save private-work stage</button>
-            </form>
-            {request.serviceHistory?.length ? <ol>{request.serviceHistory.map((item, index) => <li key={`${item.at}-${index}`}>{new Date(item.at).toLocaleDateString("en-US")}: {serviceStageLabels[item.stage]} — {item.note}</li>)}</ol> : null}
-          </details> : null}
-          {request.kind === "app" && request.reviewRounds?.length ? <details className="submission-review-history">
-            <summary>Review history ({request.reviewRounds.length} {request.reviewRounds.length === 1 ? "round" : "rounds"})</summary>
-            <ol>{request.reviewRounds.map(round => <li key={round.number}>
-              <strong>Round {round.number}: {round.basis === "initial" ? "Initial evaluation" : round.basis === "paid_followup" ? "Paid focused follow-up" : "Free reassessment"}</strong>
-              {round.startedAt ? <span>Started {new Date(round.startedAt).toLocaleDateString("en-US")}</span> : null}
-              {round.outcome ? <span>Outcome: {statusLabels[round.outcome]} · {round.decidedAt ? new Date(round.decidedAt).toLocaleDateString("en-US") : "date unavailable"}</span> : <span>Outcome pending</span>}
-              {round.testedScope ? <p>Tested: {round.testedScope}</p> : null}
-              {round.decisionNote ? <p>Private reason: {round.decisionNote}</p> : null}
-              {round.startNote ? <p>Reopened for: {round.startNote}</p> : null}
-            </li>)}</ol>
-          </details> : null}
-          {request.kind === "app" && normalizeAppSubmissionStatus(request.status) === "screening" ? <form className="submission-screen" action={completeSubmissionScreening}>
-            <input type="hidden" name="id" value={request.id}/>
-            <p>Initial screen: check public facts only. A developer claim is not independent evidence.</p>
-            <div className="submission-checks">
-              <label><input type="checkbox" name="liveProduct"/> Live public product</label>
-              <label><input type="checkbox" name="substantiveTraining"/> Substantive training or tracking</label>
-              <label><input type="checkbox" name="workingListing"/> Working website or store listing</label>
-              <label><input type="checkbox" name="privacyPolicy"/> Public privacy policy</label>
-              <label><input type="checkbox" name="pricingAndPlatforms"/> Pricing and platforms stated</label>
-              <label><input type="checkbox" name="reviewAccess"/> Review access available or practical</label>
-            </div>
-            <label>Brief screening note <input name="note" maxLength={500} placeholder="Verified facts, missing items, or reason"/></label>
-            <div className="editorial-actions"><button name="decision" value="waitlisted_eligible" type="submit">Eligible waitlist</button><button name="decision" value="not_scheduled" type="submit">Not scheduled</button><button name="decision" value="declined" type="submit">Decline</button></div>
-          </form> : null}
-          {request.kind === "app" ? <details className="editorial-delete">
-            <summary>Delete submission</summary>
-            <p>This permanently removes this submission and its notification record. It does not change the catalog.</p>
-            <form action={deleteAppSubmission}>
-              <input type="hidden" name="id" value={request.id}/>
-              <label><input type="checkbox" name="confirmDelete" required/> I want to delete {request.appName}.</label>
-              <button type="submit">Permanently delete</button>
-            </form>
-          </details> : null}
-        </article>
-      )) : <p>No submissions on this page.</p>}
-      <nav className="submission-pagination" aria-label="Submission pages"><Link href="/admin#editorial-inbox">Newest</Link>{nextCursor ? <Link href={`/admin?cursor=${nextCursor}#editorial-inbox`}>Older submissions →</Link> : null}</nav>
+      <p><Link href={deleted === "1" ? "/admin#editorial-inbox" : "/admin?deleted=1#editorial-inbox"}>{deleted === "1" ? "Return to active inbox" : "Deleted submissions and retained billing history"}</Link></p>
+      <div><p className="eyebrow">EDITORIAL INBOX</p><h2>Submissions, corrections, and private inquiries</h2><p className="editor-help">Verify eligibility, prepare factual catalog entries and track purchased work separately. Ordinary listings need public-source research and owner publication approval. Larger services follow their signed scope and verified deposit. No developer messages are sent by these saves.</p></div>
+      {editorialRequests.length ? editorialRequests.map(request => <SubmissionInboxCard key={request.id} request={request} catalogOptions={apps.map(app => ({id:app.id,name:app.name}))}/>) : <p>No submissions on this page.</p>}
+      <nav className="submission-pagination" aria-label="Submission pages"><Link href={deleted === "1" ? "/admin?deleted=1#editorial-inbox" : "/admin#editorial-inbox"}>Newest</Link>{nextCursor ? <Link href={`/admin?cursor=${nextCursor}${deleted === "1" ? "&deleted=1" : ""}#editorial-inbox`}>Older submissions →</Link> : null}</nav>
     </section>
     <div className="admin-stats"><article><span>{apps.length}</span><p>Catalog entries</p></article><article><span>{listed}</span><p>Public listings</p></article><article><span>{apps.length-listed}</span><p>Not public</p></article></div>
     <div className="admin-work" id="app-evaluations"><div className="admin-list"><div className="admin-list-head"><h2>Catalog entries</h2><span>Listing</span></div>{catalogEntries.map(({ app, saved }) => {

@@ -16,6 +16,9 @@ import { reviewStageProblem } from "@/lib/catalog-review-stage";
 import { missingReviewProfileDetails } from "@/lib/catalog-review-readiness";
 import { buildCatalogEntryUpdate,catalogListingProblems,catalogEditIsCurrent,replacePublicCatalogEntry,hasCatalogPublicSource } from "@/lib/catalog-entry-editing";
 
+import { serviceStartProblem, engagementFor } from "@/lib/inbox-workflow";
+import { candidateFromSubmission, candidateId } from "@/lib/submission-candidate";
+
 const field=(data:FormData,name:string)=>String(data.get(name)??"").trim();
 const checked=(data:FormData,name:string)=>data.get(name)==="on";
 function returnToSubmission(formData: FormData, id: string, workflow: "decision" | "round" | "service"): never {
@@ -30,35 +33,6 @@ async function assertReviewedCatalogRecord(record: AppRecord, confirmed: boolean
   if (!isFactual(record) && !(await listEvidence(record.id)).some(isRecheckedEvidence)) throw new Error("Recheck and attach at least one current source before marking this profile Reviewed");
 }
 const personRoles = new Set<PersonAssociation["role"]>(["Creator", "Founder", "Trainer", "Program author", "Featured athlete"]);
-
-function candidateFromSubmission(id: string, name: string): AppRecord {
-  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]?.toUpperCase() ?? "").join("") || "?";
-  return {
-    coverageMode: "factual", factClaims: [], commercialDisclosure: {status:"not-established",statement:""},
-    id, name, initials, color: "#536b83", type: "Unclassified",
-    bestFor: "Not yet assessed",
-    description: "Research candidate. Product facts have not been established.",
-    price: "Not verified", monthlyPrice: null,
-    hasUsableFreeTier: null,
-    freeTierCapabilities: { completeProgram: null, adaptiveProgramming: null, programLibrary: null },
-    platforms: [], ai: "Not assessed", legit: null, goals: [], features: [], level: [],
-    authorship: "Not assessed", caveat: "Not yet assessed",
-    deliversCompleteProgram: null, programLibrary: null, adaptiveProgramming: null,
-    supportedTrainingEnvironments: [], researchStatus: "Candidate", verifiedSections: 0, totalSections: 7,
-    trainingRelationship: {
-      planningStyle: "Not assessed", choiceLoad: "Not assessed", continuity: "Not assessed",
-      customization: "Not assessed", decisionsRemoved: "Not yet assessed",
-      decisionsRemaining: "Not yet assessed", tradeoff: "Not yet assessed",
-      idealUser: "Not yet assessed", notFor: "Not yet assessed",
-    },
-
-  };
-}
-
-function candidateId(name: string): string {
-  return name.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60).replace(/-$/g, "") || "app";
-}
 
 function parsePeople(value: FormDataEntryValue | null): PersonAssociation[] {
   const parsed: unknown = JSON.parse(String(value ?? "[]"));
@@ -115,7 +89,6 @@ export async function startSubmissionScreening(formData: FormData) {
     if (!request.exists || data?.kind !== "app") throw new Error("App submission not found");
     const status = normalizeAppSubmissionStatus(data.status);
     if (!canTransition(status, "screening") && !canTransition(status, "waitlisted_unassessed")) throw new Error("This submission cannot enter screening");
-    if (data.submissionVersion === "developer-1" && !data.engagement?.agreedProducts?.length) throw new Error("Choose the agreed work before beginning eligibility checks");
     const count = Number(capacity.data()?.screenings ?? 0);
     transaction.set(capacityRef, { screenings: count + 1 }, { merge: true });
     transaction.update(ref, { status: "screening", screeningStartedAt: now, screeningMonth: month,
@@ -217,7 +190,7 @@ export async function changeSubmissionReviewStage(formData: FormData) {
   const target = field(formData, "target");
   if (!/^[A-Za-z0-9]{20}$/.test(id) || !["active_review", "research_ready", "not_scheduled", "waitlisted_eligible", "declined"].includes(target)) throw new Error("Invalid stage");
   const note = field(formData, "note");
-  if (note.length > 500 || (target === "not_scheduled" && !note)) throw new Error("Record a brief reason, up to 500 characters");
+  if (note.length > 500) throw new Error("Record a brief reason, up to 500 characters");
   const db = getAdminFirestore();
   const ref = db.collection("editorialRequests").doc(id);
   await db.runTransaction(async transaction => {
@@ -301,7 +274,12 @@ export async function startAnotherReviewRound(formData: FormData) {
     const data = request.data();
     if (!request.exists || data?.kind !== "app" || !canStartAnotherReview(normalizeAppSubmissionStatus(data.status))) throw new Error("Record the current review outcome first");
     if (!data.candidateAppId) throw new Error("A linked catalog evaluation is required");
-    if (basis === "paid_followup" && data.serviceStage !== "followup_agreed") throw new Error("Record a separately agreed focused follow-up before using the paid review basis");
+    if (basis === "paid_followup") {
+      const engagement = engagementFor(data);
+      if (!engagement.agreedProducts.includes("focused_test")) throw new Error("Record the agreed focused follow-up in Work and payments");
+      const problem = serviceStartProblem({ ...engagement, workStatus: "in_progress" });
+      if (problem) throw new Error(problem);
+    }
     const round = (Number.isInteger(data.reviewRound) && data.reviewRound > 0 ? data.reviewRound : 1) + 1;
     const history = Array.isArray(data.reviewRounds) ? data.reviewRounds : [];
     const event = workflowEvent(db, id, data.candidateAppId, round, "review_round_started", data.status, "active_review", user.userId, now);
@@ -352,8 +330,9 @@ export async function deleteAppSubmission(formData: FormData) {
   await db.runTransaction(async (transaction) => {
     const request = await transaction.get(requestRef);
     if (!request.exists || request.data()?.kind !== "app") throw new Error("App submission not found");
-    transaction.delete(requestRef);
-    transaction.delete(notificationRef);
+    transaction.update(requestRef, { deletedAt: Date.now() });
+    // Retain the request, notification audit and payment references for reconciliation/reporting.
+    void notificationRef;
   });
   revalidatePath("/admin");
 }
@@ -536,6 +515,7 @@ export async function publishApprovedCatalog(_previous:PublishCatalogResult, _fo
     const submissionDocs=await Promise.all(reviewedRows.map(row=>row.source_submission_id
       ? getAdminFirestore().collection("editorialRequests").doc(row.source_submission_id).get() : null));
     const rows=reviewedRows.filter((row,index)=>{
+      if(isFactual(row.record)) return true; // Factual publication uses catalog checks, not retired inbox rounds.
       if(!row.source_submission_id) return true;
       const submission=submissionDocs[index];
       const status=submission?.exists ? normalizeAppSubmissionStatus(submission.data()?.status) : null;
@@ -557,7 +537,7 @@ export async function publishApprovedCatalog(_previous:PublishCatalogResult, _fo
       coverage.set(source.app_id,categories);
     }
     const required=["platforms","pricing","ai","features"];
-    const profileProblems=rows.flatMap(row=>missingReviewProfileDetails(row.record).map(problem=>`${row.id}: ${problem}`));
+    const profileProblems=rows.flatMap(row=>(isFactual(row.record) ? catalogListingProblems(row.record,hasCatalogPublicSource(row.record,evidence.filter(source=>source.app_id===row.id))) : missingReviewProfileDetails(row.record)).map(problem=>`${row.id}: ${problem}`));
     if(profileProblems.length) throw new Error(`Reviewed apps need complete approved profiles. Missing ${profileProblems.join(", ")}`);
     const missing=rows.filter(row=>!isFactual(row.record)).flatMap(row=>required.filter(category=>!coverage.get(row.id)?.has(category)).map(category=>`${row.id}: ${category}`));
     if(missing.length) throw new Error(`Reviewed apps need evidence for platforms, pricing, AI, and features. Missing ${missing.join(", ")}`);

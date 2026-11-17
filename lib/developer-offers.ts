@@ -30,10 +30,10 @@ export const developerDetailsSchema = z.object({
 });
 export type DeveloperDetails = z.infer<typeof developerDetailsSchema>;
 export const developerServiceSelectionSchema = z.array(z.enum(["focused_test", "launch_review", "competitive_audit"])).length(1, "Choose exactly one service.");
-export const workStates = ["not_started", "reviewing", "awaiting_access", "awaiting_scope", "in_progress", "complete", "cancelled"] as const;
+export const workStates = ["not_started", "on_hold", "reviewing", "awaiting_access", "awaiting_scope", "in_progress", "complete", "cancelled"] as const;
 export type WorkState = typeof workStates[number];
 export const workLabels: Record<WorkState, string> = {
-  not_started: "Not started", reviewing: "Reviewing", awaiting_access: "Awaiting access",
+  not_started: "Not started", on_hold: "On hold", reviewing: "Reviewing", awaiting_access: "Awaiting access",
   awaiting_scope: "Awaiting signed scope", in_progress: "In progress", complete: "Complete", cancelled: "Cancelled",
 };
 export type InvoiceReference = { id: string; stage: "deposit" | "balance"; status: string; amountPaid: number; refunded: number; currency: string; dueAt: number | null; verifiedAt: number; livemode: boolean; products?: CommercialProduct[]; refundPending?: boolean; refundFailed?: boolean; paidAt?: number | null };
