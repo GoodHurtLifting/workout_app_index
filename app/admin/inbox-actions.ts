@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getCatalogAdminForAction } from "@/lib/admin-auth";
 import { getAdminFirestore } from "@/lib/firebase-admin";
-import { getCatalogRecord } from "@/lib/catalog-repository";
+import { getCatalogRecord, getPublicCatalog } from "@/lib/catalog-repository";
+import type { EditorialRequest } from "@/lib/editorial-requests";
+import { inboxCompletionBlocker } from "@/lib/inbox-presentation";
 import { apps } from "@/lib/catalog";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
 import { candidateFromSubmission, candidateId } from "@/lib/submission-candidate";
@@ -22,6 +24,7 @@ export async function saveInboxAction(form: FormData): Promise<{ error?: string;
     if (intent === "refund") { await rejectListingAndRefund(form); return { message: "Refund requested. Check the provider status below." }; }
     const db = getAdminFirestore(), ref = db.collection("editorialRequests").doc(id);
     const requestedLink = field(form, "catalogAppId");
+    const publicIds = intent === "complete" ? new Set((await getPublicCatalog()).apps.map(app => app.id)) : new Set<string>();
     if (intent === "link" && requestedLink && (!/^[a-z0-9-]{1,80}$/.test(requestedLink) || !(await getCatalogRecord(requestedLink)))) throw new Error("Select an existing catalog entry");
     await db.runTransaction(async transaction => {
       const saved = await transaction.get(ref), data = saved.data();
@@ -59,6 +62,11 @@ export async function saveInboxAction(form: FormData): Promise<{ error?: string;
           transaction.create(appRef, { id: appId, slug: appId, name: data.appName, record, publication_status: "Candidate", source_submission_id: id, created_at: now, updated_at: now, updated_by: user.userId });
         }
         patch = { candidateAppId: appId || null, commercialCatalogAppId: appId || null, commercialRevision: Number(data.commercialRevision ?? 0) + 1 };
+      } else if (intent === "complete" || intent === "reopen") {
+        const request = { id, ...data } as EditorialRequest;
+        const problem = inboxCompletionBlocker(request, publicIds.has(data.commercialCatalogAppId || data.candidateAppId));
+        if (intent === "complete" && problem) throw new Error(`${problem}. Resolve it in Work and payments before completing this request.`);
+        patch = intent === "complete" ? { inboxState: "completed", inboxCompletedAt: now, inboxCompletedBy: user.userId, inboxCompletionNote: z.string().max(2000).parse(field(form, "note")) } : { inboxState: "open", inboxReopenedAt: now, inboxReopenedBy: user.userId };
       } else if (intent === "restore") {
         patch = { deletedAt: null, restoredAt: now, restoredBy: user.userId };
       } else if (intent === "delete") {

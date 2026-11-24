@@ -7,6 +7,7 @@ import { z } from "zod";
 import { getAdminFirestore } from "@/lib/firebase-admin";
 import type { ReviewOutcome, ServiceStage, SubmissionStatus } from "@/lib/submission-workflow";
 import { monthKey } from "@/lib/submission-workflow";
+import { matchesInbox, type InboxFilter } from "./inbox-presentation.ts";
 
 import type { DeveloperProduct, Engagement } from "@/lib/developer-offers";
 import { serviceInquirySchema, partnershipInquirySchema } from "@/lib/commercial-inquiries";
@@ -70,6 +71,9 @@ export type EditorialRequest = z.infer<typeof requestSchema> & {
   eligibility?: import("./inbox-workflow").Eligibility;
   researchNotes?: import("./inbox-workflow").ResearchNote[];
   inboxRevision?: number;
+  inboxState?: "open" | "completed";
+  inboxCompletedAt?: number;
+  inboxCompletionNote?: string;
   candidateAppId?: string;
   commercialCatalogAppId?: string;
   submissionVersion?: "developer-1";
@@ -218,7 +222,7 @@ export async function saveEditorialRequest(input: unknown, developer?: { accessH
   return entryRef.id;
 }
 
-export async function listEditorialRequests(cursor?: string, deleted = false): Promise<{ requests: EditorialRequest[]; nextCursor: string | null }> {
+export async function listEditorialRequests(cursor?: string, deleted = false, filter: InboxFilter = {}): Promise<{ requests: EditorialRequest[]; nextCursor: string | null }> {
   const collection = getAdminFirestore().collection("editorialRequests");
   let boundary;
   if (cursor && /^[A-Za-z0-9]{20}$/.test(cursor)) {
@@ -232,7 +236,7 @@ export async function listEditorialRequests(cursor?: string, deleted = false): P
     if (boundary) query = query.startAfter(boundary);
     const batch = await query.get();
     for (const document of batch.docs) {
-      if (Boolean(document.data().deletedAt) === deleted) matched.push(document);
+      if (Boolean(document.data().deletedAt) === deleted && matchesInbox({ id: document.id, ...document.data() } as EditorialRequest, filter)) matched.push(document);
       if (matched.length === 31) break;
     }
     if (batch.size < 100 || matched.length === 31) break;
@@ -248,7 +252,7 @@ export async function listEditorialRequests(cursor?: string, deleted = false): P
   const notifications = notificationRefs.length ? await getAdminFirestore().getAll(...notificationRefs) : [];
   const notificationById = new Map(notifications.filter(doc => doc.exists).map(doc => [doc.id, doc.data()?.delivery?.state as string]));
   return {
-    requests: page.filter(document => Boolean(document.data().deletedAt) === deleted).map((document) => ({ id: document.id, ...document.data(), researchNotes: [...(document.data().researchNotes ?? []), ...notePages[page.indexOf(document)].docs.map(note => note.data())], workflowHistory: [...histories[page.indexOf(document)].docs, ...legacyEvents[page.indexOf(document)].docs].map(event => event.data()).sort((a,b) => (b.at ?? 0) - (a.at ?? 0)), notification: { id: `${document.data().kind}-${document.id}`, state: notificationById.get(`${document.data().kind}-${document.id}`) ?? "NOT_QUEUED" } }) as EditorialRequest),
+    requests: page.filter(document => Boolean(document.data().deletedAt) === deleted).map((document) => ({ id: document.id, ...document.data(), researchNotes: [...(document.data().researchNotes ?? []), ...notePages[page.indexOf(document)].docs.map(note => note.data())], workflowHistory: [...(Array.isArray(document.data().workflowHistory) ? document.data().workflowHistory : []), ...[...histories[page.indexOf(document)].docs, ...legacyEvents[page.indexOf(document)].docs].map(event => event.data())].sort((a,b) => (b.at ?? 0) - (a.at ?? 0)), notification: { id: `${document.data().kind}-${document.id}`, state: notificationById.get(`${document.data().kind}-${document.id}`) ?? "NOT_QUEUED" } }) as EditorialRequest),
     nextCursor: matched.length > 30 ? page[page.length - 1].id : null,
   };
 }
