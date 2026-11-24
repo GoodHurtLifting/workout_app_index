@@ -10,5 +10,5 @@ export function freeAccessLabel(app:AppRecord):string {
 }
 export function profileEvidenceLabel(app:AppRecord):string {
   const date=latestFactDate(app);
-  return date ? `Facts checked ${date}` : isFactual(app)?"See dated facts and unknowns":"See sources and verification limits";
+  return date ? `Evidence checked ${date}` : isFactual(app)?"See dated claims and unknowns":"See sources and coverage limits";
 }
