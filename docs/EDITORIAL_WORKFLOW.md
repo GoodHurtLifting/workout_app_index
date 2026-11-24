@@ -10,6 +10,8 @@ A normal selected editorial session can be bounded to roughly 60–90 minutes of
 
 Preserve device, platform, country/store, date, known version and access tier. Distinguish a physical workout, simulated log and exploration. A button is not proof its operation works, a suggested change is not an applied adaptation, and silence is not a failed feature. A support exchange for editorial clarification is not an ordinary customer-support test. Reported fixes remain unverified until checked; later builds may differ.
 
+Preserve original owner dictation separately from assistant-authored summaries. Keep the wording, spelling, first-person voice, capture time and source reference; append later corrections rather than rewriting the original. Chat text is a speech-to-text transcript where applicable, not an original audio recording. Never reconstruct a quote from a summary. In admin, **Original dictated words** holds preserved messages and new `owner_dictation` notes; **Research summaries and earlier evidence** holds interpretations and structured notes. Use both when preparing editorials, letting explicit later corrections control factual conclusions without erasing the earlier experience. These records remain private and do not approve public quotation or publication. Do not add developer letters, credentials or unrelated chat messages to the archive.
+
 ## Reusable source pack
 
 Use the following structure internally, adapting it to the work. It is not an owner questionnaire.

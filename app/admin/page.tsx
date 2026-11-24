@@ -5,9 +5,7 @@ import { catalogVersion } from "@/lib/catalog";
 import { requireCatalogAdmin } from "@/lib/admin-auth";
 import { listCatalogRecords, listPublications, getPublicCatalog, listAllEvidence, type EvidenceRow } from "@/lib/catalog-repository";
 import { inboxHref, type InboxView } from "@/lib/inbox-presentation";
-import { catalogConnection } from "@/lib/inbox-workflow";
-import { preparedEvidenceForApp } from "@/lib/catalog-prepared-evidence";
-import type { LinkedResearch } from "@/components/submission-research-history";
+import { researchForInbox, originalDictationForInbox } from "@/lib/inbox-research";
 import { listEditorialRequests } from "@/lib/editorial-requests";
 import { createFactualCatalogDraft, importPreliminaryCatalog } from "./actions";
 import { catalogResearchDrafts } from "@/lib/catalog-research-drafts";
@@ -39,15 +37,6 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const completedCatalogIds = new Set(catalogEntries.filter(({app,saved}) => publicIds.has(app.id) && saved?.reviewState === "complete").map(({app}) => app.id));
   const { requests: editorialRequests, nextCursor } = await listEditorialRequests(cursor, deleted === "1", { q, view, completedCatalogIds });
   const inboxLink = (target: InboxView, next?: string) => inboxHref({ q, view: target, deleted: deleted === "1", cursor: next });
-  const linkedResearchFor = (request: typeof editorialRequests[number]): LinkedResearch[] => {
-    const ids = [...new Set([catalogConnection(request), request.candidateAppId, request.commercialCatalogAppId].filter((id): id is string => Boolean(id)))];
-    return ids.flatMap(id => {
-      const saved = evidenceByApp.get(id) ?? [];
-      const savedIds = new Set(saved.map(source => source.id));
-      const name = apps.find(app => app.id === id)?.name ?? id;
-      return [...saved.map(source => ({ id: source.id, sourceType: source.source_type, finding: source.claim_supported, note: source.internal_note, at: source.checked_at, url: source.url, origin: `Saved catalog evidence · ${name}` })), ...preparedEvidenceForApp(id).filter(source => source.source_type === "Hands-on testing" && !savedIds.has(source.id)).map(source => ({ id: source.id, sourceType: source.source_type, finding: source.claim_supported, note: source.internal_note, at: source.checked_at, url: source.url, origin: `Local prepared research · ${name} · not saved on this submission` }))];
-    });
-  };
   const purchasedByApp = new Map<string, Set<string>>();
   const commerceRows = await getAdminFirestore().collection("editorialRequests").select("candidateAppId", "commercialCatalogAppId", "engagement", "listingPurchasedAt", "listingPaymentStatus").get();
   for (const row of commerceRows.docs) {
@@ -78,7 +67,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       <form className="inbox-search" action="/admin#editorial-inbox" method="get"><label htmlFor="submission-search">Find a submission</label><input id="submission-search" name="q" type="search" defaultValue={q} maxLength={200} placeholder="App, contact name, email or catalog entry"/><input type="hidden" name="inbox" value={view}/>{deleted === "1" ? <input type="hidden" name="deleted" value="1"/> : null}<button type="submit">Search submissions</button>{q ? <Link href={inboxHref({view,deleted:deleted === "1"})}>Clear search</Link> : null}</form>
       <nav className="inbox-views" aria-label="Inbox views">{(["open", "completed", "all"] as const).map(target => <Link key={target} href={inboxLink(target)} aria-current={view === target ? "page" : undefined}>{target === "open" ? "Open" : target === "completed" ? "Completed" : "All requests"}</Link>)}</nav>
       <p className="editor-help">{editorialRequests.length} matching requests on this page. Search covers all submissions in this view, including older pages. Open a row for details. Completed includes reviewed public listings and closed ineligible requests; unfinished work or payments keep requests open.</p>
-      {editorialRequests.length ? editorialRequests.map(request => <SubmissionInboxCard key={request.id} request={request} catalogOptions={apps.map(app => ({id:app.id,name:app.name}))} completedCatalogIds={completedCatalogIds} publicIds={publicIds} linkedResearch={linkedResearchFor(request)}/>) : <p>No {view === "all" ? "matching" : view} submissions found. Try another view or clear the search.</p>}
+      {editorialRequests.length ? editorialRequests.map(request => <SubmissionInboxCard key={request.id} request={request} catalogOptions={apps.map(app => ({id:app.id,name:app.name}))} completedCatalogIds={completedCatalogIds} publicIds={publicIds} linkedResearch={researchForInbox(request,evidence,apps)} originalDictation={originalDictationForInbox(request)}/>) : <p>No {view === "all" ? "matching" : view} submissions found. Try another view or clear the search.</p>}
       <nav className="submission-pagination" aria-label="Submission pages"><Link href={inboxLink(view)}>Newest matches</Link>{nextCursor ? <Link href={inboxLink(view,nextCursor)}>Older matches →</Link> : null}</nav>
     </section>
     <div className="admin-stats"><article><span>{apps.length}</span><p>Catalog entries</p></article><article><span>{listed}</span><p>Public listings</p></article><article><span>{apps.length-listed}</span><p>Not public</p></article></div>

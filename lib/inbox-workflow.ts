@@ -10,7 +10,7 @@ export const eligibilityChecks = {
 } as const;
 export type Finding = "unknown" | "pass" | "fail";
 export type Eligibility = { result: "pending" | "eligible" | "ineligible"; findings: Record<string, Finding>; note: string; at?: number };
-export type ResearchNote = { id: string; kind: "public_source" | "developer_statement" | "hands_on"; at: number; by: string; observedOn: string; context: string; used: string; findings: string; limitations: string; catalogAppId: string | null };
+export type ResearchNote = { id: string; kind: "public_source" | "developer_statement" | "hands_on" | "owner_dictation"; at: number; by: string; observedOn: string; context: string; used: string; findings: string; limitations: string; catalogAppId: string | null };
 export function eligibilityFor(request: Pick<EditorialRequest, "eligibility" | "screeningCriteria" | "screeningCompletedAt" | "screeningNote" | "status">): Eligibility {
   if (request.eligibility) return request.eligibility;
   // Old unchecked boxes did not distinguish unknowns from failures. Preserve that uncertainty.

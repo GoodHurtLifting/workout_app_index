@@ -97,3 +97,16 @@ test("server rejects completing unresolved purchased listings, even if controls 
   assert.equal(store.rows.get(request.id).inboxState, undefined);
   assert.equal(store.events.length, 0);
 });
+
+test("new original dictation is appended without trimming or rewriting the owner's words", async () => {
+  const store = storage([request]); globalThis.__inboxDb = store.db; globalThis.__inboxAuthorized = true;
+  const form = new FormData(); form.set("id", request.id); form.set("intent", "note"); form.set("inboxRevision", "0"); form.set("kind", "owner_dictation");
+  const original = "  I couldn't find it.\nThen I tried again — that's what I saw.  \n";
+  form.set("findings", original);
+  assert.match((await saveInboxAction(form)).error, /observation date/);
+  form.set("observedOn", "2026-10-23");
+  assert.equal((await saveInboxAction(form)).error, undefined);
+  const note = store.events.find(event => event.reference.name === "researchNotes");
+  assert.equal(note.data.kind, "owner_dictation");
+  assert.equal(note.data.findings, original);
+});

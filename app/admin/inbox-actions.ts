@@ -39,13 +39,13 @@ export async function saveInboxAction(form: FormData): Promise<{ error?: string;
         const problem = eligibilityProblem(eligibility); if (problem) throw new Error(problem);
         patch = { eligibility };
       } else if (intent === "note") {
-        const kind = z.enum(["public_source", "developer_statement", "hands_on"]).parse(field(form, "kind"));
+        const kind = z.enum(["public_source", "developer_statement", "hands_on", "owner_dictation"]).parse(field(form, "kind"));
         const observedOn = field(form, "observedOn");
         if (observedOn && (!/^\d{4}-\d{2}-\d{2}$/.test(observedOn) || !Number.isFinite(Date.parse(observedOn)) || new Date(observedOn).toISOString().slice(0,10) !== observedOn || Date.parse(observedOn) > now)) throw new Error("Use a valid observation date, today or earlier");
-        if (kind === "hands_on" && !observedOn) throw new Error("Hands-on observations need an observation date");
+        if (["hands_on", "owner_dictation"].includes(kind) && !observedOn) throw new Error("Hands-on observations and original dictation need an observation date");
         const noteId = randomUUID();
         const note = { id: noteId, kind, at: now, by: user.userId, observedOn,
-          context: z.string().max(1000).parse(field(form, "context")), used: z.string().max(2000).parse(field(form, "used")), findings: z.string().min(1).max(8000).parse(field(form, "findings")), limitations: z.string().max(2000).parse(field(form, "limitations")), catalogAppId: data.commercialCatalogAppId || data.candidateAppId || null };
+          context: z.string().max(1000).parse(field(form, "context")), used: z.string().max(2000).parse(field(form, "used")), findings: z.string().min(1).max(kind === "owner_dictation" ? 20000 : 8000).refine(value => Boolean(value.trim())).parse(kind === "owner_dictation" ? String(form.get("findings") ?? "") : field(form, "findings")), limitations: z.string().max(2000).parse(field(form, "limitations")), catalogAppId: data.commercialCatalogAppId || data.candidateAppId || null };
         transaction.create(ref.collection("researchNotes").doc(noteId), note);
         patch = { researchNotesUpdatedAt: now };
       } else if (intent === "create" || intent === "link") {
