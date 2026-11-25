@@ -9,7 +9,7 @@ Current November 25, 2026. Describes implemented behavior in this release, not p
 | `/` | Introduction, search and curated rotating examples including The Lift League, Boostcamp, Hevy and StrongLifts |
 | `/apps`, `/apps/[id]` | Alphabetical factual catalog/search/filtering and individual profiles; comparison supports up to four apps |
 | `/reviews`, `/reviews/aegir-iron` | Owner-approved editorial review with linked author, publication date and explicit testing scope; separate from factual profiles |
-| `/about` | Ryan Lovelace’s bio and the ownership disclosure |
+| `/about` | Ryan Lovelace’s bio and portrait |
 | `/find` | Nine-question preference finder; restored browser-local answers/results do not create a new completion |
 | `/how-we-score`, `/editorial-standards` | Current fit methodology and evidence/independence standards; the historic scoring route name is retained |
 | `/submit-app` | Save app details, choose one product, pay for listing or save a scoped-service inquiry |

@@ -22,7 +22,7 @@ export function SiteHeader({ onFind }: { onFind?: () => void }) {
       onClick={() => { setOpen(false); if (href === "/find") onFind?.(); }}>{label}</Link>
   ));
   return <header className="site-header wai-site-header">
-    <Link className="brand" href="/" aria-label="Workout App Index home"><span className="brand-mark"><span /></span><span>WORKOUT APP <b>INDEX</b></span></Link>
+    <Link className="brand" href="/" aria-label="Workout App Index home"><span>WORKOUT APP <b>INDEX</b></span></Link>
     <nav className="desktop-navigation" aria-label="Primary navigation">{navigationLinks}</nav>
     <Link className="wai-header-cta" href="/find" onClick={onFind}>Find my fit <ArrowRight aria-hidden="true" /></Link>
     <Sheet open={open} onOpenChange={setOpen}>

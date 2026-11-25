@@ -5,7 +5,7 @@ export const aegirReview = {
   "title": "Ægir Iron review: One training home for athletes who cross strength sports",
   "author": "Ryan Lovelace",
   "publishedAt": "2026-11-25",
-  "description": "Ryan Lovelace tries Ægir Iron’s program builder, completes one workout and takes a first look at its coach dashboard.",
+  "description": "Let's look at AEgir Iron as I run through program building, workout logging and coaching tools.",
   "scope": "One completed workout, program building and a first look at the desktop coach dashboard in October 2026. Band-resistance calculations, muscle mapping and strength-level estimates were not tested. This is not a retest of the latest release.",
   "intro": [
     "I tend to start by seeing how an app handles a 5×5 with a couple of accessory lifts each day, so I opened Ægir Iron with a pretty specific idea of what I wanted to train. In the program builder, I set up three full-body days a week, with a mix of heavy and volume days, six exercises per session, and an eight-week cycle split into two four-week blocks. I could preview how the week would lay out before building the plan. Then I took the first session into the gym.",

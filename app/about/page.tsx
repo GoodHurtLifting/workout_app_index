@@ -20,7 +20,6 @@ export default function AboutPage() {
       <p>I’m Ryan Lovelace, the founder and editor of Workout App Index. I started WAI to help people find the best workout app for the way they train and give indie developers a place alongside established brands.</p>
       <p>I’ve lived in the gym since 2016 and became a certified personal trainer in 2020. I’ve spent nearly two decades in commercial design and interactive development. I started building fitness apps in 2019, and these days I spend most of my time thinking about how they look, how they feel, and how they work.</p>
       <Link className="editorial-text-link" href="/reviews">Read the reviews <ArrowRight aria-hidden="true" /></Link>
-    </div><Image className="about-portrait" src="/images/ryan-lovelace.jpg" alt="Ryan Lovelace" width={1492} height={2065} sizes="(max-width: 620px) calc(100vw - 44px), 340px" /></section>
-    <aside className="editorial-reading-note"><h2>Experience, with context.</h2><p>Workout App Index and The Lift League share ownership through Turf King LLC. WAI discloses that relationship on The Lift League’s profile. Commercial relationships do not buy recommendations, rankings or favorable coverage.</p><Link href="/editorial-standards">Read our editorial standards <ArrowRight aria-hidden="true" /></Link></aside>
+    </div><Image className="about-portrait" src="/images/ryan-lovelace.jpg" alt="Ryan Lovelace" width={1492} height={2065} sizes="(max-width: 620px) 144px, 340px" /></section>
   </EditorialLayout>;
 }

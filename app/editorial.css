@@ -55,23 +55,34 @@
 
 .mobile-navigation-sheet {
   background:#f6f7f8;
-  width:min(90vw,390px);
-  padding:26px 16px;
+  width:min(90vw,360px);
+  height:auto;
+  max-height:calc(100dvh - 16px);
+  top:8px;
+  right:8px;
+  bottom:auto;
+  gap:8px;
+  border:1px solid #cdd5de;
+  border-radius:10px;
+  padding:20px 16px;
   overflow-y:auto;
 }
 
 .mobile-navigation-sheet [data-slot=sheet-header] {
-  padding:20px 10px;
+  padding:12px 32px 12px 10px;
 }
 
 .mobile-navigation-sheet nav {
   display:flex;
   flex-direction:column;
-  padding:10px;
+  gap:0;
+  padding:0 10px;
 }
 
 .mobile-navigation-sheet nav a {
-  padding:17px 0;
+  min-height:44px;
+  padding:10px 0;
+  line-height:1.4;
   border-bottom:1px solid #dce1e6;
   font-size:17px;
   font-weight:650;
@@ -79,7 +90,7 @@
 }
 
 .mobile-navigation-sheet .wai-menu-cta {
-  margin:16px 10px;
+  margin:8px 10px;
 }
 
 .mobile-navigation-sheet>button {
@@ -496,9 +507,10 @@
   }
   .about-author:has(.about-portrait) {
     grid-template-columns:1fr;
+    gap:24px;
   }
   .about-portrait {
-    max-width:340px;
+    width:144px;
     grid-row:1;
   }
   .about-bio p {
