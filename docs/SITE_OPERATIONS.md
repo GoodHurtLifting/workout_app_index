@@ -1,6 +1,6 @@
 # How the current WAI site works
 
-Current November 13, 2026. Describes implemented behavior in this release, not proof that a rollout or provider delivery has completed. Strategy is in the [business plan](../WAI_BUSINESS_PLAN.md); owner procedures are in [Catalog workflow](CATALOG_WORKFLOW.md).
+Current November 25, 2026. Describes implemented behavior in this release, not proof that a rollout or provider delivery has completed. Strategy is in the [business plan](../WAI_BUSINESS_PLAN.md); owner procedures are in [Catalog workflow](CATALOG_WORKFLOW.md).
 
 ## Public experience
 
@@ -8,6 +8,8 @@ Current November 13, 2026. Describes implemented behavior in this release, not p
 | --- | --- |
 | `/` | Introduction, search and curated rotating examples including The Lift League, Boostcamp, Hevy and StrongLifts |
 | `/apps`, `/apps/[id]` | Alphabetical factual catalog/search/filtering and individual profiles; comparison supports up to four apps |
+| `/reviews`, `/reviews/aegir-iron` | Owner-approved editorial review with linked author, publication date and explicit testing scope; separate from factual profiles |
+| `/about` | Ryan Lovelace’s bio and the ownership disclosure |
 | `/find` | Nine-question preference finder; restored browser-local answers/results do not create a new completion |
 | `/how-we-score`, `/editorial-standards` | Current fit methodology and evidence/independence standards; the historic scoring route name is retained |
 | `/submit-app` | Save app details, choose one product, pay for listing or save a scoped-service inquiry |
@@ -15,9 +17,13 @@ Current November 13, 2026. Describes implemented behavior in this release, not p
 | `/partnerships`, `/sponsored/[slug]` | Partnership inquiry, published disclosed placements and sponsored articles |
 | `/corrections`, `/terms`, `/privacy` | Free sourced corrections, current commercial terms and data practices |
 
+Public pages share desktop navigation and a keyboard-accessible mobile menu. The same primary links appear in both; choosing a menu link closes the menu, and Escape dismisses it. Footer About links and editorial bylines lead to `/about`.
+
 Public profiles/cards/API/comparison omit historical Legit/Originality ratings in all coverage modes. Matching uses factual compatibility and preferences, with alphabetical ties; payment and historical subjective values do not influence fit. The nine questions cover platform, goal, experience, guidance preference, equipment, main extra priority, optional adjacent features, AI and budget. Current version is `fit-5`; `lib/finder-questions.ts`, `lib/matching.ts` and `/how-we-score` define exact options, exclusions, weights and caps.
 
 No visitor account is required. Owner Google authentication is separate. Finder/browser storage is not a server-side training profile. Consent controls public analytics; private admin routes are excluded.
+
+Public cards, finder results, comparisons and profiles distinguish **Researched claims**, **Hands-on verified findings** and **Editorial review**. These can coexist; they describe the evidence and published coverage, not quality or ranking. Source-only coverage, including legacy entries, defaults to Researched claims. Hands-on findings are limited to their dated tested scope; historical owner-confirmed scopes for Aldo Coach, WorkoutFlow and swithAI are recorded in `lib/catalog-coverage.ts`. Only an approved write-up supports Editorial review. These labels do not replace or clear admin missing-content, pending-proposal, review-progress or publication indicators.
 
 ## Data and administration
 
@@ -65,4 +71,8 @@ The [measurement specification](MEASUREMENT_SPEC.md) defines `facts-1` catalog/s
 
 BigQuery SQL under `reporting/` is bounded read-only preparation. GA represents consented browser activity, while operational saved-request totals can include nonconsenting developers. No Firestore-to-BigQuery export, new views or dashboard changes are implied. The reporting runbook records historical observations and verification gaps.
 
-Public metadata/canonicals use the real site routes. Static sitemap entries do not receive invented current dates. Factual app dates require the owner-reviewed factual record and a valid supported date; unreviewed records receive no `lastModified`. Published sponsored articles use valid update dates. Private/admin/preview content stays outside public indexing. Do not weaken the owner-review sitemap regression test.
+Public metadata/canonicals use the real site routes. Static sitemap entries do not receive invented current dates. Factual app dates require the owner-reviewed factual record and a valid supported date; unreviewed records receive no `lastModified`. Approved editorial articles use their fixed publication dates; published sponsored articles use valid update dates. Private/admin/preview content stays outside public indexing. Do not weaken the owner-review sitemap regression test.
+
+## Editorial pages
+
+`lib/editorial.ts` contains only approved public article copy and metadata. The Reviews & Comparisons landing page links to the first Ægir Iron review; additional articles need their own public route and owner-approved copy. The article and About page supply metadata, canonicals and author structured data. Editorial coverage in `lib/catalog-coverage.ts` links the review to the app profile without modifying saved app fields, research progress or publication records. No original dictation, private scores, inbox notes or developer correspondence is imported into public article content.

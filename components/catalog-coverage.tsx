@@ -23,5 +23,5 @@ export function ProfileCoverage({ app }: { app: AppRecord }) {
 export function EditorialCoverage({ app }: { app: AppRecord }) {
   const review = profileCoverage(app).editorialReview;
   if (!review) return null;
-  return <section className="profile-sources"><p className="eyebrow">EDITORIAL REVIEW</p><h2>{review.title}</h2><p>Published {review.publishedAt}. Testing scope: {review.scope}</p>{review.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}</section>;
+  return <section className="profile-sources"><p className="eyebrow">EDITORIAL REVIEW</p><h2>{review.title}</h2><p>Published {review.publishedAt}. Testing scope: {review.scope}</p>{review.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}{review.href ? <p><Link href={review.href}>Read the full review by Ryan Lovelace</Link></p> : null}</section>;
 }

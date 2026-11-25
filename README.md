@@ -9,7 +9,7 @@ WAI helps people choose workout apps through sourced factual profiles, an accoun
 | [Business plan](WAI_BUSINESS_PLAN.md) | Current strategy, products, independence and priorities |
 | [Site operations](docs/SITE_OPERATIONS.md) | Public routes, questionnaire, saved data, admin and reporting |
 | [Catalog workflow](docs/CATALOG_WORKFLOW.md) | Research cohorts, missing fields, local proposals, owner approval and publication |
-| [Editorial workflow](docs/EDITORIAL_WORKFLOW.md) | Dictated observations, source packs and developer message templates |
+| [Editorial workflow](docs/EDITORIAL_WORKFLOW.md) | Dictated observations, approved editorial pages and developer message templates |
 | [Deployment and payments](docs/DEPLOYMENT.md) | Existing Firebase setup, Stripe, notifications, local checks and release boundaries |
 | [Commercial scope template](docs/COMMERCIAL_SCOPE_TEMPLATE.md) | Reusable larger-service agreement; completed client versions stay private |
 | [Measurement specification](docs/MEASUREMENT_SPEC.md) | Catalog and developer event contracts and privacy boundaries |
@@ -30,6 +30,10 @@ npm.cmd run dev
 ```
 
 The default URL is `http://localhost:3000`; the private owner area is `/admin`. Do not replace an existing environment file or mix live and sandbox Stripe credentials.
+
+For a preview from Android Studio, use its Terminal to run the command above and open the printed URL in a browser; no Android emulator or push is required. Admin access also needs valid server credentials. See [preview and credential troubleshooting](docs/DEPLOYMENT.md#preview-from-android-studio).
+
+For day-to-day catalog work, follow [Finish a prepared listing](docs/CATALOG_WORKFLOW.md#finish-a-prepared-listing). Public coverage labels, catalog review progress, inbox completion and public visibility are separate states; see [Site operations](docs/SITE_OPERATIONS.md).
 
 ## Validate and release
 

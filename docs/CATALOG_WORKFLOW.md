@@ -1,6 +1,6 @@
 # Catalog research, editing and publication
 
-Current November 13, 2026. This replaces the active instructions in the old catalog review, factual migration and legacy rescoring guides. The [business plan](../WAI_BUSINESS_PLAN.md) controls current policy. Public profiles and matching do not use subjective quality or originality ratings; historical private values are retained only for provenance/compatibility.
+Current November 24, 2026. This replaces the active instructions in the old catalog review, factual migration and legacy rescoring guides. The [business plan](../WAI_BUSINESS_PLAN.md) controls current policy. Public profiles and matching do not use subjective quality or originality ratings; historical private values are retained only for provenance/compatibility.
 
 ## Four separate records
 
@@ -29,6 +29,8 @@ Commercial disclosure is structured: `none` for a known absence of a material WA
 
 Show Ryan a concise card: app/use case; training approach and tradeoff; practical platform/price/features; dated evidence and unknowns; proposed public wording; outstanding decisions. Use plain descriptions and source links rather than requiring the owner to read a data object. Never invent scores, tests or a verdict to fill a field.
 
+For the six optional extras only, the owner has directed that a capability absent from the checked official product/store description be recorded as **Not available**. State that documentary basis and check date in its evidence; this is a catalog convention, not a hands-on finding or proof that an undocumented feature cannot exist. Preserve any documented capability, restriction, separate companion product or contradictory evidence. Do not apply this absence rule to programming, pricing, authorship or other fields.
+
 ## Local handoff and per-field acceptance
 
 1. Prepare structured proposals and only genuinely checked evidence; discuss discrepancies with Ryan. Keep app-specific correspondence and completed client scopes private, outside Git.
@@ -48,6 +50,14 @@ The catalog list shows horizontal labels for public visibility, review progress,
 **Hide public listing** withdraws it without deleting saved research, prior outcomes or history. Withdrawal state fails closed if it cannot be read. The original 36 have an explicit legacy-public compatibility marker; it preserves existing visibility until a specific revision/withdrawal, not permission to publish new Candidates. Gymshark Training was hidden at the owner's direction; do not restore it merely because a bundled record exists.
 
 For factual sitemap `lastModified`, the app must be factual **and** `researchStatus === "Reviewed"`. Derive and validate its latest supported factual date once; unreviewed factual records receive no last-modified date. Do not substitute build/request time, research-draft dates or historical subjective assessments.
+
+## Finish a prepared listing
+
+1. Open the saved catalog entry linked to the submission; check pending proposals and preserve owner values. Preview the saved draft, rather than assuming a deployed proposal is saved.
+2. Resolve required publication checks, confirm the commercial relationship and inspect dated, value-bound sources. Keep source-only claims, firsthand observations and unknowns distinct. Review all six optional extras under the rule above. Optional missing-content flags may remain when the uncertainty is honest.
+3. Save any factual edits and inspect the persisted result. Save **Review complete** separately when the factual assessment is finished. This does not publish.
+4. With owner publication authorization, use **Publish listing** for a new draft or **Update public listing** for an existing publication, then verify the public profile for that app. A draft marked Not public still needs publication even when its research is finished.
+5. Check the linked submission: a reviewed public listing can move it into Completed, unless unfinished commercial or payment work keeps it Open. Explicit inbox completion is separate and cannot substitute for publication. Preserve research, original dictation, earlier decisions and financial history.
 
 ## Developer submissions and existing reviews
 

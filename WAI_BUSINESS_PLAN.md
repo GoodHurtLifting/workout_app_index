@@ -1,6 +1,6 @@
 # Workout App Index business plan
 
-Updated November 13, 2026. This is the current operating plan for the existing WAI website. It replaces the November 4 plan's obsolete scoring, free developer submission, fixed public service-package and speculative subscription language. Historical agreements and evidence remain historical records; do not silently reinterpret them.
+Updated November 24, 2026. This is the current operating plan for the existing WAI website. It replaces the November 4 plan's obsolete scoring, free developer submission, fixed public service-package and speculative subscription language. Historical agreements and evidence remain historical records; do not silently reinterpret them.
 
 **Financial objective:** Build toward at least $20,000 in annual external WAI revenue, with a repeatable $1,667 monthly run rate. These are targets, not verified receipts. Owner-funded and sandbox transactions do not count as external revenue; track The Lift League, Caliper Cal and other Turf King revenue separately.
 
@@ -17,6 +17,8 @@ The homepage introduces WAI and rotates curated app examples, including The Lift
 The questionnaire covers platform, goal, experience, preferred training guidance, equipment, a main feature priority, optional adjacent features, AI preference and budget. Adjacent features include nutrition, recovery, mindfulness, cardio, body composition and wearable integration. Health-platform syncing and a dedicated watch app are different capabilities. Unknown, conflicting, platform-specific and paid-tier information must remain visible in the evidence and cannot be promoted into verified availability.
 
 Profiles explain what an app does, its training approach, decisions it removes, choices the user retains, supported platforms, price/access limits, relevant features, dated sources and commercial relationships. Training approach describes the user's relationship with the product, rather than reducing every app to an AI/manual label. The current matching contract lives in `lib/matching.ts` and is explained at `/how-we-score`.
+
+Coverage labels tell visitors what supports a profile: **Researched claims** means sourced product claims, **Hands-on verified findings** means findings within the stated owner-tested scope, and **Editorial review** means an approved written assessment. They can coexist and are not quality grades or matching bonuses. Source-only legacy profiles remain Researched claims; a completed admin review alone does not establish firsthand testing or an editorial. Preserve original dictated observations separately from summaries for future writing, without making private notes public.
 
 ## Catalog growth and ownership
 

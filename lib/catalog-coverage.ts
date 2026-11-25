@@ -1,3 +1,4 @@
+import { aegirReview } from "./editorial.ts";
 import type { AppRecord, FactClaim } from "./catalog.ts";
 import { currentClaim, factLabel, latestFactDate } from "./catalog-facts.ts";
 
@@ -8,13 +9,18 @@ export const coverageDescriptions = {
 } as const;
 export type CoverageLabel = keyof typeof coverageDescriptions;
 type HandsOnScope = { scope: string; testedAt: string; context: string };
-type EditorialReview = { title: string; publishedAt: string; scope: string; paragraphs: string[] };
+type EditorialReview = { title: string; publishedAt: string; scope: string; paragraphs: string[]; href?: string };
 type ApprovedCoverage = { handsOn?: HandsOnScope; editorialReview?: EditorialReview };
 
-// Public summaries only. Owner confirmed these historical coverage assignments
-// November 23, 2026. Do not import private research/correspondence into the client.
+// Owner-confirmed public summaries only. The original historical assignments were
+// confirmed November 23, 2026; the approved Ægir article was added November 25.
+// Do not import private research/correspondence into the client.
 // An editorial review requires an explicitly approved write-up, not a review status.
 const approvedCoverage: Record<string, ApprovedCoverage> = {
+  "gir-iron": {
+    handsOn: { scope: "Program building, one completed workout and a first look at the desktop coach dashboard.", testedAt: "October 2026", context: aegirReview.scope },
+    editorialReview: { title: aegirReview.title, publishedAt: aegirReview.publishedAt, scope: aegirReview.scope, paragraphs: [aegirReview.description], href: `/reviews/${aegirReview.slug}` },
+  },
   "aldo-coach": { handsOn: {
     scope: "Workout logging and AI-assisted training workflows during owner use.",
     testedAt: "October 2026",

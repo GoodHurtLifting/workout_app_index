@@ -1,6 +1,6 @@
 # Firsthand coverage, source packs and developer messages
 
-Current November 13, 2026. This combines the useful current parts of the dictated review protocol, editorial content template and decision templates. Ordinary factual catalog research follows [Catalog workflow](CATALOG_WORKFLOW.md); it does not require deep testing, a subjective score or a developer conversation. Earlier scoring/correspondence records remain [historical](archive/LEGACY_EDITORIAL_RECORD.md).
+Current November 25, 2026. This combines the useful current parts of the dictated review protocol, editorial content template and decision templates. Ordinary factual catalog research follows [Catalog workflow](CATALOG_WORKFLOW.md); it does not require deep testing, a subjective score or a developer conversation. Earlier scoring/correspondence records remain [historical](archive/LEGACY_EDITORIAL_RECORD.md).
 
 ## Listen to actual experience
 
@@ -38,7 +38,7 @@ Use the six catalog evidence classes consistently. Pricing includes currency, pe
 | Onboarding/paywalls | Attempted access, trial conversion, purchase boundary and actual next step; no guessed backend diagnosis |
 | Podcast/video source pack | Evidence-linked outline and demonstration plan; no invented footage, quote or workout |
 
-Credit successful product differences with a concrete explanation: what differs, compared with what, who benefits, the tradeoff and what worked in the tested scope. This requires editorial judgment; it is not an automated Originality score, finder bonus or paid benefit. Reusing evidence does not expand what was tested. These source-pack formats do not imply a general article/podcast/video publishing system is implemented.
+Credit successful product differences with a concrete explanation: what differs, compared with what, who benefits, the tradeoff and what worked in the tested scope. This requires editorial judgment; it is not an automated Originality score, finder bonus or paid benefit. Reusing evidence does not expand what was tested. The site now has an editorial landing page at `/reviews` and the approved Ægir Iron article at `/reviews/aegir-iron`. Public copy and metadata live in `lib/editorial.ts`; the article route, sitemap and catalog coverage link use that approved record. Bylines link to Ryan’s `/about` page. Add only approved public wording, a real publication date, testing scope and disclosures. Keep original dictation and private research in their existing records; do not publish a research file or infer approval from a completed review stage. This is code-managed editorial publishing, not an admin article editor or a podcast/video publishing system.
 
 ## Draft-only developer messages
 

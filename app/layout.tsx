@@ -4,6 +4,7 @@ import { AnalyticsConsent } from "@/components/analytics-consent";
 import "./globals.css";
 import "./relationship.css";
 import "./facts-first.css";
+import "./editorial.css";
 
 const adClientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
 const adsEnabled = process.env.NEXT_PUBLIC_ADSENSE_ENABLED === "true";

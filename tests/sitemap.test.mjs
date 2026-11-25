@@ -13,7 +13,7 @@ test("public sitemap dates come from current facts, never historical scores or r
   assert.equal(first.find(row=>row.url.endsWith("/legacy")).lastModified,undefined);
   assert.equal(first.find(row=>row.url.endsWith("/stale")).lastModified,undefined);
   assert.equal(first.find(row=>row.url.endsWith("/unreviewed")).lastModified,undefined);
-  assert.ok(first.filter(row=>!row.url.includes("/apps/")).every(row=>row.lastModified===undefined));
+  assert.ok(first.filter(row=>!row.url.includes("/apps/")&&!row.url.includes("/reviews/")).every(row=>row.lastModified===undefined));
 });
 test("sitemap rejects malformed/future dates, unsafe slugs and duplicate URLs",()=>{
   for(const date of ["2026-02-30","2026-1-2","2026-10-22T00:00:00Z","9999-01-01",null]) assert.equal(validSitemapDate(date),undefined);

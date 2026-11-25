@@ -1,6 +1,6 @@
 # Existing deployment, payments and verification
 
-Updated November 13, 2026. This consolidates Firebase setup and the commerce handoff. It describes the existing setup and latest verified preparation, not a claim that the public rollout or live payment delivery has succeeded. No new Firebase, cloud, Android project or backend is needed.
+Updated November 24, 2026. This consolidates Firebase setup and the commerce handoff. It describes the existing setup and latest verified preparation, not a claim that the public rollout or live payment delivery has succeeded. No new Firebase, cloud, Android project or backend is needed.
 
 ## Existing targets and release workflow
 
@@ -21,6 +21,14 @@ Actual repository: `C:\dev\projects\workout_app_index`, opened in Android Studio
 Use Node 24 and install `pnpm install --frozen-lockfile` from the committed lock. Run npm scripts as documented in the root README. If `.env.local` already exists, preserve it. Otherwise copy `.env.example` and supply the existing development web config, `CATALOG_ADMIN_EMAIL` and authorized server credentials. `gcloud auth application-default login` supplies local server credentials when using real development Firebase; Firebase CLI sign-in and gcloud/BigQuery credentials are separate. Prefer isolated emulators for mutation tests.
 
 Never commit service-account keys, secret values, `.env.local`, `.env.wai-live.local`, emulator logs or ignored `work/` helpers. The intentionally public Firebase web config/Stripe publishable key still must match the selected environment. Keep sandbox keys in local test configuration; the ignored live setup file is not automatically loaded by Next and is not a second deployment environment.
+
+## Preview from Android Studio
+
+Open the repository Terminal, run `npm.cmd run dev`, leave it running and open the printed local URL, normally `http://localhost:3000`. Use `/admin` for the owner area. This previews local changes before a commit or push; an Android emulator is unnecessary. The selected local Firebase environment still controls which records an admin action changes, so a local preview is not automatically an isolated data copy.
+
+If the page loads but admin sign-in fails, inspect the terminal error. Expired Application Default Credentials can report `invalid_grant` or `invalid_rapt`; refresh them with `gcloud auth application-default login`, then retry. Firebase CLI sign-in alone does not refresh these server credentials. An unexpected-end-of-JSON browser error can be a symptom of a failed server response; check the server error rather than assuming the catalog data is missing.
+
+Before release, compare `git status --short`, the full intended diff and the staged file list. Include new modules and tests imported by the changed code, using explicit paths; an Android Studio list of tracked modifications can omit required new files. Keep `.idea/`, secrets, logs and temporary work excluded. Run tests, lint and the production build. If the default Turbopack build hits the observed Windows CSS worker/junction failure, `npm.cmd run build -- --webpack` is the verified local alternative; record which build passed.
 
 ## Stripe configuration
 
